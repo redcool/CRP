@@ -12,10 +12,14 @@ namespace PowerUtilities
     public class SetRenderTarget : BasePass
     {
 
+        [Header("Apply Camera Props")]
+        public bool isSetupCameraProperties = true;
+
+        [Header("Render Targets")]
         public string[] targetNames;
         public RenderTargetIdentifier[] targetIds;
 
-        [Header("Clear ")]
+        [Header("Clear Options")]
         public bool clearTarget;
         public bool clearDepth = true;
         public float depth = 1;
@@ -25,6 +29,11 @@ namespace PowerUtilities
         
         public override void OnRender()
         {
+            if (isSetupCameraProperties)
+            {
+                context.SetupCameraProperties(camera);
+            }
+
             if (targetNames == null || targetNames.Length ==0)
                 return;
 

@@ -54,12 +54,6 @@ namespace PowerUtilities
             supportLightModeTagIds = InitShaderTagIdss(supportLightModeTags);
             unsupportLightModeTagIds = InitShaderTagIdss(unsupportLightModeTags);
 
-            //BeginSampler(nameof(RenderObjectPass));
-
-            //context.SetupCameraProperties(camera);
-
-            //ClearTarget(Cmd,camera);
-            //ExecuteCommand();
 
             var sortingSettings = new SortingSettings(camera);
             var drawSettings = new DrawingSettings();
@@ -108,7 +102,7 @@ namespace PowerUtilities
             sortSettings.criteria = SortingCriteria.CommonOpaque;
             drawSettings.sortingSettings = sortSettings;
 
-            drawSettings.overrideMaterial = ErrorMaterial;
+            drawSettings.overrideMaterial = RenderingTools.ErrorMaterial;
             for (int i = 0; i < unsupportLightModeTagIds.Length; i++)
             {
                 drawSettings.SetShaderPassName(i, unsupportLightModeTagIds[i]);

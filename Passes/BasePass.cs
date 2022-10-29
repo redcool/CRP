@@ -10,10 +10,10 @@ namespace PowerUtilities
 {
     public abstract class BasePass : ScriptableObject
     {
+        [Header("Pass Options")]
         public string log;
 
-        public string errorShaderName = "Hidden/InternalErrorShader";
-        Material errorMaterial;
+
 
         public bool isInterrupt;
         public bool isSkip;
@@ -32,15 +32,7 @@ namespace PowerUtilities
             }
         }
 
-        public Material ErrorMaterial         
-        {
-            get
-            {
-                if (!errorMaterial)
-                    errorMaterial = new Material(Shader.Find(errorShaderName));
-                return errorMaterial;
-            }
-        }
+
         public void ExecuteCommand()
         {
             context.ExecuteCommandBuffer(Cmd);
