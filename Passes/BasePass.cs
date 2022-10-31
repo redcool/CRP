@@ -10,12 +10,15 @@ namespace PowerUtilities
 {
     public abstract class BasePass : ScriptableObject
     {
+        public bool isFoldout;
+
         [Header("Pass Options")]
         public string log;
 
-
-
+        [Tooltip("when pass done, interrupt flow afterwards")]
         public bool isInterrupt;
+
+        [Tooltip("skip this pass?")]
         public bool isSkip;
 
         [NonSerialized]public ScriptableRenderContext context;
@@ -41,12 +44,13 @@ namespace PowerUtilities
 
         public void Render(ref ScriptableRenderContext context,Camera camera)
         {
+            if (!CanExecute())
+                return;
             this.context = context;
             this.camera = camera;
 
-            Cmd.name = camera.name;
-
-            BeginSample(cmd.name);
+            Cmd.name = PassName();
+            BeginSample(Cmd.name);
 
             OnRender();
             EndSample(Cmd.name);
@@ -66,5 +70,7 @@ namespace PowerUtilities
         }
 
         public abstract void OnRender();
+        public virtual bool CanExecute() => ! isSkip;
+        public virtual string PassName() => nameof(BasePass);
     }
 }

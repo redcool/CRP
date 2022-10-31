@@ -22,20 +22,25 @@ namespace PowerUtilities
         [Header("Material")]
         public Material blitMat;
         public int pass = 0;
+
+        public override string PassName() => nameof(BlitToTarget);
+
         public override void OnRender()
         {
             RenderTargetIdentifier source = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : sourceName;
             RenderTargetIdentifier target = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : targetName;
+            //BeginSample("Blit Target");
             if (!blitMat)
             {
-            Cmd.Blit(source, target);
-
+                Cmd.Blit(source, target);
             }
             else
             {
-                Cmd.Blit(source, target, blitMat,pass);
+                Cmd.Blit(source, target, blitMat, pass);
             }
-            ExecuteCommand();
+
+            //ExecuteCommand();
+            //EndSample("Blit Target");
         }
     }
 }

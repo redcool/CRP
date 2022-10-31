@@ -37,6 +37,8 @@ namespace PowerUtilities
             return tagIds;
         }
 
+        public override string PassName() => nameof(RenderObjects);
+
         public override void OnRender()
         {
 #if UNITY_EDITOR

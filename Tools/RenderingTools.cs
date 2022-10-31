@@ -22,5 +22,17 @@ namespace PowerUtilities
                 return errorMaterial;
             }
         }
+
+        public static void RenderTargetNameToIdentifier(string[] names, ref RenderTargetIdentifier[] ids)
+        {
+            if (names == null)
+            {
+                return;
+            }
+
+            ids = names.Where(name => !string.IsNullOrEmpty(name)).
+                Select(name => new RenderTargetIdentifier(name)).
+                ToArray();
+        }
     }
 }

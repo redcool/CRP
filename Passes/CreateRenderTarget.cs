@@ -14,6 +14,8 @@ namespace PowerUtilities
 
         public int[] targetIds;
 
+        public override string PassName() => nameof(CreateRenderTarget);
+
         public override void OnRender()
         {
             targetIds = targetNames.Where((item)=>!string.IsNullOrEmpty(item))

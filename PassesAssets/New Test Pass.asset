@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86b3bedf3f7b5884bb30d6bcfdcd58f6, type: 3}
   m_Name: New Test Pass
   m_EditorClassIdentifier: 
+  isFoldout: 0
   log: 
-  errorShaderName: Hidden/InternalErrorShader
   isInterrupt: 1
   isSkip: 1
   setRenderTargetPass: {fileID: 0}

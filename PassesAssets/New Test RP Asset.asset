@@ -15,7 +15,6 @@ MonoBehaviour:
   renderScale: 1
   passes:
   - {fileID: 11400000, guid: 6c22f3f1ce4f91c40bd461226f2c754d, type: 2}
-  - {fileID: 11400000, guid: 70e108593b90ae74a86418596bbc8c26, type: 2}
   - {fileID: 11400000, guid: cd341caaa42a35e45a661aa9422bb4d5, type: 2}
   - {fileID: 11400000, guid: 6be2642ea9e92bb44be65455bf896f75, type: 2}
   - {fileID: 11400000, guid: f5f39a12c83a7ec40be8bfcee5f0f929, type: 2}

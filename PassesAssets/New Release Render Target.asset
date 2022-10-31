@@ -9,18 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b251598c8ad180340b698e5411377ce2, type: 3}
-  m_Name: New Render Object Pass
+  m_Script: {fileID: 11500000, guid: d38ca1c509f23b146b63d7df743eb09c, type: 3}
+  m_Name: New Release Render Target
   m_EditorClassIdentifier: 
-  isFoldout: 0
   log: 
   isInterrupt: 0
   isSkip: 0
-  supportLightModeTags:
-  - SRPDefaultUnlit
-  - UniversalForward
-  - UniversalForwardOnly
-  unsupportLightModeTags:
-  - Always
-  - ForwardBase
-  - PrepassBase
+  targetNames: []

@@ -26,7 +26,8 @@ namespace PowerUtilities
         public bool clearColor = true;
         public Color color = Color.clear;
 
-        
+        public override string PassName() => nameof(SetRenderTarget);
+
         public override void OnRender()
         {
             if (isSetupCameraProperties)

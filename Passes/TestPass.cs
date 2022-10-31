@@ -14,13 +14,14 @@ namespace PowerUtilities
         public SetRenderTarget setRenderTargetPass;
         public override void OnRender()
         {
+            context.DrawSkybox(camera);
             BeginSample("Test");
             
-            context.DrawSkybox(camera);
-
             Cmd.Blit(BuiltinRenderTextureType.CurrentActive, BuiltinRenderTextureType.CameraTarget);
-
             EndSample("Test");
         }
+
+        public override string PassName() => nameof(TestPass);
     }
 }
+ 

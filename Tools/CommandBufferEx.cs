@@ -28,5 +28,22 @@ namespace PowerUtilities
             //camera.clearFlags == CameraClearFlags.Color ? camera.backgroundColor : Color.clear
             //);
         }
+
+        public static void Execute(this CommandBuffer cmd,ref ScriptableRenderContext context)
+        {
+            context.ExecuteCommandBuffer(cmd);
+            cmd.Clear();
+        }
+
+        public static void BeginSampleExecute(this CommandBuffer cmd, string sampleName,ref ScriptableRenderContext context)
+        {
+            cmd.BeginSample(sampleName);
+            cmd.Execute(ref context);
+        }
+        public static void EndSampleExecute(this CommandBuffer cmd,string sampleName,ref ScriptableRenderContext context)
+        {
+            cmd.EndSample(sampleName);
+            cmd.Execute(ref context);
+        }
     }
 }

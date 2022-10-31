@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
   m_Name: New Blit To Target
   m_EditorClassIdentifier: 
+  isFoldout: 0
   log: sourceNames.Length != targetNames.Length
-  errorShaderName: Hidden/InternalErrorShader
   isInterrupt: 0
   isSkip: 0
   sourceName: 

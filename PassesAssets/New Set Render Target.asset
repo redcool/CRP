@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce09de95229079c4e8bd4b0039020b4a, type: 3}
   m_Name: New Set Render Target
   m_EditorClassIdentifier: 
+  isFoldout: 0
   log: 
-  errorShaderName: Hidden/InternalErrorShader
   isInterrupt: 0
   isSkip: 0
+  isSetupCameraProperties: 1
   targetNames:
   - _CameraTarget
   clearTarget: 1

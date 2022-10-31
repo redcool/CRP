@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 731211693d74009479980c2436a3d6dd, type: 3}
   m_Name: New Create Render Target
   m_EditorClassIdentifier: 
-  errorShaderName: Hidden/InternalErrorShader
+  isFoldout: 0
+  log: 
+  isInterrupt: 0
+  isSkip: 0
   targetNames:
   - _CameraTarget
-  targetIds: 
+  targetIds: 8d030000
