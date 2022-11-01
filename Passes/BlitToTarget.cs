@@ -21,6 +21,7 @@ namespace PowerUtilities
 
         [Header("Material")]
         public Material blitMat;
+        [Range(0,15)]
         public int pass = 0;
 
         public override string PassName() => nameof(BlitToTarget);
