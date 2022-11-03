@@ -17,16 +17,11 @@ namespace PowerUtilities
 
         [Header("Render Targets")]
         public string[] targetNames;
-        public RenderTargetIdentifier[] targetIds;
+        RenderTargetIdentifier[] targetIds;
 
         [Header("Clear Options")]
+        [Tooltip("Clear target use camera clear settings")]
         public bool clearTarget;
-        public bool clearDepth = true;
-        public float depth = 1;
-        public bool clearColor = true;
-        public Color color = Color.clear;
-
-        public override string PassName() => nameof(SetRenderTarget);
 
         public override void OnRender()
         {
@@ -38,19 +33,14 @@ namespace PowerUtilities
             if (targetNames == null || targetNames.Length ==0)
                 return;
 
-            targetIds = targetNames.Where(item=>!string.IsNullOrEmpty(item))
-                .Select(name => new RenderTargetIdentifier(name))
-                .Take(8)
-                .ToArray();
+            RenderingTools.RenderTargetNameToIdentifier(targetNames, ref targetIds);
 
             Cmd.SetRenderTarget(targetIds, targetIds[0]);
 
             if (clearTarget)
             {
-                //Cmd.ClearRenderTarget(clearDepth, clearColor, color, depth);
                 Cmd.ClearRenderTarget(camera);
             }
-            ExecuteCommand();
         }
     }
 }

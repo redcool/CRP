@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11513b6c94d60cd478624e3307e78af9, type: 3}
   m_Name: New Test RP Asset
   m_EditorClassIdentifier: 
-  renderScale: 1
   passes:
   - {fileID: 11400000, guid: 6c22f3f1ce4f91c40bd461226f2c754d, type: 2}
-  - {fileID: 11400000, guid: cd341caaa42a35e45a661aa9422bb4d5, type: 2}
   - {fileID: 11400000, guid: 6be2642ea9e92bb44be65455bf896f75, type: 2}
+  - {fileID: 11400000, guid: cd341caaa42a35e45a661aa9422bb4d5, type: 2}
   - {fileID: 11400000, guid: f5f39a12c83a7ec40be8bfcee5f0f929, type: 2}
+  - {fileID: 11400000, guid: 5d5e3948c2b4423488bdb01a1a0672c2, type: 2}
+  - {fileID: 11400000, guid: 7001d6e37fa287942a00efc9f67988c8, type: 2}
   - {fileID: 11400000, guid: 5005031a944c2b64797b4eb57345fd9c, type: 2}
+  - {fileID: 11400000, guid: 966319daca1ec094592b8d6739fdaf0c, type: 2}

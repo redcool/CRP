@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b251598c8ad180340b698e5411377ce2, type: 3}
+  m_Name: New Render Opaque Object Pass
+  m_EditorClassIdentifier: 
+  isFoldout: 0
+  overridePassName: Render Opaque Object Pass
+  isInterrupt: 0
+  isSkip: 0
+  drawOpaques: 1
+  drawSkybox: 1
+  drawTransparents: 0
+  drawUnsupportObjects: 1
+  drawGizmos: 1
+  supportLightModeTags:
+  - SRPDefaultUnlit
+  - UniversalForward
+  - UniversalForwardOnly
+  unsupportLightModeTags:
+  - Always
+  - ForwardBase
+  - PrepassBase
+  enableDynamicBatch: 0
+  enableInstanced: 0
+  enableSRPBatch: 1

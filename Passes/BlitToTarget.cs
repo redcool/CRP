@@ -11,37 +11,65 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(BlitToTarget))]
     public class BlitToTarget : BasePass
     {
+        [Header("Blit Options")]
+        [Tooltip("Blit run after last camera")]
+        public bool isFinalBlit = true;
+
+        [Tooltip("After blit, restore cameraTarget to SourceName")]
+        public bool isRestoreCameraTarget;
+
         [Header("Source")]
         public string sourceName;
         public bool isCurrentActive;
 
         [Header("Target")]
         public string targetName;
-        public bool isCameraTarget;
+        public bool isDefaultCameraTarget;
+        public bool isNeedCreateTarget;
 
         [Header("Material")]
         public Material blitMat;
-        [Range(0,15)]
+        [Range(0, 15)]
         public int pass = 0;
 
-        public override string PassName() => nameof(BlitToTarget);
+        public override bool CanExecute()
+        {
+            var isSourceOk = isCurrentActive || !string.IsNullOrEmpty(sourceName);
+            var isTargetOk = isDefaultCameraTarget || !string.IsNullOrEmpty(targetName);
+            var isFinalOk = !isFinalBlit || (isFinalBlit && PassTools.IsFinalCamera());
+            return isSourceOk &&  isTargetOk && isFinalOk;
+        }
+
+        public override string PassName() => isFinalBlit ? "FinalBlit" : base.PassName();
 
         public override void OnRender()
         {
-            RenderTargetIdentifier source = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : sourceName;
-            RenderTargetIdentifier target = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : targetName;
-            //BeginSample("Blit Target");
+            var sourceNameId = Shader.PropertyToID(sourceName);
+            var targetNameId = Shader.PropertyToID(targetName);
+            
+            RenderTargetIdentifier sourceId = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : sourceNameId;
+            RenderTargetIdentifier targetId = isDefaultCameraTarget ? BuiltinRenderTextureType.CameraTarget : targetNameId;
+
+            if(!isDefaultCameraTarget && isNeedCreateTarget)
+            {
+                targetId = targetNameId;
+                Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
+            }
+
             if (!blitMat)
             {
-                Cmd.Blit(source, target);
+                Cmd.Blit(sourceId, targetId);
             }
             else
             {
-                Cmd.Blit(source, target, blitMat, pass);
+                Cmd.Blit(sourceId, targetId, blitMat, pass);
             }
 
-            //ExecuteCommand();
-            //EndSample("Blit Target");
+            if (isRestoreCameraTarget)
+            {
+                Cmd.SetRenderTarget(sourceNameId);
+            }
+
         }
     }
 }

@@ -11,6 +11,13 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/RenderObjects")]
     public class RenderObjects : BasePass
     {
+        [Header("Render Options")]
+        public bool drawOpaques = true;
+        public bool drawSkybox = true;
+        public bool drawTransparents = true;
+        public bool drawUnsupportObjects=true;
+        public bool drawGizmos=true;
+
         public string[] supportLightModeTags = new[] {
             "SRPDefaultUnlit",
             "UniversalForward",
@@ -21,52 +28,68 @@ namespace PowerUtilities
         "ForwardBase",
         "PrepassBase"
         };
-        
+
+        [Header("Batch Options")]
+        public bool enableDynamicBatch;
+        public bool enableInstanced;
+        public bool enableSRPBatch = true;
+
 
         CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
         ShaderTagId[] unsupportLightModeTagIds;
 
-        public static ShaderTagId[] InitShaderTagIdss(string[] shaderTags)
+        public static void SetupDrawingSettings(ref DrawingSettings drawSettings,
+            ShaderTagId[] supportLightModeTagIds,
+            bool enableDynamicBatch,bool enableInstanced,bool enableSRPBatch)
         {
-            var tagIds = new ShaderTagId[shaderTags.Length];
-            for (int i = 0; i < shaderTags.Length; i++)
-            {
-                tagIds[i] = new ShaderTagId(shaderTags[i]);
-            }
-            return tagIds;
-        }
+            drawSettings.enableDynamicBatching = enableDynamicBatch;
+            drawSettings.enableInstancing = enableInstanced;
+            GraphicsSettings.useScriptableRenderPipelineBatching = enableSRPBatch;
 
-        public override string PassName() => nameof(RenderObjects);
+            for (int i = 0; i < supportLightModeTagIds.Length; i++)
+            {
+                drawSettings.SetShaderPassName(i, supportLightModeTagIds[i]);
+            }
+        }
 
         public override void OnRender()
         {
 #if UNITY_EDITOR
-            if(camera.cameraType == CameraType.SceneView)
+            if (camera.cameraType == CameraType.SceneView)
             {
                 ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
             }
 #endif
-            if(!camera.TryGetCullingParameters(out var cullingParams))
+            if (!camera.TryGetCullingParameters(out var cullingParams))
             {
                 return;
             }
             cullingResults = context.Cull(ref cullingParams);
 
-            supportLightModeTagIds = InitShaderTagIdss(supportLightModeTags);
-            unsupportLightModeTagIds = InitShaderTagIdss(unsupportLightModeTags);
-
+            RenderingTools.ShaderTagNameToId(supportLightModeTags, ref supportLightModeTagIds);
+            RenderingTools.ShaderTagNameToId(unsupportLightModeTags, ref unsupportLightModeTagIds);
 
             var sortingSettings = new SortingSettings(camera);
-            var drawSettings = new DrawingSettings();
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
-            DrawOpaques(ref sortingSettings, ref drawSettings, ref filterSettings);
+            var drawSettings = new DrawingSettings();
 
-            context.DrawSkybox(camera);
+            SetupDrawingSettings(ref drawSettings,supportLightModeTagIds,enableDynamicBatch,enableInstanced,enableSRPBatch);
 
-            DrawTransparents(ref sortingSettings, ref drawSettings, ref filterSettings);
-            DrawErrorObjects(ref sortingSettings, ref drawSettings, ref filterSettings);
-            DrawGizmos();
+            if (drawOpaques)
+                DrawOpaques(ref sortingSettings, ref drawSettings, ref filterSettings);
+
+            if (drawSkybox)
+                context.DrawSkybox(camera);
+
+            if (drawTransparents)
+                DrawTransparents(ref sortingSettings, ref drawSettings, ref filterSettings);
+
+            if (drawUnsupportObjects)
+                DrawErrorObjects(ref sortingSettings, ref drawSettings, ref filterSettings);
+
+            if (drawGizmos)
+                DrawGizmos();
 
             ExecuteCommand();
         }
@@ -76,16 +99,12 @@ namespace PowerUtilities
             sortSettings.criteria = SortingCriteria.CommonOpaque;
             
             drawSettings.sortingSettings = sortSettings;
-
-            for (int i = 0; i < supportLightModeTagIds.Length; i++)
-            {
-                drawSettings.SetShaderPassName(i,supportLightModeTagIds[i]);
-            }
-
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             filterSettings.layerMask = camera.cullingMask;
 
+            Cmd.BeginSampleExecute(nameof(DrawOpaques),ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
+            Cmd.EndSampleExecute(nameof(DrawOpaques), ref context);
         }
 
         void DrawTransparents(ref SortingSettings sortSettings, ref DrawingSettings drawSettings, ref FilteringSettings filterSettings)
@@ -96,7 +115,9 @@ namespace PowerUtilities
             filterSettings.layerMask = camera.cullingMask;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
 
+            Cmd.BeginSampleExecute(nameof(DrawTransparents), ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
+            Cmd.EndSampleExecute(nameof(DrawTransparents), ref context);
         }
 
         void DrawErrorObjects(ref SortingSettings sortSettings, ref DrawingSettings drawSettings, ref FilteringSettings filterSettings)
@@ -112,7 +133,9 @@ namespace PowerUtilities
             filterSettings.layerMask = camera.cullingMask;
             filterSettings.renderQueueRange = RenderQueueRange.all;
 
+            Cmd.BeginSampleExecute(nameof(DrawErrorObjects), ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
+            Cmd.EndSampleExecute(nameof(DrawErrorObjects), ref context);
         }
 
         void DrawGizmos()

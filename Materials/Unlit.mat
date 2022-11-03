@@ -7,14 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unlit_NewUnlitShader
-  m_Shader: {fileID: 4800000, guid: 4f39e60dd8c02c6408a817b5ac8ecbd6, type: 3}
+  m_Name: Unlit
+  m_Shader: {fileID: 4800000, guid: 6ba69367ec5ad064c82dd2da2ab1d8cc, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -25,6 +25,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _CullMode: 2
+    - _DstMode: 0
+    - _SrcMode: 1
+    - _ZWrite: 1
     m_Colors: []
   m_BuildTextureStacks: []

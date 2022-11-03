@@ -32,8 +32,14 @@ namespace PowerUtilities
             if (passes == null || passes.Length == 0)
                 return;
 
-            foreach (var camera in cameras)
+            PassTools.cameras = cameras;
+
+            //foreach (var camera in cameras)
+            for (int i = 0; i < cameras.Length; i++)
             {
+                PassTools.cameraIndex = i;
+
+                var camera = cameras[i];
                 BasePass.Cmd.name = camera.name;
                 BasePass.Cmd.BeginSampleExecute(camera.name, ref context);
                 foreach (var pass in passes)

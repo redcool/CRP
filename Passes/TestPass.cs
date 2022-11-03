@@ -15,13 +15,13 @@ namespace PowerUtilities
         public override void OnRender()
         {
             context.DrawSkybox(camera);
-            BeginSample("Test");
+
+            Cmd.BeginSampleExecute("Test",ref context);
             
             Cmd.Blit(BuiltinRenderTextureType.CurrentActive, BuiltinRenderTextureType.CameraTarget);
-            EndSample("Test");
+            Cmd.EndSampleExecute("Test",ref context);
         }
 
-        public override string PassName() => nameof(TestPass);
     }
 }
  

@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: New Create Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
-  log: 
   isInterrupt: 0
   isSkip: 0
   targetNames:
   - _CameraTarget
-  targetIds: 74030000
+  renderScale: 1

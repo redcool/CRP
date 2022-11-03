@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unlit_Blit
-  m_Shader: {fileID: 4800000, guid: 0ebf98be9105e3d4186b0835d7b9cb7e, type: 3}
+  m_Name: UnlitAlpha
+  m_Shader: {fileID: 4800000, guid: 6ba69367ec5ad064c82dd2da2ab1d8cc, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -25,6 +25,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _CullMode: 0
+    - _DstMode: 1
+    - _SrcMode: 1
+    - _ZWrite: 1
     m_Colors: []
   m_BuildTextureStacks: []

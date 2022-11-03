@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
+  m_Name: BlitToCameraTexture
+  m_EditorClassIdentifier: 
+  isFoldout: 0
+  overridePassName: BlitToCameraTexture
+  isInterrupt: 0
+  isSkip: 0
+  isFinalBlit: 0
+  sourceName: _CameraTarget
+  isCurrentActive: 0
+  targetName: _CameraTexture
+  isCameraTarget: 0
+  isNeedCreateTarget: 1
+  blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
+  pass: 0

@@ -10,10 +10,9 @@ namespace PowerUtilities
 {
     public abstract class BasePass : ScriptableObject
     {
+        [Header(nameof(BasePass))]
         public bool isFoldout;
-
-        [Header("Pass Options")]
-        public string log;
+        public string overridePassName;
 
         [Tooltip("when pass done, interrupt flow afterwards")]
         public bool isInterrupt;
@@ -50,27 +49,16 @@ namespace PowerUtilities
             this.camera = camera;
 
             Cmd.name = PassName();
-            BeginSample(Cmd.name);
+            Cmd.BeginSampleExecute(Cmd.name, ref context);
 
             OnRender();
-            EndSample(Cmd.name);
+
+            Cmd.EndSampleExecute(Cmd.name, ref context);
         }
 
-        public void BeginSample(string name)
-        {
-            Cmd.name = name;
-            Cmd.BeginSample(name);
-            ExecuteCommand();
-        }
-
-        public void EndSample(string name)
-        {
-            Cmd.EndSample(name);
-            ExecuteCommand();
-        }
 
         public abstract void OnRender();
         public virtual bool CanExecute() => ! isSkip;
-        public virtual string PassName() => nameof(BasePass);
+        public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
     }
 }

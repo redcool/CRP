@@ -29,6 +29,22 @@ namespace PowerUtilities
             //);
         }
 
+        public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1)
+        {
+            var desc = new RenderTextureDescriptor();
+            desc.width = (int)(camera.pixelWidth * renderScale);
+            desc.height = (int)(camera.pixelHeight * renderScale);
+            desc.msaaSamples = 1;
+            desc.dimension = TextureDimension.Tex2D;
+            desc.colorFormat = RenderTextureFormat.ARGB32;
+            desc.depthBufferBits = 32;
+
+            foreach (var item in targetIds)
+            {
+                Cmd.GetTemporaryRT(item, desc);
+            }
+        }
+
         public static void Execute(this CommandBuffer cmd,ref ScriptableRenderContext context)
         {
             context.ExecuteCommandBuffer(cmd);
@@ -37,6 +53,7 @@ namespace PowerUtilities
 
         public static void BeginSampleExecute(this CommandBuffer cmd, string sampleName,ref ScriptableRenderContext context)
         {
+            cmd.name = sampleName;
             cmd.BeginSample(sampleName);
             cmd.Execute(ref context);
         }
@@ -45,5 +62,7 @@ namespace PowerUtilities
             cmd.EndSample(sampleName);
             cmd.Execute(ref context);
         }
+
+
     }
 }

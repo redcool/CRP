@@ -13,14 +13,9 @@ MonoBehaviour:
   m_Name: New Set Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
-  log: 
   isInterrupt: 0
   isSkip: 0
   isSetupCameraProperties: 1
   targetNames:
   - _CameraTarget
   clearTarget: 1
-  clearDepth: 1
-  depth: 1
-  clearColor: 1
-  color: {r: 0, g: 0, b: 0, a: 0}

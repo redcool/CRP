@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace PowerUtilities
 {
-    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/CreateRenderTarget")]
+    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+ nameof(CreateRenderTarget))]
     public class CreateRenderTarget : BasePass
     {
         public string[] targetNames = new[] { "_CameraTarget" };
+        int[] targetIds;
 
-        public int[] targetIds;
-
-        public override string PassName() => nameof(CreateRenderTarget);
+        [Range(0.1f,2f)]
+        public float renderScale = 1;
 
         public override void OnRender()
         {
@@ -22,24 +22,7 @@ namespace PowerUtilities
             .Select(item => Shader.PropertyToID(item))
             .ToArray();
 
-            var desc = new RenderTextureDescriptor();
-            desc.width = (int)(camera.pixelWidth * CRP.asset.renderScale);
-            desc.height = (int)(camera.pixelHeight * CRP.asset.renderScale);
-            desc.msaaSamples = 1;
-            desc.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
-
-            desc.colorFormat = RenderTextureFormat.ARGB32;
-            desc.depthBufferBits = 32;
-
-            BeginSample(nameof(CreateRenderTarget));
-
-            foreach (var item in targetIds)
-            {
-                Cmd.GetTemporaryRT(item, desc);
-            }
-
-            EndSample(nameof(CreateRenderTarget));
-            ExecuteCommand();
+            Cmd.CreateTargets(camera, targetIds, renderScale);
         }
     }
 }

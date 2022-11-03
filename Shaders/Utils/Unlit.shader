@@ -1,12 +1,16 @@
-Shader "Unlit/Blit"
+Shader "CRP/Unlit"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
+        [GroupToggle()]_ZWrite("_ZWrite",int) = 1
+        [Enum(UnityEngine.Rendering.CullMode)]_CullMode("_CullMode",int) = 2
     }
 
     HLSLINCLUDE
-    #include "UnityInput.hlsl"
+    #include "../Libs/UnityInput.hlsl"
 
     struct appdata
     {
@@ -21,16 +25,17 @@ Shader "Unlit/Blit"
     };
 
     sampler2D _MainTex;
+
+    CBUFFER_START(UnityPerMaterial)
     float4 _MainTex_ST;
+    CBUFFER_END
 
     v2f vert (appdata v)
     {
         v2f o;
         o.vertex = TransformObjectToHClip(v.vertex.xyz);
         o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-        #if defined(UNITY_UV_STARTS_AT_TOP)
-        o.uv.y = 1-o.uv.y;
-        #endif
+
         return o;
     }
 
@@ -48,6 +53,9 @@ Shader "Unlit/Blit"
 
         Pass
         {
+            zwrite[_ZWrite]
+            cull[_CullMode]
+            blend [_SrcMode][_DstMode]
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag

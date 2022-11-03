@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d38ca1c509f23b146b63d7df743eb09c, type: 3}
   m_Name: New Release Render Target
   m_EditorClassIdentifier: 
-  log: 
+  isFoldout: 0
   isInterrupt: 0
   isSkip: 0
-  targetNames: []
+  targetNames:
+  - _CameraTarget

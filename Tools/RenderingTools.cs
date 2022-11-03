@@ -34,5 +34,27 @@ namespace PowerUtilities
                 Select(name => new RenderTargetIdentifier(name)).
                 ToArray();
         }
+
+        public static void RenderTargetNameToInt(string[] names, ref int[] ids)
+        {
+            if (names == null)
+            {
+                return;
+            }
+
+            ids = names.Where(name => !string.IsNullOrEmpty(name)).
+                Select(name => Shader.PropertyToID(name)).
+                ToArray();
+        }
+
+        public static void ShaderTagNameToId(string[] tagNames,ref ShaderTagId[] ids)
+        {
+            if (tagNames == null)
+                return;
+
+            ids = tagNames.Where(name => !string.IsNullOrEmpty(name))
+                .Select(name => new ShaderTagId(name))
+                .ToArray();
+        }
     }
 }
