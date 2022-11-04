@@ -7,14 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blit
-  m_Shader: {fileID: 4800000, guid: 0ebf98be9105e3d4186b0835d7b9cb7e, type: 3}
+  m_Name: Unlit Test
+  m_Shader: {fileID: 4800000, guid: e859ca41a51fd1149a410d93c66f8586, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
@@ -25,6 +25,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _CullMode: 2
+    - _DstMode: 0
+    - _SrcMode: 1
+    - _ZWrite: 1
     m_Colors: []
   m_BuildTextureStacks: []

@@ -16,23 +16,21 @@ namespace PowerUtilities
     {
         public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
 
-        //public CameraRenderer renderer = new CameraRenderer();
         public static CRPAsset asset;
 
-        public BasePass[] passes;
-
-        public CRP(CRPAsset asset, BasePass[] passes)
+        public CRP(CRPAsset asset)
         {
-            this.passes = passes;
             CRP.asset=asset;
         }
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
         {
-            if (passes == null || passes.Length == 0)
+            if (!asset || asset.passes == null || asset.passes.Length == 0)
                 return;
 
             PassTools.cameras = cameras;
+
+            ExecutePasses(asset.beginPasses, ref context, cameras[0], 0);
 
             //foreach (var camera in cameras)
             for (int i = 0; i < cameras.Length; i++)
@@ -40,22 +38,28 @@ namespace PowerUtilities
                 PassTools.cameraIndex = i;
 
                 var camera = cameras[i];
-                BasePass.Cmd.name = camera.name;
-                BasePass.Cmd.BeginSampleExecute(camera.name, ref context);
-                foreach (var pass in passes)
-                {
-                    if (pass == null || pass.isSkip)
-                        continue;
-
-                    pass.Render(ref context, camera);
-
-                    if (pass.isInterrupt)
-                        break;
-                }
-
-                BasePass.Cmd.EndSampleExecute(camera.name, ref context);
-                context.Submit();
+                ExecutePasses(asset.passes, ref context, camera, i);
             }
+            ExecutePasses(asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
+        }
+
+        void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
+        {
+            BasePass.Cmd.name = camera.name;
+            BasePass.Cmd.BeginSampleExecute(camera.name, ref context);
+            foreach (var pass in passes)
+            {
+                if (pass == null || pass.isSkip)
+                    continue;
+
+                pass.Render(ref context, camera);
+
+                if (pass.isInterrupt)
+                    break;
+            }
+
+            BasePass.Cmd.EndSampleExecute(camera.name, ref context);
+            context.Submit();
         }
 
     }

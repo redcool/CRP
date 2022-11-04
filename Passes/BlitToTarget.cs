@@ -11,10 +11,6 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(BlitToTarget))]
     public class BlitToTarget : BasePass
     {
-        [Header("Blit Options")]
-        [Tooltip("Blit run after last camera")]
-        public bool isFinalBlit = true;
-
         [Tooltip("After blit, restore cameraTarget to SourceName")]
         public bool isRestoreCameraTarget;
 
@@ -36,11 +32,9 @@ namespace PowerUtilities
         {
             var isSourceOk = isCurrentActive || !string.IsNullOrEmpty(sourceName);
             var isTargetOk = isDefaultCameraTarget || !string.IsNullOrEmpty(targetName);
-            var isFinalOk = !isFinalBlit || (isFinalBlit && PassTools.IsFinalCamera());
-            return isSourceOk &&  isTargetOk && isFinalOk;
+            return isSourceOk && isTargetOk;
         }
 
-        public override string PassName() => isFinalBlit ? "FinalBlit" : base.PassName();
 
         public override void OnRender()
         {
