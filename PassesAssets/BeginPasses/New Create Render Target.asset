@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: New Create Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
+  overridePassName: 
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
   targetNames:
   - _CameraTarget
+  depthTargetNames:
+  - _CameraDepthTarget
   renderScale: 1

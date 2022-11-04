@@ -23,38 +23,26 @@ namespace PowerUtilities
             }
         }
 
-        public static void RenderTargetNameToIdentifier(string[] names, ref RenderTargetIdentifier[] ids)
+        public static void ConvertStringArray<T>(ref T[] results, Func<string, T> onConvert, params string[] names)
         {
-            if (names == null)
-            {
+            if (onConvert == null || names == null)
                 return;
-            }
 
-            ids = names.Where(name => !string.IsNullOrEmpty(name)).
-                Select(name => new RenderTargetIdentifier(name)).
+            results = names.
+                Select(n => onConvert(n)).
                 ToArray();
         }
+
+        public static void RenderTargetNameToIdentifier(string[] names, ref RenderTargetIdentifier[] ids)
+        => ConvertStringArray(ref ids, (n) => new RenderTargetIdentifier(n), names);
+
 
         public static void RenderTargetNameToInt(string[] names, ref int[] ids)
-        {
-            if (names == null)
-            {
-                return;
-            }
+        => ConvertStringArray(ref ids, (n) => Shader.PropertyToID(n), names);
 
-            ids = names.Where(name => !string.IsNullOrEmpty(name)).
-                Select(name => Shader.PropertyToID(name)).
-                ToArray();
-        }
 
-        public static void ShaderTagNameToId(string[] tagNames,ref ShaderTagId[] ids)
-        {
-            if (tagNames == null)
-                return;
+        public static void ShaderTagNameToId(string[] tagNames, ref ShaderTagId[] ids)
+        => ConvertStringArray(ref ids, (n) => new ShaderTagId(n), tagNames);
 
-            ids = tagNames.Where(name => !string.IsNullOrEmpty(name))
-                .Select(name => new ShaderTagId(name))
-                .ToArray();
-        }
     }
 }

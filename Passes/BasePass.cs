@@ -12,12 +12,19 @@ namespace PowerUtilities
     {
         [Header(nameof(BasePass))]
         public bool isFoldout;
+
+        [Tooltip("Pass name show in FrameDebugger")]
         public string overridePassName;
 
-        [Tooltip("when pass done, interrupt flow afterwards")]
+        [Header("Filters")]
+        [Tooltip("Execute when camera's tag equals,otherwise skip")]
+        public string cameraTag;
+
+        [Header("Render flow")]
+        [Tooltip("When pass done, break render flow?")]
         public bool isInterrupt;
 
-        [Tooltip("skip this pass?")]
+        [Tooltip("Skip this pass?")]
         public bool isSkip;
 
         [NonSerialized]public ScriptableRenderContext context;
@@ -34,7 +41,6 @@ namespace PowerUtilities
             }
         }
 
-
         public void ExecuteCommand()
         {
             context.ExecuteCommandBuffer(Cmd);
@@ -43,10 +49,11 @@ namespace PowerUtilities
 
         public void Render(ref ScriptableRenderContext context,Camera camera)
         {
-            if (!CanExecute())
-                return;
             this.context = context;
             this.camera = camera;
+
+            if (!CanExecute())
+                return;
 
             Cmd.name = PassName();
             Cmd.BeginSampleExecute(Cmd.name, ref context);
@@ -56,9 +63,8 @@ namespace PowerUtilities
             Cmd.EndSampleExecute(Cmd.name, ref context);
         }
 
-
         public abstract void OnRender();
-        public virtual bool CanExecute() => ! isSkip;
+        public virtual bool CanExecute() => string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag);
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
     }
 }

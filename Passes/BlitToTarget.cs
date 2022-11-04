@@ -11,9 +11,6 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(BlitToTarget))]
     public class BlitToTarget : BasePass
     {
-        [Tooltip("After blit, restore cameraTarget to SourceName")]
-        public bool isRestoreCameraTarget;
-
         [Header("Source")]
         public string sourceName;
         public bool isCurrentActive;
@@ -32,7 +29,7 @@ namespace PowerUtilities
         {
             var isSourceOk = isCurrentActive || !string.IsNullOrEmpty(sourceName);
             var isTargetOk = isDefaultCameraTarget || !string.IsNullOrEmpty(targetName);
-            return isSourceOk && isTargetOk;
+            return base.CanExecute() && isSourceOk && isTargetOk;
         }
 
 
@@ -40,16 +37,21 @@ namespace PowerUtilities
         {
             var sourceNameId = Shader.PropertyToID(sourceName);
             var targetNameId = Shader.PropertyToID(targetName);
-            
+
             RenderTargetIdentifier sourceId = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : sourceNameId;
             RenderTargetIdentifier targetId = isDefaultCameraTarget ? BuiltinRenderTextureType.CameraTarget : targetNameId;
 
-            if(!isDefaultCameraTarget && isNeedCreateTarget)
+            if (!isDefaultCameraTarget && isNeedCreateTarget)
             {
                 targetId = targetNameId;
                 Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
             }
 
+            Blit(sourceId, targetId,blitMat,pass);
+        }
+
+        private void Blit(RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material blitMat,int pass)
+        {
             if (!blitMat)
             {
                 Cmd.Blit(sourceId, targetId);
@@ -58,12 +60,6 @@ namespace PowerUtilities
             {
                 Cmd.Blit(sourceId, targetId, blitMat, pass);
             }
-
-            if (isRestoreCameraTarget)
-            {
-                Cmd.SetRenderTarget(sourceNameId);
-            }
-
         }
     }
 }

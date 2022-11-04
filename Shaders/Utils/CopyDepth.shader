@@ -2,7 +2,7 @@ Shader "CRP/Utils/CopyDepth"
 {
     Properties
     {
-        // _MainTex ("Texture", 2D) = "white" {}
+        _MainTex ("Texture", 2D) = "white" {}
     }
 
     HLSLINCLUDE
@@ -20,8 +20,8 @@ Shader "CRP/Utils/CopyDepth"
         float4 vertex : SV_POSITION;
     };
 
-    TEXTURE2D(_MainTex);
-    SAMPLER(sampler_MainTex);
+    TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
+    TEXTURE2D(_DepthBuffer);SAMPLER(sampler_DepthBuffer);
 
     CBUFFER_START(UnityPerMaterial)
     float4 _MainTex_ST;
@@ -31,14 +31,14 @@ Shader "CRP/Utils/CopyDepth"
     {
         v2f o;
         o.vertex = TransformObjectToHClip(v.vertex.xyz);
-        o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+        o.uv = v.uv;
         #if defined(UNITY_UV_STARTS_AT_TOP)
         o.uv.y = 1-o.uv.y;
         #endif
         return o;
     }
 
-    float frag (v2f i) : SV_Depth
+    float4 frag (v2f i) : SV_Target
     {
         float depth = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv).x;
         return depth;

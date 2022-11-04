@@ -19,6 +19,8 @@ namespace PowerUtilities
         public string[] targetNames;
         RenderTargetIdentifier[] targetIds;
 
+        public string depthTargetName;
+
         [Header("Clear Options")]
         [Tooltip("Clear target use camera clear settings")]
         public bool clearTarget;
@@ -34,8 +36,9 @@ namespace PowerUtilities
                 return;
 
             RenderingTools.RenderTargetNameToIdentifier(targetNames, ref targetIds);
+            var depthTargetId = string.IsNullOrEmpty(depthTargetName) ? targetIds[0] : new RenderTargetIdentifier(depthTargetName);
 
-            Cmd.SetRenderTarget(targetIds, targetIds[0]);
+            Cmd.SetRenderTarget(targetIds, depthTargetId);
 
             if (clearTarget)
             {

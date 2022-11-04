@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: New Set Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
+  overridePassName: 
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
   isSetupCameraProperties: 1
   targetNames:
   - _CameraTarget
+  depthTargetName: _CameraDepthTarget
   clearTarget: 1

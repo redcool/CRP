@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: New Release Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
+  overridePassName: 
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
   targetNames:
   - _CameraTarget
+  - _CameraDepthTarget

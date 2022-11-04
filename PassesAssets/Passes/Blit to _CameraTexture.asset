@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
-  m_Name: Blit To CameraTarget
+  m_Name: Blit to _CameraTexture
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: Final Blit To CameraTarget
+  overridePassName: BlitToCameraTexture
+  cameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
-  isRestoreCameraTarget: 0
-  sourceName: 
-  isCurrentActive: 1
-  targetName: 
-  isDefaultCameraTarget: 1
-  isNeedCreateTarget: 0
+  sourceName: _CameraTarget
+  isCurrentActive: 0
+  targetName: _CameraTexture
+  isDefaultCameraTarget: 0
+  isNeedCreateTarget: 1
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   pass: 0

@@ -29,15 +29,28 @@ namespace PowerUtilities
             //);
         }
 
+
         public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1)
         {
+            if (targetIds == null || targetIds.Length == 0)
+                return;
+
             var desc = new RenderTextureDescriptor();
-            desc.width = (int)(camera.pixelWidth * renderScale);
-            desc.height = (int)(camera.pixelHeight * renderScale);
-            desc.msaaSamples = 1;
-            desc.dimension = TextureDimension.Tex2D;
-            desc.colorFormat = RenderTextureFormat.ARGB32;
-            desc.depthBufferBits = 32;
+            desc.SetupColorDescriptor(camera, renderScale);
+
+            foreach (var item in targetIds)
+            {
+                Cmd.GetTemporaryRT(item, desc);
+            }
+        }
+
+        public static void CreateDepthTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1)
+        {
+            if (targetIds == null || targetIds.Length == 0)
+                return;
+
+            var desc = new RenderTextureDescriptor();
+            desc.SetupDepthDescriptor(camera, renderScale);
 
             foreach (var item in targetIds)
             {
@@ -62,7 +75,6 @@ namespace PowerUtilities
             cmd.EndSample(sampleName);
             cmd.Execute(ref context);
         }
-
 
     }
 }

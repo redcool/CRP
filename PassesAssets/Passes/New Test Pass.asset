@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: New Test Pass
   m_EditorClassIdentifier: 
   isFoldout: 0
+  overridePassName: 
+  cameraTag: 
   isInterrupt: 0
   isSkip: 1
   setRenderTargetPass: {fileID: 0}
