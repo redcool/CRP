@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
   m_Name: Blit to  _CameraDepthTexture
   m_EditorClassIdentifier: 
-  isFoldout: 1
+  isFoldout: 0
   overridePassName: BlitToCameraDepthTexture
   cameraTag: MainCamera
-  isInterrupt: 1
+  isInterrupt: 0
   isSkip: 0
   sourceName: _CameraDepthTarget
   isCurrentActive: 0
