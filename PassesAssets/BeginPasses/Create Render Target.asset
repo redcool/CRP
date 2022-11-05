@@ -19,6 +19,8 @@ MonoBehaviour:
   isSkip: 0
   targetNames:
   - _CameraTarget
+  - _CameraTexture
+  - _CameraDepthTexture
   isTargetHasDepth: 1
   depthTargetNames:
   - _CameraDepthTarget

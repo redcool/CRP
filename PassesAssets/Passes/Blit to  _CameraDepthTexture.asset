@@ -21,6 +21,6 @@ MonoBehaviour:
   isCurrentActive: 0
   targetName: _CameraDepthTexture
   isDefaultCameraTarget: 0
-  isNeedCreateTarget: 1
-  blitMat: {fileID: 2100000, guid: c84bd5e5ac7bf144f9e8b78a39a8d77d, type: 2}
+  isNeedCreateTarget: 0
+  blitMat: {fileID: 0}
   pass: 0

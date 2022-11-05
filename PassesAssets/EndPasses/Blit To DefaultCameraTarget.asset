@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: Final Blit To CameraTarget
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
-  isRestoreCameraTarget: 0
   sourceName: 
   isCurrentActive: 1
   targetName: 

@@ -41,6 +41,8 @@ namespace PowerUtilities
                 ExecutePasses(asset.passes, ref context, camera, i);
             }
             ExecutePasses(asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
+
+            context.Submit();
         }
 
         void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
@@ -59,7 +61,7 @@ namespace PowerUtilities
             }
 
             BasePass.Cmd.EndSampleExecute(camera.name, ref context);
-            context.Submit();
+
         }
 
     }
