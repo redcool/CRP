@@ -1,12 +1,14 @@
-Shader "CRP/UnlitTest"
+Shader "CRP/Test/ShowScreenTarget"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
         [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
         [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
-        [GroupToggle()]_ZWrite("_ZWrite",int) = 1
+        [GroupToggle]_ZWrite("_ZWrite",int) = 1
         [Enum(UnityEngine.Rendering.CullMode)]_CullMode("_CullMode",int) = 2
+
+        [GroupToggle]_ShowColorTarget("_ShowColorTarget",int) = 0
     }
 
     HLSLINCLUDE
@@ -26,9 +28,11 @@ Shader "CRP/UnlitTest"
 
     sampler2D _MainTex;
     sampler2D _CameraDepthTexture;
+    sampler2D _CameraTexture;
 
     CBUFFER_START(UnityPerMaterial)
     float4 _MainTex_ST;
+    int _ShowColorTarget;
     CBUFFER_END
 
     v2f vert (appdata v)
@@ -43,13 +47,14 @@ Shader "CRP/UnlitTest"
     half4 frag (v2f i) : SV_Target
     {
         half4 col = tex2D(_CameraDepthTexture, i.uv);
+        if(_ShowColorTarget)
+            col = tex2D(_CameraTexture,i.uv);
         return col;
     }
     ENDHLSL
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
         LOD 100
 
         Pass

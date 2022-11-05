@@ -21,7 +21,6 @@ Shader "CRP/Utils/CopyDepth"
     };
 
     TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
-    TEXTURE2D(_DepthBuffer);SAMPLER(sampler_DepthBuffer);
 
     CBUFFER_START(UnityPerMaterial)
     float4 _MainTex_ST;

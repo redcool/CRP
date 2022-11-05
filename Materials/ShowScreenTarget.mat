@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unlit Test
+  m_Name: ShowScreenTarget
   m_Shader: {fileID: 4800000, guid: e859ca41a51fd1149a410d93c66f8586, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -26,9 +26,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ColorTexture: 0
     - _CullMode: 2
     - _DstMode: 0
     - _SrcMode: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors: []
   m_BuildTextureStacks: []

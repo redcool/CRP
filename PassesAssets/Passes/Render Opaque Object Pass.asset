@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b251598c8ad180340b698e5411377ce2, type: 3}
-  m_Name: New Render Transparent Object
+  m_Name: Render Opaque Object Pass
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: ' Render Transparent Object'
+  overridePassName: Render Opaque Object Pass
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
-  drawOpaques: 0
-  drawSkybox: 0
-  drawTransparents: 1
-  drawUnsupportObjects: 0
-  drawGizmos: 1
+  drawOpaques: 1
+  drawSkybox: 1
+  drawTransparents: 0
+  drawUnsupportObjects: 1
+  drawGizmos: 0
   supportLightModeTags:
   - SRPDefaultUnlit
   - UniversalForward
@@ -30,5 +31,5 @@ MonoBehaviour:
   - ForwardBase
   - PrepassBase
   enableDynamicBatch: 0
-  enableInstanced: 0
-  enableSRPBatch: 1
+  enableInstanced: 1
+  enableSRPBatch: 0

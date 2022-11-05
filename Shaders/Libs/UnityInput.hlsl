@@ -1,6 +1,7 @@
 #if !defined(UNITY_INPUT_HLSL)
 #define UNITY_INPUT_HLSL
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+
 // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityInput.hlsl"
 
 CBUFFER_START(UnityPerDraw)
@@ -109,6 +110,6 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
     return M;
 }
 
-    
+    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #endif // UNITY_INPUT_HLSL

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d38ca1c509f23b146b63d7df743eb09c, type: 3}
-  m_Name: New Release Render Target
+  m_Name: Release Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: 
@@ -20,3 +20,5 @@ MonoBehaviour:
   targetNames:
   - _CameraTarget
   - _CameraDepthTarget
+  - _CameraTexture
+  - _CameraDepthTexture
