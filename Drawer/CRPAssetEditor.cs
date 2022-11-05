@@ -46,12 +46,20 @@ namespace PowerUtilities
                 {
                     var passItemProp = iterator.GetArrayElementAtIndex(i);
 
-                    var passItemSO = new SerializedObject(passItemProp.objectReferenceValue);
+                    var basePass = (passItemProp.objectReferenceValue as BasePass);
+                    var passItemSO = new SerializedObject(basePass);
                     passItemSO.UpdateIfRequiredOrScript();
 
                     var isPassFoldout = passItemSO.FindProperty("isFoldout");
-                    var passName = passItemSO.targetObject.GetType().Name;
-                    if (isPassFoldout.boolValue = EditorGUILayout.Foldout(isPassFoldout.boolValue, passName, true))
+                    var passName = basePass.PassName();
+
+                    var titleColor = basePass.isInterrupt ? Color.red : basePass.isSkip ? Color.green : GUI.color;
+
+                    ColorField(titleColor, () => {
+                        isPassFoldout.boolValue = EditorGUILayout.Foldout(isPassFoldout.boolValue, passName, true);
+                    });
+
+                    if (isPassFoldout.boolValue)
                     {
                         EditorGUI.indentLevel++;
                         GUILayout.BeginVertical("Box");
@@ -59,10 +67,19 @@ namespace PowerUtilities
                         GUILayout.EndVertical();
                         EditorGUI.indentLevel--;
                     }
+
                     passItemSO.ApplyModifiedProperties();
                 }
                 EditorGUI.indentLevel--;
             }
+        }
+
+        public static void ColorField(Color c, Action onDraw)
+        {
+            var lastColor = GUI.color;
+            GUI.color = c;
+            onDraw();
+            GUI.color = lastColor;
         }
     }
 }

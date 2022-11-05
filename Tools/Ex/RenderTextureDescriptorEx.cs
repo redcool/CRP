@@ -17,7 +17,6 @@ namespace PowerUtilities
             desc.msaaSamples = 1;
             desc.dimension = TextureDimension.Tex2D;
             desc.colorFormat = RenderTextureFormat.ARGB32;
-            //desc.depthBufferBits = 24;
             desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
         }
 

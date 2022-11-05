@@ -30,13 +30,15 @@ namespace PowerUtilities
         }
 
 
-        public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1)
+        public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1,bool hasDepth=false)
         {
             if (targetIds == null || targetIds.Length == 0)
                 return;
 
             var desc = new RenderTextureDescriptor();
             desc.SetupColorDescriptor(camera, renderScale);
+            if (hasDepth)
+                desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
 
             foreach (var item in targetIds)
             {

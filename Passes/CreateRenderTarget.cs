@@ -12,6 +12,10 @@ namespace PowerUtilities
     {
         [Header(nameof(CreateRenderTarget))]
         public string[] targetNames = new[] { "_CameraTarget" };
+        [Tooltip("rt has depth buffer?")]
+        public bool isTargetHasDepth;
+
+        [Header("Depth Target")]
         public string[] depthTargetNames = new[] { "_CameraDepthTarget" };
 
         int[] targetIds;
@@ -23,7 +27,7 @@ namespace PowerUtilities
         public override void OnRender()
         {
             RenderingTools.RenderTargetNameToInt(targetNames, ref targetIds);
-            Cmd.CreateTargets(camera, targetIds, renderScale);
+            Cmd.CreateTargets(camera, targetIds, renderScale,isTargetHasDepth);
 
             RenderingTools.RenderTargetNameToInt(depthTargetNames, ref depthIds);
             Cmd.CreateDepthTargets(camera, depthIds, renderScale);
