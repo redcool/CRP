@@ -31,6 +31,13 @@ namespace Assets.CRP.Test
         };
 
         CommandBuffer cmd = new CommandBuffer();
+
+        int _CameraTarget = Shader.PropertyToID("_CameraTarget");
+        int _CameraTexture = Shader.PropertyToID("_CameraTexture");
+        int _CameraDepthTarget = Shader.PropertyToID("_CameraDepthTarget");
+        int _CameraDepthTexture = Shader.PropertyToID("_CameraDepthTexture");
+
+        
         public void Render(ref ScriptableRenderContext context, Camera camera)
         {
             this.context = context;
@@ -48,6 +55,9 @@ namespace Assets.CRP.Test
             Setup();
             DrawObjects();
             DrawGizmos();
+
+            cmd.Blit(_CameraTarget, BuiltinRenderTextureType.CameraTarget, TestRPAsset.asset.blitMat);
+
             Submit();
         }
         public void ExecuteCommand()
@@ -55,9 +65,38 @@ namespace Assets.CRP.Test
             context.ExecuteCommandBuffer(cmd);
             cmd.Clear();
         }
+
+        void SetupTextures()
+        {
+            var desc = new RenderTextureDescriptor();
+            desc.width = camera.pixelWidth;
+            desc.msaaSamples =1;
+            desc.dimension = TextureDimension.Tex2D;
+            desc.height = camera.pixelHeight;
+            desc.colorFormat = RenderTextureFormat.ARGB32;
+
+            cmd.GetTemporaryRT(_CameraTarget, desc);
+            cmd.GetTemporaryRT(_CameraTexture, desc);
+
+            desc.colorFormat = RenderTextureFormat.Depth;
+            desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
+            cmd.GetTemporaryRT(_CameraDepthTexture, desc);
+            cmd.GetTemporaryRT(_CameraDepthTarget, desc);
+
+        }
+        bool isMainCamera(Camera c)
+        {
+            return c.CompareTag("MainCamera") || c.cameraType == CameraType.SceneView;
+        }
         public void Setup()
         {
             context.SetupCameraProperties(camera);
+
+            if(isMainCamera(camera))
+                SetupTextures();
+
+            cmd.SetRenderTarget(new RenderTargetIdentifier(_CameraTarget), new RenderTargetIdentifier(_CameraDepthTarget));
+            
             cmd.ClearRenderTarget(camera.clearFlags <= CameraClearFlags.Depth,
                 camera.clearFlags == CameraClearFlags.Color,
                 camera.clearFlags == CameraClearFlags.Color ? camera.backgroundColor.linear : Color.clear);
@@ -91,6 +130,9 @@ namespace Assets.CRP.Test
 
             context.DrawSkybox(camera);
 
+            if(isMainCamera(camera))
+                BlitTextures();
+
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
             sortingSettings.criteria = SortingCriteria.CommonTransparent;
             drawSettings.sortingSettings = sortingSettings;
@@ -106,6 +148,14 @@ namespace Assets.CRP.Test
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
         }
 
+        private void BlitTextures()
+        {
+            cmd.Blit(_CameraTarget, _CameraTexture);
+            cmd.Blit(_CameraDepthTarget, _CameraDepthTexture);
+
+            cmd.SetRenderTarget(_CameraTarget, _CameraDepthTarget);
+            ExecuteCommand();
+        }
 
         public void DrawGizmos()
         {
@@ -123,6 +173,19 @@ namespace Assets.CRP.Test
             cmd.EndSample(cmd.name);
             ExecuteCommand();
             context.Submit();
+        }
+    }
+
+
+    public class TestRP : RenderPipeline
+    {
+        TestCameraRenderer renderer = new TestCameraRenderer();
+        protected override void Render(ScriptableRenderContext context, Camera[] cameras)
+        {
+            foreach (var camera in cameras)
+            {
+                renderer.Render(ref context, camera);
+            }
         }
     }
 }

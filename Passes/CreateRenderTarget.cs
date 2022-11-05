@@ -24,6 +24,12 @@ namespace PowerUtilities
         [Range(0.1f,2f)]
         public float renderScale = 1;
 
+        public override bool CanExecute()
+        {
+            var isok = base.CanExecute();
+            return isok;
+        }
+
         public override void OnRender()
         {
             RenderingTools.RenderTargetNameToInt(targetNames, ref targetIds);

@@ -55,12 +55,14 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
+
 #if UNITY_EDITOR
             if (camera.cameraType == CameraType.SceneView)
             {
                 ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
             }
 #endif
+
             if (!camera.TryGetCullingParameters(out var cullingParams))
             {
                 return;
@@ -91,7 +93,6 @@ namespace PowerUtilities
             if (drawGizmos)
                 DrawGizmos();
 
-            ExecuteCommand();
         }
 
         void DrawOpaques(ref SortingSettings sortSettings ,ref DrawingSettings drawSettings,ref FilteringSettings filterSettings)

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11513b6c94d60cd478624e3307e78af9, type: 3}
-  m_Name: New Test RP Asset
+  m_Name: CRP Asset
   m_EditorClassIdentifier: 
   beginPasses:
   - {fileID: 11400000, guid: bc9fb4a4863f8e140b858e4381ffcd6d, type: 2}

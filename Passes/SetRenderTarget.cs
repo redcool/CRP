@@ -39,7 +39,6 @@ namespace PowerUtilities
             var depthTargetId = string.IsNullOrEmpty(depthTargetName) ? targetIds[0] : new RenderTargetIdentifier(depthTargetName);
 
             Cmd.SetRenderTarget(targetIds, depthTargetId);
-
             if (clearTarget)
             {
                 Cmd.ClearRenderTarget(camera);

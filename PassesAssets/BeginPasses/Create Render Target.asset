@@ -19,7 +19,7 @@ MonoBehaviour:
   isSkip: 0
   targetNames:
   - _CameraTarget
-  isTargetHasDepth: 0
+  isTargetHasDepth: 1
   depthTargetNames:
   - _CameraDepthTarget
   renderScale: 1
