@@ -9,7 +9,7 @@ using UnityEngine.Rendering;
 namespace PowerUtilities
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/RenderObjects")]
-    public class RenderObjects : BasePass
+    public partial class RenderObjects : BasePass
     {
         [Header("Render Options")]
         public bool drawOpaques = true;
@@ -34,7 +34,6 @@ namespace PowerUtilities
         public bool enableInstanced;
         public bool enableSRPBatch = true;
 
-
         CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
         ShaderTagId[] unsupportLightModeTagIds;
@@ -53,6 +52,8 @@ namespace PowerUtilities
             }
         }
 
+
+
         public override void OnRender()
         {
 
@@ -69,6 +70,14 @@ namespace PowerUtilities
             }
             cullingResults = context.Cull(ref cullingParams);
 
+            if (updateLights)
+                SetupLighting();
+
+            StartRenderObjects();
+        }
+
+        private void StartRenderObjects()
+        {
             RenderingTools.ShaderTagNameToId(supportLightModeTags, ref supportLightModeTagIds);
             RenderingTools.ShaderTagNameToId(unsupportLightModeTags, ref unsupportLightModeTagIds);
 
@@ -76,7 +85,7 @@ namespace PowerUtilities
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
             var drawSettings = new DrawingSettings();
 
-            SetupDrawingSettings(ref drawSettings,supportLightModeTagIds,enableDynamicBatch,enableInstanced,enableSRPBatch);
+            SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced, enableSRPBatch);
 
             if (drawOpaques)
                 DrawOpaques(ref sortingSettings, ref drawSettings, ref filterSettings);
@@ -92,7 +101,6 @@ namespace PowerUtilities
 
             if (drawGizmos)
                 DrawGizmos();
-
         }
 
         void DrawOpaques(ref SortingSettings sortSettings ,ref DrawingSettings drawSettings,ref FilteringSettings filterSettings)
@@ -149,5 +157,6 @@ namespace PowerUtilities
             }
 #endif
         }
+
     }
 }

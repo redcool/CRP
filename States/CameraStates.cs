@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
-    public static class PassTools
+    public static class CameraStates
     {
-        public static Camera[] cameras;
+        public static Camera[] cameras = new Camera[] { } ;
         public static int cameraIndex;
         public static bool IsFinalCamera() => cameras.Length -1 == cameraIndex;
+
     }
 }

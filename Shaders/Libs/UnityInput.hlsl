@@ -4,6 +4,10 @@
 
 // #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityInput.hlsl"
 
+#if !defined(USING_STEREO_MATRICES)
+float3 _WorldSpaceCameraPos;
+#endif
+
 CBUFFER_START(UnityPerDraw)
 // Space block Feature
 float4x4 unity_ObjectToWorld;

@@ -21,6 +21,8 @@ namespace PowerUtilities
         public CRP(CRPAsset asset)
         {
             CRP.asset=asset;
+
+            GraphicsSettings.lightsUseLinearIntensity = true;
         }
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
@@ -28,16 +30,17 @@ namespace PowerUtilities
             if (!asset || asset.passes == null || asset.passes.Length == 0)
                 return;
 
-            PassTools.cameras = cameras;
+            CameraStates.cameras = cameras;
 
             ExecutePasses(asset.beginPasses, ref context, cameras[0], 0);
 
             //foreach (var camera in cameras)
             for (int i = 0; i < cameras.Length; i++)
             {
-                PassTools.cameraIndex = i;
+                CameraStates.cameraIndex = i;
 
                 var camera = cameras[i];
+
                 ExecutePasses(asset.passes, ref context, camera, i);
             }
             ExecutePasses(asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);

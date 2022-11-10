@@ -64,7 +64,8 @@ namespace PowerUtilities
         }
 
         public abstract void OnRender();
-        public virtual bool CanExecute() => string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag) || 
+        public virtual bool CanExecute() => 
+            string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag) || 
             camera.cameraType == CameraType.SceneView;
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
     }

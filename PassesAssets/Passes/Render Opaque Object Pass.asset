@@ -33,3 +33,5 @@ MonoBehaviour:
   enableDynamicBatch: 0
   enableInstanced: 1
   enableSRPBatch: 0
+  updateLights: 1
+  maxLightCount: 8
