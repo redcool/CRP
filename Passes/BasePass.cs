@@ -55,11 +55,13 @@ namespace PowerUtilities
             if (!CanExecute())
                 return;
 
-            Cmd.name = PassName();
+            var passName = PassName();
+            Cmd.name = passName;
             Cmd.BeginSampleExecute(Cmd.name, ref context);
 
             OnRender();
 
+            Cmd.name = passName;
             Cmd.EndSampleExecute(Cmd.name, ref context);
         }
 

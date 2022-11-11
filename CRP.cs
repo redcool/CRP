@@ -17,6 +17,7 @@ namespace PowerUtilities
         public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
 
         public static CRPAsset asset;
+        CommandBuffer cmd = new CommandBuffer();
 
         public CRP(CRPAsset asset)
         {
@@ -45,13 +46,15 @@ namespace PowerUtilities
             }
             ExecutePasses(asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
 
+            context.ExecuteCommandBuffer(cmd);
+            cmd.Clear();
             context.Submit();
         }
 
         void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
         {
-            BasePass.Cmd.name = camera.name;
-            BasePass.Cmd.BeginSampleExecute(camera.name, ref context);
+            cmd.name = camera.name;
+            cmd.BeginSampleExecute(camera.name, ref context);
             foreach (var pass in passes)
             {
                 if (pass == null || pass.isSkip)
@@ -63,7 +66,7 @@ namespace PowerUtilities
                     break;
             }
 
-            BasePass.Cmd.EndSampleExecute(camera.name, ref context);
+            cmd.EndSampleExecute(camera.name, ref context);
 
         }
 
