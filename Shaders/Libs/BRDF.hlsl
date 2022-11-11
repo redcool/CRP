@@ -8,9 +8,10 @@ struct BRDF{
 };
 
 
+
 BRDF GetBRDF(Surface s){
     BRDF b = (BRDF)0;
-    b.diffuse = s.albedo * (0.96 - s.metallic * 0.96);
+    b.diffuse = s.albedo * s.oneMinusReflectivity;
     b.specular = lerp(0.04,s.albedo,s.metallic);
     float r = 1 - s.smoothness;
     b.a = r * r;

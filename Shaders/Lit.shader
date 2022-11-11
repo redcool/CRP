@@ -9,10 +9,15 @@ Shader "CRP/Lit"
         _Metallic("_Metallic",range(0,1)) = 0.5
         _Smoothness("_Smoothness",range(0,1)) = 0.5
         _Occlusion("_Occlusion",range(0,1)) = 0
+        
+        [Header(Alpha)]
+        [Toggle(_PREMULTIPLY_ALPHA)]_PremulAlpha("_PremulAlpha",int) = 0
+        [Toggle(_CULL)]_Cull("_Cull",int) = 0
+        _CullOff("_CullOff",range(0,1)) = 0.5
 
-        [Header(Render States)]
         [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
         [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
+        [Header(Render States)]
         [GroupToggle()]_ZWrite("_ZWrite",int) = 1
         [Enum(UnityEngine.Rendering.CullMode)]_CullMode("_CullMode",int) = 2
     }
@@ -35,6 +40,8 @@ Shader "CRP/Lit"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
+            #pragma shader_feature _CULL
+            #pragma shader_feature _PREMULTIPLY_ALPHA
 
             #include "Passes/LitPass.hlsl"
             

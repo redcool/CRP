@@ -35,12 +35,14 @@
         UNITY_DEFINE_INSTANCED_PROP(float,_Metallic)
         UNITY_DEFINE_INSTANCED_PROP(float,_Smoothness)
         UNITY_DEFINE_INSTANCED_PROP(float,_Occlusion)
+        UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
     UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
     #define _Color UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Color)
     #define _MainTex_ST UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_MainTex_ST)
     #define _Metallic UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Metallic)
     #define _Smoothness UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Smoothness)
     #define _Occlusion UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Occlusion)
+    #define _CullOff UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CullOff)
     // CBUFFER_END
 
     v2f vert (appdata v)
@@ -74,16 +76,23 @@
         wn = normalize(wn);
 
         half4 mainTex = tex2D(_MainTex, i.uv) * _Color;
+        #if defined(_CULL)
+            clip(mainTex.w - _CullOff);
+        #endif
+        
         half4 pbrMask = tex2D(_PBRMask,i.uv);
 
         Surface surface = (Surface)0;
         surface.normal = wn;
         surface.albedo = mainTex.xyz;
         surface.alpha = mainTex.w;
+
         surface.metallic = pbrMask.x * _Metallic;
+        surface.oneMinusReflectivity = 0.96 - 0.96 * surface.metallic;
         surface.smoothness = pbrMask.y * _Smoothness;
         surface.occlusion = lerp(1,pbrMask.z , _Occlusion);
         surface.viewDir = normalize(_WorldSpaceCameraPos - worldPos);
+        PremultiplyAlpha(surface);
         
         half3 col = GetLighting(surface);
         return half4(col,surface.alpha);
