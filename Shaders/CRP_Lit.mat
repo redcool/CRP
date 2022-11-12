@@ -10,7 +10,8 @@ Material:
   m_Name: CRP_Lit
   m_Shader: {fileID: 4800000, guid: 622383f0dc10c584283c0b053cf5a20e, type: 3}
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _PREFMUL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,7 +22,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 218cfca5afbf3664aa59b11e44eb8dce, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PBRMask:
@@ -30,13 +31,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Cull: 0
     - _CullMode: 2
+    - _CullOff: 0
     - _DstMode: 0
     - _Metallic: 0.313
     - _Occlusion: 0.555
+    - _PremulAlpha: 0
     - _Smoothness: 0.922
     - _SrcMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.99056596, g: 0.99056596, b: 0.99056596, a: 1}
   m_BuildTextureStacks: []

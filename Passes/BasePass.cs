@@ -31,6 +31,7 @@ namespace PowerUtilities
         [NonSerialized]public Camera camera;
 
         static CommandBuffer cmd;
+        protected static CullingResults cullingResults;
         public static CommandBuffer Cmd
         {
             get
@@ -66,9 +67,13 @@ namespace PowerUtilities
         }
 
         public abstract void OnRender();
+
         public virtual bool CanExecute() => 
             string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag) || 
             camera.cameraType == CameraType.SceneView;
+
+        public bool IsCullingResultsValid() => cullingResults != default(CullingResults);
+
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
     }
 }

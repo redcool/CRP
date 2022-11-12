@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
-    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/TestPass")]
+    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(TestPass))]
     public class TestPass : BasePass
     {
         public SetRenderTarget setRenderTargetPass;

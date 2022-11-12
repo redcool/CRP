@@ -9,7 +9,7 @@ using UnityEngine.Rendering;
 namespace PowerUtilities
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/RenderObjects")]
-    public partial class RenderObjects : BasePass
+    public class RenderObjects : BasePass
     {
         [Header("Render Options")]
         public bool drawOpaques = true;
@@ -34,7 +34,7 @@ namespace PowerUtilities
         public bool enableInstanced;
         public bool enableSRPBatch = true;
 
-        CullingResults cullingResults;
+        //CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
         ShaderTagId[] unsupportLightModeTagIds;
 
@@ -56,24 +56,8 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
-
-#if UNITY_EDITOR
-            if (camera.cameraType == CameraType.SceneView)
-            {
-                ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
-            }
-#endif
-
-            if (!camera.TryGetCullingParameters(out var cullingParams))
-            {
-                return;
-            }
-            cullingResults = context.Cull(ref cullingParams);
-
-            if (updateLights)
-                SetupLighting();
-
-            StartRenderObjects();
+            if (IsCullingResultsValid())
+                StartRenderObjects();
         }
 
         private void StartRenderObjects()
