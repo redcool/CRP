@@ -17,6 +17,9 @@ namespace PowerUtilities
         [Header("End camera passes")]
         public BasePass[] endPasses;
 
+        [Header("Light Settings")]
+        public LightSettings lightSettings;
+
         protected override RenderPipeline CreatePipeline()
         {
             return new CRP(this);

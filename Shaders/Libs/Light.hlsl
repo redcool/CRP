@@ -21,8 +21,8 @@ int GetLightCount(){
 
 Light GetLight(int id){
     Light l = (Light)0;
-    l.color = _DirectionalLightColors[id];
-    l.direction = _DirectionalLightDirections[id];
+    l.color = _DirectionalLightColors[id].xyz;
+    l.direction = _DirectionalLightDirections[id].xyz;
     l.attenuation = 1;
     return l;
 }

@@ -55,7 +55,7 @@
         o.vertex = TransformObjectToHClip(v.vertex.xyz);
         o.uv = TRANSFORM_TEX(v.uv, _MainTex);
         
-        float3 worldPos = TransformObjectToWorld(v.vertex);
+        float3 worldPos = TransformObjectToWorld(v.vertex.xyz);
         float3 wn = TransformObjectToWorldNormal(v.normal);
         float3 wt = TransformObjectToWorldDir(v.tangent.xyz);
         float3 wb = cross(wn,wt) * v.tangent.w;
@@ -76,7 +76,7 @@
         wn = normalize(wn);
 
         half4 mainTex = tex2D(_MainTex, i.uv) * _Color;
-        #if defined(_CULL)
+        #if defined(_CLIPPING)
             clip(mainTex.w - _CullOff);
         #endif
         

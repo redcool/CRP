@@ -30,6 +30,7 @@ namespace PowerUtilities
             if (isSetupCameraProperties)
             {
                 context.SetupCameraProperties(camera);
+                Cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix,camera.projectionMatrix);
             }
 
             if (targetNames == null || targetNames.Length ==0)

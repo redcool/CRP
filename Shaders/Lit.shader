@@ -12,7 +12,7 @@ Shader "CRP/Lit"
         
         [Header(Alpha)]
         [Toggle(_PREMULTIPLY_ALPHA)]_PremulAlpha("_PremulAlpha",int) = 0
-        [Toggle(_CULL)]_Cull("_Cull",int) = 0
+        [Toggle(_CLIPPING)]_Cull("_Cull",int) = 0
         _CullOff("_CullOff",range(0,1)) = 0.5
 
         [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
@@ -37,13 +37,30 @@ Shader "CRP/Lit"
             cull[_CullMode]
             blend [_SrcMode][_DstMode]
             HLSLPROGRAM
+            #pragma target 3.5
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
-            #pragma shader_feature _CULL
+            #pragma shader_feature _CLIPPING
             #pragma shader_feature _PREMULTIPLY_ALPHA
 
             #include "Passes/LitPass.hlsl"
+            
+            ENDHLSL
+        }
+
+        Pass{
+            Tags{"LightMode"="ShadowCaster"}
+            colorMask 0
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_instancing
+            #pragma shader_feature _CLIPPING
+
+            #include "Passes/ShadowCasterPass.hlsl"
             
             ENDHLSL
         }

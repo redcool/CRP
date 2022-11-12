@@ -22,39 +22,34 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(SetupLighting))]
     public class SetupLighting : BasePass
     {
-        static int _DirectionalLightCount = Shader.PropertyToID(nameof(_DirectionalLightCount));
-        static int _DirectionalLightColors = Shader.PropertyToID(nameof(_DirectionalLightColors));
-        static int _DirectionalLightDirections = Shader.PropertyToID(nameof(_DirectionalLightDirections));
+        public static readonly int _DirectionalLightCount = Shader.PropertyToID(nameof(_DirectionalLightCount));
+        public static readonly int _DirectionalLightColors = Shader.PropertyToID(nameof(_DirectionalLightColors));
+        public static readonly int _DirectionalLightDirections = Shader.PropertyToID(nameof(_DirectionalLightDirections));
 
-        [Header("Light")]
-        public bool updateLights;
-        [Range(1, 8)] public int maxLightCount = 8;
+        public static readonly int _DirectionalShadowAtlas = Shader.PropertyToID(nameof(_DirectionalShadowAtlas));
 
         Vector4[] dirLightColors;
         Vector4[] dirLightDirections;
 
-        static int _DirectionalShadowAtlas = Shader.PropertyToID(nameof(_DirectionalShadowAtlas));
-
-        [Header("Shadow")]
-        [Range(0, 8)] public int maxShadowedDirLightCount = 8;
-        [Range(1, 4)] public int maxCascades = 4;
-        [Range(0.001f, 1f)] public float cascadeFade;
-
-        public int shadowedDirLightCount = 0;
-
-        public float maxDisatance = 100;
-        public int atlasSize = 1024;
-
+        int shadowedDirLightCount = 0;
         LightShadowInfo[] dirLightShadowInfos;
+
 
         public override void OnRender()
         {
-            if(IsCullingResultsValid())
-                SetupLights();
+            if (!IsCullingResultsValid())
+                return;
+
+            SetupLights();
+
+            shadowedDirLightCount = SetupShadows();
+            RenderShadows();
         }
 
         void SetupLights()
         {
+            var maxLightCount = CRP.Asset.lightSettings.maxLightCount;
+
             if (dirLightColors == null || dirLightColors.Length ==0)
             {
                 dirLightColors = new Vector4[maxLightCount];
@@ -62,12 +57,11 @@ namespace PowerUtilities
             }
 
             var vLights = cullingResults.visibleLights;
-            int i;
-            for (i = 0; i < vLights.Length; i++)
+            int i = 0;
+            for (; i < vLights.Length; i++)
             {
                 var vlight = vLights[i];
                 SetupLight(ref vlight, i);
-                SetupShadow(vlight.light, i);
 
                 if (i >= maxLightCount)
                     break;
@@ -84,16 +78,42 @@ namespace PowerUtilities
             dirLightDirections[id] = -vlight.localToWorldMatrix.GetColumn(2);
         }
 
-        public void SetupShadow(Light light, int id)
+        int SetupShadows()
         {
-            if (id >= maxShadowedDirLightCount)
-                return;
+            var maxLightCount = CRP.Asset.lightSettings.maxLightCount;
+            var maxShadowedDirLightCount = CRP.Asset.lightSettings.maxShadowedDirLightCount;
 
             if (dirLightShadowInfos == null || dirLightShadowInfos.Length != maxShadowedDirLightCount)
             {
                 dirLightShadowInfos = new LightShadowInfo[maxShadowedDirLightCount];
             }
-            dirLightShadowInfos[id] = new LightShadowInfo
+
+            var shadowedDirLightCount = 0;
+
+            var vLights = cullingResults.visibleLights;
+            for (var i= 0 ; i < vLights.Length; i++)
+            {
+                var vlight = vLights[i];
+                if(SetupShadowInfo(vlight.light,i, out var shadowInfo))
+                {
+                    dirLightShadowInfos[shadowedDirLightCount++] = shadowInfo;
+                }
+
+                if (i >= maxLightCount || shadowedDirLightCount >= maxShadowedDirLightCount)
+                    break;
+            }
+            return shadowedDirLightCount;
+        }
+
+        public bool SetupShadowInfo(Light light, int id,out LightShadowInfo shadowInfo)
+        {
+            var isNotValidShadowLight =
+                light.shadows == LightShadows.None ||
+                light.shadowStrength <= 0 ||
+                !cullingResults.GetShadowCasterBounds(id, out var bounds)
+                ;
+
+            shadowInfo = new LightShadowInfo
             {
                 lightIndex = id,
                 shadowBias = light.shadowBias,
@@ -102,55 +122,64 @@ namespace PowerUtilities
                 cascadeId = 0,
                 shadowNormalBias = light.shadowNormalBias,
             };
-            shadowedDirLightCount++;
+            return !isNotValidShadowLight;
         }
 
         public void RenderShadows()
         {
+            var sampleName = nameof(RenderShadows);
+            Cmd.BeginSampleExecute(sampleName, ref context);
+
+            var atlasSize = (int)CRP.Asset.lightSettings.atlasSize;
+
             Cmd.GetTemporaryRT(_DirectionalShadowAtlas, atlasSize, atlasSize, 32,
                 FilterMode.Bilinear, RenderTextureFormat.Shadowmap);
 
             Cmd.SetRenderTarget(_DirectionalShadowAtlas, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
-            Cmd.BeginSampleExecute(nameof(RenderShadows), ref context);
+            Cmd.ClearRenderTarget(true, false, Color.clear);
 
             var splitCount = 1;
             var tileSize = atlasSize/splitCount;
             for (int i = 0; i < shadowedDirLightCount; i++)
             {
-                RenderShadow(i, splitCount, tileSize);
+                RenderDirectionalShadow(i, splitCount, tileSize);
             }
 
-            Cmd.EndSampleExecute(nameof(RenderShadows), ref context);
+            Cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
+            Cmd.SetGlobalDepthBias(0, 0);
 
+            Cmd.EndSampleExecute(sampleName, ref context);
+            Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
         }
 
-        void RenderShadow(int id, int splitCount, int tileSize)
+        void RenderDirectionalShadow(int id, int splitCount, int tileSize)
         {
             LightShadowInfo shadowInfo = dirLightShadowInfos[id];
+            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex);
 
-            var lightIndex = 0;
-            var shadowSettings = new ShadowDrawingSettings(cullingResults, lightIndex);
-            var tileOffset = id * maxCascades;
-            var splitRatio = new Vector3();
-            var cullingFactor = Mathf.Max(0, 0.8f - cascadeFade);
+            var splitRatio = Vector3.zero;
+            var cascadeCount = CRP.Asset.lightSettings.maxCascades;
 
-            for (int i = 0; i < maxCascades; i++)
+            for (int i = 0; i < cascadeCount; i++)
             {
+                cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(
+                    shadowInfo.lightIndex,
+                    i,
+                    cascadeCount,
+                    splitRatio,
+                    tileSize,
+                    shadowInfo.shadowNearPlane,
+                    out var viewMatrix,
+                    out var projectionMatrix,
+                    out var shadowSplitData
+                    );
 
-                cullingResults.ComputeDirectionalShadowMatricesAndCullingPrimitives(lightIndex, id, splitCount, splitRatio, tileSize,
-                   shadowInfo.shadowNearPlane,
-                   out var viewMatrix, out var projMatrix, out var shadowSplitData);
-                shadowSplitData.shadowCascadeBlendCullingFactor = cullingFactor;
-                shadowSettings.splitData = shadowSplitData;
-
-                var tileId = tileOffset + 1;
-
-                Cmd.SetViewProjectionMatrices(viewMatrix, projMatrix);
+                settings.splitData = shadowSplitData;
+                Cmd.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
                 Cmd.SetGlobalDepthBias(0, shadowInfo.shadowBias);
                 ExecuteCommand();
 
-                context.DrawShadows(ref shadowSettings);
-                Cmd.SetGlobalDepthBias(0, 0);
+                context.DrawShadows(ref settings);
             }
         }
     }

@@ -31,8 +31,9 @@ namespace PowerUtilities
         [NonSerialized]public Camera camera;
 
         static CommandBuffer cmd;
+        //protected static ScriptableCullingParameters cullingParams;
         protected static CullingResults cullingResults;
-        public static CommandBuffer Cmd
+        protected static CommandBuffer Cmd
         {
             get
             {

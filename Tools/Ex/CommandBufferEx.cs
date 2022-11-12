@@ -75,6 +75,7 @@ namespace PowerUtilities
         }
         public static void EndSampleExecute(this CommandBuffer cmd,string sampleName,ref ScriptableRenderContext context)
         {
+            cmd.name = sampleName;
             cmd.EndSample(sampleName);
             cmd.Execute(ref context);
         }

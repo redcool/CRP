@@ -16,24 +16,24 @@ namespace PowerUtilities
     {
         public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
 
-        public static CRPAsset asset;
+        public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();
 
         public CRP(CRPAsset asset)
         {
-            CRP.asset=asset;
+            Asset=asset;
 
             GraphicsSettings.lightsUseLinearIntensity = true;
         }
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
         {
-            if (!asset || asset.passes == null || asset.passes.Length == 0)
+            if (!Asset || Asset.passes == null || Asset.passes.Length == 0)
                 return;
 
             CameraStates.cameras = cameras;
 
-            ExecutePasses(asset.beginPasses, ref context, cameras[0], 0);
+            ExecutePasses(Asset.beginPasses, ref context, cameras[0], 0);
 
             //foreach (var camera in cameras)
             for (int i = 0; i < cameras.Length; i++)
@@ -42,9 +42,9 @@ namespace PowerUtilities
 
                 var camera = cameras[i];
 
-                ExecutePasses(asset.passes, ref context, camera, i);
+                ExecutePasses(Asset.passes, ref context, camera, i);
             }
-            ExecutePasses(asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
+            ExecutePasses(Asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
 
             context.ExecuteCommandBuffer(cmd);
             cmd.Clear();
