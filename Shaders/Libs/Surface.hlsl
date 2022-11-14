@@ -7,6 +7,7 @@ struct Surface{
     float metallic,smoothness,occlusion;
     float oneMinusReflectivity;
     float3 viewDir;
+    float3 worldPos;
 };
 
 void PremultiplyAlpha(inout Surface s){

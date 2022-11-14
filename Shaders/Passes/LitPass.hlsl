@@ -1,7 +1,8 @@
 #if !defined(CRP_LIT_PASS_HLSL)
     #include "Libs/UnityInput.hlsl"
-    #include "Libs/Light.hlsl"
     #include "Libs/Surface.hlsl"
+    #include "Libs/Shadows.hlsl"
+    #include "Libs/Light.hlsl"
     #include "Libs/BRDF.hlsl"
     #include "Libs/Lighting.hlsl"
 
@@ -93,6 +94,7 @@
         surface.occlusion = lerp(1,pbrMask.z , _Occlusion);
         surface.viewDir = normalize(_WorldSpaceCameraPos - worldPos);
         PremultiplyAlpha(surface);
+        surface.worldPos = worldPos;
         
         half3 col = GetLighting(surface);
         return half4(col,surface.alpha);

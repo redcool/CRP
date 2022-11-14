@@ -14,14 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: 
-  cameraTag: 
+  cameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
-  updateLights: 0
-  maxLightCount: 8
-  maxShadowedDirLightCount: 8
-  maxCascades: 4
-  cascadeFade: 0
-  shadowedDirLightCount: 0
-  maxDisatance: 100
-  atlasSize: 1024

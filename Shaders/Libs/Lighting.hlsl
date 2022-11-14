@@ -34,7 +34,7 @@ float3 GetLighting(Surface surface){
     BRDF brdf = GetBRDF(surface);
 
     for(int i=0;i<lightCount;i++){
-        Light l = GetLight(i);
+        Light l = GetLight(i,surface);
         col += CalcLight(l,surface);
     }
     return col;

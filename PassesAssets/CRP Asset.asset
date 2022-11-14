@@ -31,7 +31,7 @@ MonoBehaviour:
   lightSettings:
     maxLightCount: 8
     maxShadowedDirLightCount: 8
-    maxCascades: 4
+    maxCascades: 1
     cascadeFade: 0.2
     atlasSize: 1024
     maxShadowDistance: 100
