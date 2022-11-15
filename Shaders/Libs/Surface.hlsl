@@ -8,6 +8,7 @@ struct Surface{
     float oneMinusReflectivity;
     float3 viewDir;
     float3 worldPos;
+    float depth;
 };
 
 void PremultiplyAlpha(inout Surface s){

@@ -1,5 +1,5 @@
 #if !defined(CRP_LIT_PASS_HLSL)
-    #include "Libs/UnityInput.hlsl"
+    #include "Libs/Common.hlsl"
     #include "Libs/Surface.hlsl"
     #include "Libs/Shadows.hlsl"
     #include "Libs/Light.hlsl"
@@ -95,6 +95,7 @@
         surface.viewDir = normalize(_WorldSpaceCameraPos - worldPos);
         PremultiplyAlpha(surface);
         surface.worldPos = worldPos;
+        surface.depth = -TransformWorldToView(worldPos).z;
         
         half3 col = GetLighting(surface);
         return half4(col,surface.alpha);

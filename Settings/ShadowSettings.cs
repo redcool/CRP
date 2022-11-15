@@ -27,9 +27,13 @@ namespace PowerUtilities
         [Header("Shadow")]
         [Range(0, 8)] public int maxShadowedDirLightCount = 8;
         [Range(1, 4)] public int maxCascades = 4;
+        
+        [Range(0,1)]public float cascadeRatio1=0.1f,cascadeRatio2=0.25f, cascadeRatio3=0.5f;
+        public Vector3 CascadeRatios => new Vector3(cascadeRatio1, cascadeRatio2, cascadeRatio3);
         [Range(0.001f, 1f)] public float cascadeFade = 0.2f;
 
         public TextureSize atlasSize = TextureSize._1k;
         [Min(0.001f)]public float maxShadowDistance = 100;
+        [Range(0.001f, 1)] public float distanceFade = 0.1f;
     }
 }
