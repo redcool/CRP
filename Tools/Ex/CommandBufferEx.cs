@@ -80,5 +80,18 @@ namespace PowerUtilities
             cmd.Execute(ref context);
         }
 
+        public static void SetShaderKeyords(this CommandBuffer cmd, bool isOn, params string[] keywords)
+        {
+            foreach (var item in keywords)
+            {
+                if (Shader.IsKeywordEnabled(item) == isOn)
+                    continue;
+
+                if (isOn)
+                    cmd.EnableShaderKeyword(item);
+                else
+                    cmd.DisableShaderKeyword(item);
+            }
+        }
     }
 }

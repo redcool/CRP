@@ -33,6 +33,11 @@ v2f vert(appdata v){
 
     float3 worldPos = TransformObjectToWorld(v.vertex.xyz);
     o.vertex = TransformWorldToHClip(worldPos);
+    #if UNITY_REVERSED_Z
+        o.vertex.z = min(o.vertex.z,o.vertex.w * UNITY_NEAR_CLIP_VALUE);
+    #else
+        o.vertex.z = max(o.vertex.z,o.vertex.w * UNITY_NEAR_CLIP_VALUE);
+    #endif
     o.uv = TRANSFORM_TEX(v.uv,_MainTex);
     return o;
 }

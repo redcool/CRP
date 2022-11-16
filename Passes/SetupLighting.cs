@@ -37,10 +37,16 @@ namespace PowerUtilities
             _CascadeCullingSpheres = Shader.PropertyToID(nameof(_CascadeCullingSpheres)),
             _CascadeData = Shader.PropertyToID(nameof(_CascadeData)),
             _ShadowDistance = Shader.PropertyToID(nameof(_ShadowDistance)),
-            _ShadowDistanceFade = Shader.PropertyToID(nameof(_ShadowDistanceFade))
+            _ShadowDistanceFade = Shader.PropertyToID(nameof(_ShadowDistanceFade)),
+            _ShadowAtlasSize = Shader.PropertyToID(nameof(_ShadowAtlasSize))
             ;
 
+        const float MIN_SHADOW_NORMAL_BIAS = 1f;
         const int MAX_CASCADES = 4;
+
+        readonly string[] DIR_SHADOW_FILTER_MODES = new[] {
+            "_DIRECTIONAL_PCF3","_DIRECTIONAL_PCF5","_DIRECTIONAL_PCF7"
+        }; 
 
         Vector4[] dirLightColors;
         Vector4[] dirLightDirections;
@@ -64,6 +70,16 @@ namespace PowerUtilities
 
             shadowedDirLightCount = SetupShadows();
             RenderShadows();
+            SetShadowKeywords();
+        }
+
+        void SetShadowKeywords()
+        {
+            var filterId = (int)CRP.Asset.lightSettings.filterMode - 1;
+            for (int i = 0; i < DIR_SHADOW_FILTER_MODES.Length; i++)
+            {
+                Cmd.SetShaderKeyords(i == filterId, DIR_SHADOW_FILTER_MODES[i]);
+            }
         }
 
         void SetupLights()
@@ -136,7 +152,10 @@ namespace PowerUtilities
                     dirLightShadowInfos[i] = shadowInfo; // restore to default
                 }
 
-                dirLightShadowData[i] = new Vector4(shadowInfo.shadowStrength, shadowInfo.shadowedLightIndex * maxCascadeCount);
+                dirLightShadowData[i] = new Vector4(shadowInfo.shadowStrength,
+                    shadowInfo.shadowedLightIndex * maxCascadeCount,
+                    shadowInfo.shadowNormalBias + MIN_SHADOW_NORMAL_BIAS // min : 1
+                    );
 
             }
             return shadowedDirLightCount;
@@ -182,7 +201,7 @@ namespace PowerUtilities
             var atlasSize = (int)CRP.Asset.lightSettings.atlasSize;
             var cascadeCount = CRP.Asset.lightSettings.maxCascades;
             var shadowDistance = CRP.Asset.lightSettings.maxShadowDistance;
-            var distanceFadee = CRP.Asset.lightSettings.distanceFade;
+            var distanceFade = CRP.Asset.lightSettings.distanceFade;
             var cascadeFade = CRP.Asset.lightSettings.cascadeFade;
 
             var sampleName = nameof(RenderShadows);
@@ -211,7 +230,8 @@ namespace PowerUtilities
             Cmd.SetGlobalFloat(_ShadowDistance, shadowDistance);
 
             float f = 1f - cascadeFade;
-            Cmd.SetGlobalVector(_ShadowDistanceFade, new Vector4(1f/shadowDistance,1f/distanceFadee,1f/(1f-f*f)));
+            Cmd.SetGlobalVector(_ShadowDistanceFade, new Vector4(1f/shadowDistance,1f/distanceFade,1f/(1f-f*f)));
+            Cmd.SetGlobalVector(_ShadowAtlasSize, new Vector4(atlasSize,1f/atlasSize));
 
             Cmd.EndSampleExecute(sampleName, ref context);
             //Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
@@ -320,10 +340,11 @@ namespace PowerUtilities
 
         private void SetCascadeData(int i, Vector4 cullingSphere, int tileSize)
         {
+            float texelSize = 2f * cullingSphere.w/tileSize;
             cullingSphere.w *= cullingSphere.w;
 
             cascadeCCullingSpheres[i] = cullingSphere;
-            cascadeData[i].x = 1f/cullingSphere.w;
+            cascadeData[i] = new Vector4(1f/cullingSphere.w,texelSize * 1.414f);
         }
     }
 }

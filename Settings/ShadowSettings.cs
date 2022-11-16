@@ -20,6 +20,9 @@ namespace PowerUtilities
             _4k = _2k*2,
             _8k = _4k * 2
         }
+        public enum FilterMode { 
+            PCF2,PCF3,PCF5,PCF7
+        }
 
         [Header("Light")]
         [Range(1, 8)] public int maxLightCount = 8;
@@ -35,5 +38,7 @@ namespace PowerUtilities
         public TextureSize atlasSize = TextureSize._1k;
         [Min(0.001f)]public float maxShadowDistance = 100;
         [Range(0.001f, 1)] public float distanceFade = 0.1f;
+
+        public FilterMode filterMode;
     }
 }

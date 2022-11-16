@@ -32,9 +32,10 @@ MonoBehaviour:
     maxLightCount: 8
     maxShadowedDirLightCount: 4
     maxCascades: 4
-    cascadeRatio1: 0.1
-    cascadeRatio2: 0.296
-    cascadeRatio3: 0.621
-    cascadeFade: 0.435
+    cascadeRatio1: 0.302
+    cascadeRatio2: 0.522
+    cascadeRatio3: 0.809
+    cascadeFade: 0.377
     atlasSize: 1024
-    maxShadowDistance: 100
+    maxShadowDistance: 25.9
+    distanceFade: 0.001
