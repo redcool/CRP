@@ -39,6 +39,7 @@ struct DirectionalShadowData{
 struct ShadowData{
     int cascadeIndex;
     float strength;
+    float cascadeBlend;
 };
 
 float FadeShadowStrength(float distance,float scale,float fade){
@@ -47,25 +48,38 @@ float FadeShadowStrength(float distance,float scale,float fade){
 
 ShadowData GetShadowData(Surface surface){
     int i=0;
-    float4 sphere;
-    float dist2;
+    float fade=1;
     for(;i<_CascadeCount;i++)
     {
-        sphere = _CascadeCullingSpheres[i];
-        dist2 = DistanceSquared(surface.worldPos,sphere.xyz);
-        if(dist2 < sphere.w)
+        float4 sphere = _CascadeCullingSpheres[i];
+        float dist2 = DistanceSquared(surface.worldPos,sphere.xyz);
+        if(dist2 < sphere.w){
+            fade = FadeShadowStrength(dist2,_CascadeData[i].x/*(1/sphere.w)*/,_ShadowDistanceFade.z);
             break;
+        }
     }
 
     ShadowData d;
     d.cascadeIndex = i;
+    d.cascadeBlend = fade;
     // d.strength = surface.depth < _ShadowDistance ? 1 : 0;
     d.strength = FadeShadowStrength(surface.depth,_ShadowDistanceFade.x,_ShadowDistanceFade.y);
-    if(i == _CascadeCount-1){
-        d.strength *= FadeShadowStrength(dist2,_CascadeData[i].x/*(1/sphere.w)*/,_ShadowDistanceFade.z);
+    bool isLast = i == _CascadeCount-1;
+    d.strength *= lerp(1,fade,isLast);
+    d.cascadeBlend = lerp(d.cascadeBlend,1,isLast);
+
+    // if(i == _CascadeCount-1){
+    //     d.strength *= fade;
+    //     d.cascadeBlend = 1;
+    // } 
+    d.strength *= lerp(1,0, i == _CascadeCount);
+    #if defined(_CASCADE_BLEND_DITHER)
+    // else if(d.cascadeBlend < surface.dither)
+    {
+        d.cascadeIndex += d.cascadeBlend < surface.dither;
     }
-    if(i == _CascadeCount)
-        d.strength = 0;
+    #endif
+
     return d;
 }
 
@@ -92,10 +106,20 @@ float FilterDirShadow(float3 posShadowSpace){
 float GetDirShadowAttenuation(DirectionalShadowData data,ShadowData shadowData,Surface surface){
     if(data.strength<=0)
         return 1;
-    float3 normalBias = surface.normal * data.normalBias * _CascadeData[shadowData.cascadeIndex].y;
 
+    float3 normalBias = surface.normal * data.normalBias * _CascadeData[shadowData.cascadeIndex].y;
     float3 posShadowSpace = mul(_DirectionalShadowMatrices[data.tileIndex],float4(surface.worldPos+normalBias,1)).xyz;
     float atten = FilterDirShadow(posShadowSpace);
+
+    #if defined(_CASCADE_BLEND_SOFT)
+        if(shadowData.cascadeBlend < 1)
+        {
+            normalBias = surface.normal * data.normalBias * _CascadeData[shadowData.cascadeIndex+1].y;
+            posShadowSpace = mul(_DirectionalShadowMatrices[data.tileIndex+1],float4(surface.worldPos + normalBias,1)).xyz;
+            float atten2 = FilterDirShadow(posShadowSpace);
+            atten = lerp(atten2,atten,shadowData.cascadeBlend);
+        }
+    #endif
     return lerp(1,atten,data.strength);
 }
 #endif  //CRP_SHADOWS_HLSL

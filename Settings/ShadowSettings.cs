@@ -23,6 +23,10 @@ namespace PowerUtilities
         public enum FilterMode { 
             PCF2,PCF3,PCF5,PCF7
         }
+        public enum CascadeBlendMode
+        {
+            Hard,Soft,Dither
+        }
 
         [Header("Light")]
         [Range(1, 8)] public int maxLightCount = 8;
@@ -40,5 +44,6 @@ namespace PowerUtilities
         [Range(0.001f, 1)] public float distanceFade = 0.1f;
 
         public FilterMode filterMode;
+        public CascadeBlendMode cascadeBlendMode;
     }
 }

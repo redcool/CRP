@@ -96,7 +96,8 @@
         PremultiplyAlpha(surface);
         surface.worldPos = worldPos;
         surface.depth = -TransformWorldToView(worldPos).z;
-        
+        surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
+
         half3 col = GetLighting(surface);
         return half4(col,surface.alpha);
     }

@@ -9,6 +9,7 @@ struct Surface{
     float3 viewDir;
     float3 worldPos;
     float depth;
+    float dither;
 };
 
 void PremultiplyAlpha(inout Surface s){

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using UnityEngine;
-using UnityEditor.Graphs;
 
 namespace PowerUtilities
 {
@@ -44,9 +43,13 @@ namespace PowerUtilities
         const float MIN_SHADOW_NORMAL_BIAS = 1f;
         const int MAX_CASCADES = 4;
 
-        readonly string[] DIR_SHADOW_FILTER_MODES = new[] {
+        readonly string[] DIR_SHADOW_FILTER_MODE_KEYWORDS = new[] {
             "_DIRECTIONAL_PCF3","_DIRECTIONAL_PCF5","_DIRECTIONAL_PCF7"
-        }; 
+        };
+        readonly string[] CASCADE_BLEND_MODE_KEYWORDS = new[]
+        {
+            "_CASCADE_BLEND_SOFT","_CASCADE_BLEND_DITHER"
+        };
 
         Vector4[] dirLightColors;
         Vector4[] dirLightDirections;
@@ -76,9 +79,15 @@ namespace PowerUtilities
         void SetShadowKeywords()
         {
             var filterId = (int)CRP.Asset.lightSettings.filterMode - 1;
-            for (int i = 0; i < DIR_SHADOW_FILTER_MODES.Length; i++)
+            for (int i = 0; i < DIR_SHADOW_FILTER_MODE_KEYWORDS.Length; i++)
             {
-                Cmd.SetShaderKeyords(i == filterId, DIR_SHADOW_FILTER_MODES[i]);
+                Cmd.SetShaderKeyords(i == filterId, DIR_SHADOW_FILTER_MODE_KEYWORDS[i]);
+            }
+
+            var cascadeBlendId = (int)CRP.Asset.lightSettings.cascadeBlendMode-1;
+            for (int i = 0; i < CASCADE_BLEND_MODE_KEYWORDS.Length; i++)
+            {
+                Cmd.SetShaderKeyords(i == cascadeBlendId, CASCADE_BLEND_MODE_KEYWORDS[i]);
             }
         }
 
@@ -298,6 +307,7 @@ namespace PowerUtilities
             var cascadeCount = CRP.Asset.lightSettings.maxCascades;
             var tileOffset = id * cascadeCount;
             var splitRatio = CRP.Asset.lightSettings.CascadeRatios;
+            var cullingFactor = Mathf.Max(0,0.8f - CRP.Asset.lightSettings.cascadeFade);
 
             for (int i = 0; i < cascadeCount; i++)
             {
@@ -340,11 +350,15 @@ namespace PowerUtilities
 
         private void SetCascadeData(int i, Vector4 cullingSphere, int tileSize)
         {
+            float filterId = (float)CRP.Asset.lightSettings.filterMode+1;
             float texelSize = 2f * cullingSphere.w/tileSize;
+            var filterSize = texelSize * filterId;
+
+            cullingSphere.w -= filterSize;
             cullingSphere.w *= cullingSphere.w;
 
             cascadeCCullingSpheres[i] = cullingSphere;
-            cascadeData[i] = new Vector4(1f/cullingSphere.w,texelSize * 1.414f);
+            cascadeData[i] = new Vector4(1f/cullingSphere.w, filterSize* 1.414f);
         }
     }
 }
