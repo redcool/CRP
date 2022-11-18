@@ -104,6 +104,9 @@ float FilterDirShadow(float3 posShadowSpace){
 }
 
 float GetDirShadowAttenuation(DirectionalShadowData data,ShadowData shadowData,Surface surface){
+    #if defined(_RECEIVE_SHADOW_OFF)
+        return 1;
+    #endif
     if(data.strength<=0)
         return 1;
 

@@ -20,6 +20,7 @@ Shader "CRP/Lit"
 
         [Header(ShadowCaster)]
         [GroupEnum(,SHADOW_NONE SHADOW_HARD SHADOW_DITHER,true)]_ShadowMode("_ShadowMode",int) = 1
+        [GroupToggle(,_RECEIVE_SHADOW_OFF)]_ReceiveShadowOff("_ReceiveShadowOff",int) = 1
 
         [Header(Render States)]
         [GroupToggle()]_ZWrite("_ZWrite",int) = 1
@@ -49,6 +50,7 @@ Shader "CRP/Lit"
             #pragma shader_feature _PREMULTIPLY_ALPHA
             #pragma multi_compile _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             #pragma multi_compile _ _CASCADE_BLEND_SOFT _CASCADE_BLEND_DITHER
+            #pragma shader_feature _RECEIVE_SHADOW_OFF
 
             #include "Passes/LitPass.hlsl"
             

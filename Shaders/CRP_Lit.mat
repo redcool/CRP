@@ -12,13 +12,16 @@ Material:
   m_ValidKeywords:
   - _CLIPPING
   m_InvalidKeywords:
+  - SHADOW_HARD
   - _PREFMUL_ALPHA
+  - _RECEIVE_SHADOW_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SHADOW_CASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -34,11 +37,14 @@ Material:
     m_Floats:
     - _Cull: 1
     - _CullMode: 2
-    - _CullOff: 0.506
+    - _CullOff: 0.218
     - _DstMode: 0
     - _Metallic: 0.313
     - _Occlusion: 0.555
     - _PremulAlpha: 0
+    - _ReceiveShadowOff: 1
+    - _ReceiveShadowOn: 1
+    - _ShadowMode: 1
     - _Smoothness: 0.922
     - _SrcMode: 1
     - _ZWrite: 1
