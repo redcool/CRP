@@ -17,6 +17,10 @@ Shader "CRP/Lit"
 
         [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
         [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
+
+        [Header(ShadowCaster)]
+        [GroupEnum(,SHADOW_NONE SHADOW_HARD SHADOW_DITHER,true)]_ShadowMode("_ShadowMode",int) = 1
+
         [Header(Render States)]
         [GroupToggle()]_ZWrite("_ZWrite",int) = 1
         [Enum(UnityEngine.Rendering.CullMode)]_CullMode("_CullMode",int) = 2
@@ -61,11 +65,13 @@ Shader "CRP/Lit"
             #pragma fragment frag
             #pragma multi_compile_instancing
             #pragma shader_feature _CLIPPING
-
+            #pragma shader_feature SHADOW_DITHER
+            #pragma shader_featuer SHADOW_HARD
 
             #include "Passes/ShadowCasterPass.hlsl"
             
             ENDHLSL
         }
     }
+    CustomEditor "CRPShaderGUI"
 }

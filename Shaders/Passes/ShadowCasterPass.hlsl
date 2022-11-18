@@ -8,12 +8,12 @@ TEXTURE2D(_MainTex);SAMPLER(sampler_MainTex);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
 UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
     UNITY_DEFINE_INSTANCED_PROP(half4,_Color)
-    UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
+    // UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 #define _Color UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Color)
 #define _MainTex_ST UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_MainTex_ST)
-#define _CullOff UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CullOff)
-
+// #define _CullOff UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CullOff)
+float _CullOff;
 struct appdata{
     float4 vertex:POSITION;
     float2 uv:TEXCOORD;
@@ -45,8 +45,12 @@ v2f vert(appdata v){
 void frag(v2f i){
     UNITY_SETUP_INSTANCE_ID(i);
     #if defined(_CLIPPING)
-        half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex) * _Color;
-        clip(mainTex.w - _CullOff);
+        float clipOff = _CullOff;
+        #if defined(SHADOW_DITHER)
+            clipOff += InterleavedGradientNoise(i.vertex.xy,0);
+        #endif
+        half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv) * _Color;
+        clip(mainTex.w - clipOff);
     #endif
 }
 
