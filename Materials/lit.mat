@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Unlit
+  m_Name: lit
   m_Shader: {fileID: 4800000, guid: 622383f0dc10c584283c0b053cf5a20e, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -37,6 +37,8 @@ Material:
     - _Metallic: 0.5
     - _Occlusion: 0
     - _PremulAlpha: 0
+    - _ReceiveShadowOff: 1
+    - _ShadowMode: 1
     - _Smoothness: 0.5
     - _SrcMode: 1
     - _ZWrite: 1

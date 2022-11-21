@@ -28,11 +28,11 @@ float3 CalcLight(Light light,Surface surface,BRDF brdf){
     return (brdf.diffuse + brdf.specular * specTerm) * radiance;
 }
 
-float3 GetLighting(Surface surface){
-    float3 col=0;
+float3 GetLighting(Surface surface,GI gi){
     int lightCount = GetLightCount();
     BRDF brdf = GetBRDF(surface);
     ShadowData shadowData = GetShadowData(surface);
+    float3 col = (gi.diffuse * brdf.diffuse) * surface.occlusion;
 
     for(int i=0;i<lightCount;i++){
         Light l = GetLight(i,surface,shadowData);

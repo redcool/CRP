@@ -33,6 +33,7 @@ namespace PowerUtilities
         public bool enableDynamicBatch;
         public bool enableInstanced;
         public bool enableSRPBatch = true;
+        public PerObjectData perObjectData = PerObjectData.None;
 
         //CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
@@ -40,11 +41,15 @@ namespace PowerUtilities
 
         public static void SetupDrawingSettings(ref DrawingSettings drawSettings,
             ShaderTagId[] supportLightModeTagIds,
-            bool enableDynamicBatch,bool enableInstanced,bool enableSRPBatch)
+            bool enableDynamicBatch,
+            bool enableInstanced,
+            bool enableSRPBatch,
+            PerObjectData perObjectData)
         {
             drawSettings.enableDynamicBatching = enableDynamicBatch;
             drawSettings.enableInstancing = enableInstanced;
             GraphicsSettings.useScriptableRenderPipelineBatching = enableSRPBatch;
+            drawSettings.perObjectData = perObjectData;
 
             for (int i = 0; i < supportLightModeTagIds.Length; i++)
             {
@@ -69,7 +74,7 @@ namespace PowerUtilities
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
             var drawSettings = new DrawingSettings();
 
-            SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced, enableSRPBatch);
+            SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced, enableSRPBatch,perObjectData);
 
             if (drawOpaques)
                 DrawOpaques(ref sortingSettings, ref drawSettings, ref filterSettings);

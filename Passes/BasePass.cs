@@ -71,7 +71,8 @@ namespace PowerUtilities
 
         public virtual bool CanExecute() => 
             string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag) || 
-            camera.cameraType == CameraType.SceneView;
+            camera.cameraType == CameraType.SceneView ||
+            camera.cameraType == CameraType.Preview;
 
         public bool IsCullingResultsValid() => cullingResults != default(CullingResults);
 

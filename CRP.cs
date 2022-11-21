@@ -28,7 +28,9 @@ namespace PowerUtilities
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
         {
-            if (!Asset || Asset.passes == null || Asset.passes.Length == 0)
+            if (!Asset || Asset.passes == null || 
+                Asset.passes.Length == 0 ||
+                cameras.Length ==0)
                 return;
 
             CameraStates.cameras = cameras;

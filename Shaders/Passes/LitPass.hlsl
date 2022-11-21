@@ -4,12 +4,15 @@
     #include "Libs/Shadows.hlsl"
     #include "Libs/Light.hlsl"
     #include "Libs/BRDF.hlsl"
+    #include "Libs/GI.hlsl"
     #include "Libs/Lighting.hlsl"
 
     struct appdata
     {
         float4 vertex : POSITION;
         float2 uv : TEXCOORD0;
+        float2 uv1:TEXCOORD1;
+        float2 uv2:TEXCOORD2;
         float3 normal:NORMAL;
         float4 tangent:TANGENT;
         UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -17,11 +20,12 @@
 
     struct v2f
     {
-        float2 uv : TEXCOORD0;
         float4 vertex : SV_POSITION;
-        float4 tSpace0:TEXCOORD2;
-        float4 tSpace1:TEXCOORD3;
-        float4 tSpace2:TEXCOORD4;
+        float2 uv : TEXCOORD0;
+        float4 tSpace0:TEXCOORD1;
+        float4 tSpace1:TEXCOORD2;
+        float4 tSpace2:TEXCOORD3;
+        float2 lightmapUV : TEXCOORD4;
         UNITY_VERTEX_INPUT_INSTANCE_ID
         UNITY_VERTEX_OUTPUT_STEREO
     };
@@ -64,6 +68,8 @@
         o.tSpace1 = float4(wt.y,wb.y,wn.y,worldPos.y);
         o.tSpace2 = float4(wt.z,wb.z,wn.z,worldPos.z);
 
+        o.lightmapUV = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+
         return o;
     }
 
@@ -98,7 +104,9 @@
         surface.depth = -TransformWorldToView(worldPos).z;
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
 
-        half3 col = GetLighting(surface);
+        GI gi = GetGI(i.lightmapUV,surface);
+return gi.diffuse.xyzx;
+        half3 col = GetLighting(surface,gi);
         return half4(col,surface.alpha);
     }
 #endif //CRP_LIT_PASS_HLSL

@@ -33,7 +33,7 @@ Shader "CRP/Lit"
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Opaque"}
         LOD 100
 
         Pass
@@ -45,12 +45,14 @@ Shader "CRP/Lit"
             #pragma target 3.5
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_instancing
             #pragma shader_feature _CLIPPING
             #pragma shader_feature _PREMULTIPLY_ALPHA
+            #pragma shader_feature _RECEIVE_SHADOW_OFF
+
+            #pragma multi_compile_instancing
             #pragma multi_compile _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7
             #pragma multi_compile _ _CASCADE_BLEND_SOFT _CASCADE_BLEND_DITHER
-            #pragma shader_feature _RECEIVE_SHADOW_OFF
+            #pragma multi_compile _ LIGHTMAP_ON
 
             #include "Passes/LitPass.hlsl"
             
