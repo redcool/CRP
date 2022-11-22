@@ -10,17 +10,21 @@ public class CRPShaderGUI : ShaderGUI
     const string SHADOW_CASTER = "ShadowCaster";
     public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
     {
-        var mat = materialEditor.target as Material;
-
         EditorGUI.BeginChangeCheck();
         base.OnGUI(materialEditor, properties);
+        materialEditor.LightmapEmissionProperty(1);
         if (EditorGUI.EndChangeCheck())
         {
-            var _ShadowMode  =  FindProperty("_ShadowMode", properties);
-            if(_ShadowMode != null)
+            foreach (Material mat in materialEditor.targets)
             {
-                mat.SetShaderPassEnabled(SHADOW_CASTER, (int)_ShadowMode.floatValue != 0);
-            }
+                var _ShadowMode = FindProperty("_ShadowMode", properties);
+                if (_ShadowMode != null)
+                {
+                    mat.SetShaderPassEnabled(SHADOW_CASTER, (int)_ShadowMode.floatValue != 0);
+                }
+                mat.globalIlluminationFlags &= ~MaterialGlobalIlluminationFlags.EmissiveIsBlack;
+            } 
+
         }
     }
 }

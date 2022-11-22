@@ -9,6 +9,10 @@ Shader "CRP/Lit"
         _Metallic("_Metallic",range(0,1)) = 0.5
         _Smoothness("_Smoothness",range(0,1)) = 0.5
         _Occlusion("_Occlusion",range(0,1)) = 0
+
+        [Header(Emission)]
+        _EmissionMap("_EmissionMap",2d)="white"{}
+        [hdr]_EmissionColor("_EmissionColor",color) = (0,0,0,0)
         
         [Header(Alpha)]
         [Toggle(_PREMULTIPLY_ALPHA)]_PremulAlpha("_PremulAlpha",int) = 0
@@ -28,7 +32,7 @@ Shader "CRP/Lit"
     }
 
     HLSLINCLUDE
-
+        #include "Passes/LitInput.hlsl"
     ENDHLSL
 
     SubShader
@@ -38,6 +42,7 @@ Shader "CRP/Lit"
 
         Pass
         {
+            Tags{"LightMode"="UniversalForward"}
             zwrite[_ZWrite]
             cull[_CullMode]
             blend [_SrcMode][_DstMode]
@@ -73,6 +78,19 @@ Shader "CRP/Lit"
             #pragma shader_featuer SHADOW_HARD
 
             #include "Passes/ShadowCasterPass.hlsl"
+            
+            ENDHLSL
+        }
+        pass{
+            Tags{"LightMode"="Meta"}
+            Cull Off
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "Passes/MetaPass.hlsl"
             
             ENDHLSL
         }

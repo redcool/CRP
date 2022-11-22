@@ -2,18 +2,19 @@
 #define CRP_SHADOW_CASTER_PASS_HLSL
 #include "../Libs/UnityInput.hlsl"
 
-TEXTURE2D(_MainTex);SAMPLER(sampler_MainTex);
+// TEXTURE2D(_MainTex);SAMPLER(sampler_MainTex);
 
 
-UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
-UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
-    UNITY_DEFINE_INSTANCED_PROP(half4,_Color)
-    // UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
-UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
-#define _Color UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Color)
-#define _MainTex_ST UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_MainTex_ST)
+// UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
+// UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
+//     UNITY_DEFINE_INSTANCED_PROP(half4,_Color)
+//     UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
+// UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
+// #define _Color UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Color)
+// #define _MainTex_ST UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_MainTex_ST)
 // #define _CullOff UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CullOff)
-float _CullOff;
+// float _CullOff;
+
 struct appdata{
     float4 vertex:POSITION;
     float2 uv:TEXCOORD;

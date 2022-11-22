@@ -57,6 +57,12 @@ real4 unity_SHBg;
 real4 unity_SHBb;
 real4 unity_SHC;
 
+// lppv params
+float4 unity_ProbeVolumeParams;
+float4x4 unity_ProbeVolumeWorldToObject;
+float4 unity_ProbeVolumeSizeInv;
+float4 unity_ProbeVolumeMin;
+
 // Velocity
 float4x4 unity_MatrixPreviousM;
 float4x4 unity_MatrixPreviousMI;

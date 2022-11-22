@@ -31,6 +31,9 @@ SAMPLER(samplerunity_ShadowMask);
 TEXTURE2D_ARRAY(unity_ShadowMasks);
 SAMPLER(samplerunity_ShadowMasks);
 
+TEXTURE3D_FLOAT(unity_ProbeVolumeSH);
+SAMPLER(samplerunity_ProbeVolumeSH);
+
 struct GI{
     float3 diffuse;
 };
@@ -59,13 +62,26 @@ half3 SampleSH9(float3 normal){
     return SampleSH9(coefficients,normal);
 }
 
+half3 SampleProbes(float3 position,float3 normal){
+    if(unity_ProbeVolumeParams.x){
+        return SampleProbeVolumeSH4(
+            TEXTURE3D_ARGS(unity_ProbeVolumeSH,samplerunity_ProbeVolumeSH),
+            position,normal,
+            unity_ProbeVolumeWorldToObject,
+            unity_ProbeVolumeParams.y,unity_ProbeVolumeParams.z,
+            unity_ProbeVolumeMin.xyz,unity_ProbeVolumeSizeInv.xyz
+        );
+    }
+    return SampleSH9(normal);
+}
+
 GI GetGI(float2 lightmapUV,Surface surface){
     GI gi = (GI)0;
     #if defined(LIGHTMAP_ON)
     gi.diffuse += SampleLightmap(lightmapUV);
     #else
+    gi.diffuse += SampleProbes(surface.worldPos,surface.normal); 
     #endif
-    gi.diffuse += SampleSH9(surface.normal); 
 
     return gi;
 }

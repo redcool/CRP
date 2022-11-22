@@ -1,5 +1,5 @@
 #if !defined(CRP_LIT_PASS_HLSL)
-    #include "Libs/Common.hlsl"
+
     #include "Libs/Surface.hlsl"
     #include "Libs/Shadows.hlsl"
     #include "Libs/Light.hlsl"
@@ -29,26 +29,6 @@
         UNITY_VERTEX_INPUT_INSTANCE_ID
         UNITY_VERTEX_OUTPUT_STEREO
     };
-
-    sampler2D _MainTex;
-    sampler2D _PBRMask;
-
-    // CBUFFER_START(UnityPerMaterial)
-    UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
-    UNITY_DEFINE_INSTANCED_PROP(float4, _MainTex_ST)
-        UNITY_DEFINE_INSTANCED_PROP(half4,_Color)
-        UNITY_DEFINE_INSTANCED_PROP(float,_Metallic)
-        UNITY_DEFINE_INSTANCED_PROP(float,_Smoothness)
-        UNITY_DEFINE_INSTANCED_PROP(float,_Occlusion)
-        UNITY_DEFINE_INSTANCED_PROP(float,_CullOff)
-    UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
-    #define _Color UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Color)
-    #define _MainTex_ST UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_MainTex_ST)
-    #define _Metallic UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Metallic)
-    #define _Smoothness UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Smoothness)
-    #define _Occlusion UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_Occlusion)
-    #define _CullOff UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial,_CullOff)
-    // CBUFFER_END
 
     v2f vert (appdata v)
     {
@@ -82,12 +62,12 @@
         float3 wn = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);
         wn = normalize(wn);
 
-        half4 mainTex = tex2D(_MainTex, i.uv) * _Color;
+        half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex, i.uv) * _Color;
         #if defined(_CLIPPING)
             clip(mainTex.w - _CullOff);
         #endif
         
-        half4 pbrMask = tex2D(_PBRMask,i.uv);
+        half4 pbrMask = SAMPLE_TEXTURE2D(_PBRMask,sampler_PBRMask,i.uv);
 
         Surface surface = (Surface)0;
         surface.normal = wn;
@@ -105,8 +85,9 @@
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
 
         GI gi = GetGI(i.lightmapUV,surface);
-return gi.diffuse.xyzx;
+
         half3 col = GetLighting(surface,gi);
+        col.xyz += GetEmission(i.uv);
         return half4(col,surface.alpha);
     }
 #endif //CRP_LIT_PASS_HLSL
