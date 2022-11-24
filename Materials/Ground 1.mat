@@ -7,30 +7,25 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CRP_Lit
+  m_Name: Ground 1
   m_Shader: {fileID: 4800000, guid: 622383f0dc10c584283c0b053cf5a20e, type: 3}
-  m_ValidKeywords:
-  - _CLIPPING
-  m_InvalidKeywords:
-  - SHADOW_HARD
-  - _PREFMUL_ALPHA
-  - _RECEIVE_SHADOW_ON
-  m_LightmapFlags: 0
-  m_EnableInstancingVariants: 1
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses:
-  - SHADOW_CASTER
+  disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _EmissionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 218cfca5afbf3664aa59b11e44eb8dce, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PBRMask:
@@ -39,20 +34,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Cull: 1
+    - _Cull: 0
     - _CullMode: 2
-    - _CullOff: 0.218
+    - _CullOff: 0.5
     - _DstMode: 0
-    - _Metallic: 0.313
-    - _Occlusion: 0.555
+    - _Metallic: 0.5
+    - _Occlusion: 0
     - _PremulAlpha: 0
     - _ReceiveShadowOff: 1
-    - _ReceiveShadowOn: 1
     - _ShadowMode: 1
-    - _Smoothness: 0.922
+    - _Smoothness: 0.5
     - _SrcMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.99056596, g: 0.99056596, b: 0.99056596, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

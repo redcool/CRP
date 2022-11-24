@@ -11,10 +11,6 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(SetRenderTarget))]
     public class SetRenderTarget : BasePass
     {
-
-        [Header("Apply Camera Props")]
-        public bool isSetupCameraProperties = true;
-
         [Header("Render Targets")]
         public string[] targetNames;
         RenderTargetIdentifier[] targetIds;
@@ -27,12 +23,6 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
-            if (isSetupCameraProperties)
-            {
-                context.SetupCameraProperties(camera);
-                Cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix,camera.projectionMatrix);
-            }
-
             if (targetNames == null || targetNames.Length ==0)
                 return;
 

@@ -46,4 +46,5 @@ namespace PowerUtilities
         public FilterMode filterMode;
         public CascadeBlendMode cascadeBlendMode;
     }
+
 }

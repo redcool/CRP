@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce09de95229079c4e8bd4b0039020b4a, type: 3}
-  m_Name: Set Render Target
+  m_Script: {fileID: 11500000, guid: 31d5c13aaf6b1164eaccb83925470fa2, type: 3}
+  m_Name: Setup Shadow
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: 
   cameraTag: 
   isInterrupt: 0
   isSkip: 0
-  targetNames:
-  - _CameraTarget
-  depthTargetName: _CameraDepthTarget
-  clearTarget: 1

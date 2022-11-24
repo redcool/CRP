@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: ' Render Transparent Object'
+  cameraTag: 
   isInterrupt: 0
   isSkip: 0
   drawOpaques: 0
@@ -32,3 +33,4 @@ MonoBehaviour:
   enableDynamicBatch: 0
   enableInstanced: 0
   enableSRPBatch: 1
+  perObjectData: -1

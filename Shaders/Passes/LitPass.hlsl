@@ -85,7 +85,7 @@
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
 
         GI gi = GetGI(i.lightmapUV,surface);
-
+// return gi.diffuse.xyzx;
         half3 col = GetLighting(surface,gi);
         col.xyz += GetEmission(i.uv);
         return half4(col,surface.alpha);
