@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: New Test Render Shadow
+  m_Script: {fileID: 11500000, guid: 0ebc643eb6cda73469eec7d944c4639b, type: 3}
+  m_Name: Test Render Shadow
   m_EditorClassIdentifier: CRP:PowerUtilities:TestRenderShadow
   isFoldout: 0
   overridePassName: 
@@ -18,3 +18,5 @@ MonoBehaviour:
   isInterrupt: 0
   isSkip: 0
   atlasSize: 1024
+  cascadeCount: 1
+  splitRatio: {x: 0.1, y: 0.3, z: 0.6}

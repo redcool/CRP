@@ -4,7 +4,7 @@ Shader "CRP/Unlit TestShadow"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _Color("_Color",color) = (1,1,1,1)
-        [IntRange]_CascadeId("_CascadeId",range(0,3)) = 0
+        [IntRange]_TileId("_TileId",range(0,3)) = 0
         [Enum(UnityEngine.Rendering.BlendMode)]_SrcMode("_SrcMode",int) = 1
         [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
         [GroupToggle()]_ZWrite("_ZWrite",int) = 1
@@ -33,7 +33,8 @@ Shader "CRP/Unlit TestShadow"
     sampler2D _MainTex;
     sampler2D _MainLightShadowMap;
     float4x4 _MainLightShadowMapMatrices[4];
-    float _CascadeId;
+    float4 _MainLightCascadeCullingSpheres[4];
+    float _TileId;
 
     // CBUFFER_START(UnityPerMaterial)
     UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
@@ -58,13 +59,42 @@ Shader "CRP/Unlit TestShadow"
         return o;
     }
 
+    int GetCascadeId(float3 worldPos){
+        int i=0;
+        for(;i<4;i++){
+            float3 sphereCenter = _MainLightCascadeCullingSpheres[i].xyz;
+            float sphereRadius = _MainLightCascadeCullingSpheres[i].w;
+            float dist = distance(worldPos,sphereCenter);
+            if(dist < sphereRadius)
+                break;
+        }
+        return i;
+    }
+
     half4 frag (v2f i) : SV_Target
     {
         UNITY_SETUP_INSTANCE_ID(i);
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
-        float3 posShadow = mul(_MainLightShadowMapMatrices[_CascadeId],float4(i.worldPos,1)).xyz;
-        posShadow.xy = posShadow.xy * 0.5 + 0.5;
+        int cascadeId = GetCascadeId(i.worldPos);
+        if(cascadeId>=4)
+            return 1;
+        
+        float3 posShadow = mul(_MainLightShadowMapMatrices[cascadeId],float4(i.worldPos,1)).xyz;
+
+        float shadow = tex2D(_MainLightShadowMap,posShadow.xy).x < posShadow.z;
+        return shadow;
+
+        half4 col = tex2D(_MainTex, i.uv) * _Color;
+        return col;
+    }
+
+    half4 frag1 (v2f i) : SV_Target
+    {
+        UNITY_SETUP_INSTANCE_ID(i);
+        UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+        
+        float3 posShadow = mul(_MainLightShadowMapMatrices[_TileId],float4(i.worldPos,1)).xyz;
 
         float shadow = tex2D(_MainLightShadowMap,posShadow.xy).x < posShadow.z;
         return shadow;

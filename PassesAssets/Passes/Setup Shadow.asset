@@ -16,4 +16,4 @@ MonoBehaviour:
   overridePassName: 
   cameraTag: 
   isInterrupt: 0
-  isSkip: 0
+  isSkip: 1
