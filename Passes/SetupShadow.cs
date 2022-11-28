@@ -53,8 +53,8 @@ namespace PowerUtilities
 
         Vector4[]
             dirLightShadowData,//{shadow strength,tile index, normal bias,0}
-            cascadeCCullingSpheres = new Vector4[MAX_CASCADES],
-            cascadeData = new Vector4[MAX_CASCADES]
+            cascadeCCullingSpheres = new Vector4[MAX_CASCADES], //{xyz:sphere center, w: dist2}
+            cascadeData = new Vector4[MAX_CASCADES] //{x: 1/dist2,y: filterMode Atten}
             ;
 
         public override void OnRender()
@@ -84,8 +84,8 @@ namespace PowerUtilities
 
         int SetupShadows()
         {
-            var maxLightCount = lightShadowSettings.maxLightCount;
-            var maxShadowedDirLightCount = lightShadowSettings.maxShadowedDirLightCount;
+            var maxLightCount = Mathf.Min(lightShadowSettings.maxLightCount, cullingResults.visibleLights.Length);
+            var maxShadowedDirLightCount = Mathf.Min(maxLightCount,lightShadowSettings.maxShadowedDirLightCount);
             var maxCascadeCount = lightShadowSettings.maxCascades;
 
             if (maxShadowedDirLightCount <= 0)
@@ -189,7 +189,9 @@ namespace PowerUtilities
 
             Cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
             Cmd.SetGlobalDepthBias(0, 0);
+
             Cmd.SetGlobalMatrixArray(_DirectionalShadowMatrices, dirLightShadowMatrices);
+
             Cmd.SetGlobalVectorArray(_DirectionalLightShadowData, dirLightShadowData);
             Cmd.SetGlobalInt(_CascadeCount, cascadeCount);
             Cmd.SetGlobalVectorArray(_CascadeCullingSpheres, cascadeCCullingSpheres);
@@ -257,13 +259,13 @@ namespace PowerUtilities
             }
         }
 
-        void RenderDirectionalShadow(int id, int splitCount, int tileSize)
+        void RenderDirectionalShadow(int lightId, int splitCount, int tileSize)
         {
-            LightShadowInfo shadowInfo = dirLightShadowInfos[id];
+            LightShadowInfo shadowInfo = dirLightShadowInfos[lightId];
             var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex);
 
             var cascadeCount = lightShadowSettings.maxCascades;
-            var tileOffset = id * cascadeCount;
+            var tileOffset = lightId * cascadeCount;
             var splitRatio = lightShadowSettings.CascadeRatios;
             var cullingFactor = Mathf.Max(0, 0.8f - lightShadowSettings.cascadeFade);
 
@@ -300,14 +302,14 @@ namespace PowerUtilities
                 ConvertToShadowAtlasMatrix(ref worldToShadowMat, offset, splitCount, tileId);
                 dirLightShadowMatrices[tileId] = worldToShadowMat;
 
-                if (id == 0)
+                if (lightId == 0)
                 {
                     SetCascadeData(i, shadowSplitData.cullingSphere, tileSize);
                 }
             }
         }
 
-        private void SetCascadeData(int i, Vector4 cullingSphere, int tileSize)
+        private void SetCascadeData(int cascadeId, Vector4 cullingSphere, int tileSize)
         {
             float filterId = (float)lightShadowSettings.filterMode + 1;
             float texelSize = 2f * cullingSphere.w / tileSize;
@@ -316,8 +318,8 @@ namespace PowerUtilities
             cullingSphere.w -= filterSize;
             cullingSphere.w *= cullingSphere.w;
 
-            cascadeCCullingSpheres[i] = cullingSphere;
-            cascadeData[i] = new Vector4(1f / cullingSphere.w, filterSize * 1.414f);
+            cascadeCCullingSpheres[cascadeId] = cullingSphere;
+            cascadeData[cascadeId] = new Vector4(1f / cullingSphere.w, filterSize * 1.414f);
         }
     }
 }
