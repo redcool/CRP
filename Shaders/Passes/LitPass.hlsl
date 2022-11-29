@@ -57,6 +57,7 @@
     {
         UNITY_SETUP_INSTANCE_ID(i);
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+        ClipLOD(i.vertex.xy);
 
         float3 worldPos = float3(i.tSpace0.w,i.tSpace1.w,i.tSpace2.w);
         float3 wn = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);

@@ -15,7 +15,7 @@ public class CRPShaderGUI : ShaderGUI
     public override void OnGUI(MaterialEditor editor, MaterialProperty[] properties)
     {
         this.materialEditor = editor;
-        this.materials = (Material[])materialEditor.targets;
+        this.materials = materialEditor.targets as Material[];
         this.properties = properties;
 
         EditorGUI.BeginChangeCheck();

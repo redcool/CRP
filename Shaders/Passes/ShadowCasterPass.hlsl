@@ -45,6 +45,8 @@ v2f vert(appdata v){
 
 void frag(v2f i){
     UNITY_SETUP_INSTANCE_ID(i);
+    ClipLOD(i.vertex.xy);
+    
     #if defined(_CLIPPING)
         float clipOff = _CullOff;
         #if defined(SHADOW_DITHER)
