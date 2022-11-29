@@ -24,22 +24,24 @@ SAMPLER_CMP(SHADOW_SAMPLER);
 CBUFFER_START(_CRPShadows)
     int _CascadeCount;
     float4 _CascadeCullingSpheres[MAX_CASCADE_COUNT];
-    float4 _CascadeData[MAX_CASCADE_COUNT];
+    float4 _CascadeData[MAX_CASCADE_COUNT]; //{1 / cascadeCullingSphere.W(radius2),cascade Filter Size}
     float4x4 _DirectionalShadowMatrices[MAX_SHADOWED_DIR_LIGHT_COUNT * MAX_CASCADE_COUNT];
     float _ShadowDistance;
-    float4 _ShadowDistanceFade;
-    float4 _ShadowAtlasSize;
+    float4 _ShadowDistanceFade; //{1/distance,distanceFade factor,cascadeFade factor}
+    float4 _ShadowAtlasSize; //{size ,1/size}
 CBUFFER_END
 
 struct DirectionalShadowData{
     float strength;
     int tileIndex;
     float normalBias;
+    int occlusionMaskChannel;
 };
 struct ShadowData{
     int cascadeIndex;
     float strength;
     float cascadeBlend;
+    float4 shadowMask;
 };
 
 float FadeShadowStrength(float distance,float scale,float fade){
@@ -62,17 +64,21 @@ ShadowData GetShadowData(Surface surface){
     ShadowData d;
     d.cascadeIndex = i;
     d.cascadeBlend = fade;
+    
+    bool isLast = i == _CascadeCount-1;
+
     // d.strength = surface.depth < _ShadowDistance ? 1 : 0;
     d.strength = FadeShadowStrength(surface.depth,_ShadowDistanceFade.x,_ShadowDistanceFade.y);
-    bool isLast = i == _CascadeCount-1;
-    d.strength *= lerp(1,fade,isLast);
+    d.strength *= lerp(1,fade,isLast); // last cascade
+    // d.strength *= lerp(1,0, i == _CascadeCount);
+    d.strength *= step(i,_CascadeCount);
+
     d.cascadeBlend = lerp(d.cascadeBlend,1,isLast);
 
     // if(i == _CascadeCount-1){
     //     d.strength *= fade;
     //     d.cascadeBlend = 1;
     // } 
-    d.strength *= lerp(1,0, i == _CascadeCount);
     #if defined(_CASCADE_BLEND_DITHER)
     // else if(d.cascadeBlend < surface.dither)
     {
@@ -103,26 +109,53 @@ float FilterDirShadow(float3 posShadowSpace){
     #endif
 }
 
-float GetDirShadowAttenuation(DirectionalShadowData data,ShadowData shadowData,Surface surface){
-    #if defined(_RECEIVE_SHADOW_OFF)
-        return 1;
-    #endif
-    if(data.strength<=0)
-        return 1;
-
-    float3 normalBias = surface.normal * data.normalBias * _CascadeData[shadowData.cascadeIndex].y;
-    float3 posShadowSpace = mul(_DirectionalShadowMatrices[data.tileIndex],float4(surface.worldPos+normalBias,1)).xyz;
+float GetDirShadowAttenuationRealtime(DirectionalShadowData dirShadowData,ShadowData shadowData,Surface surface){
+    float3 normalBias = surface.normal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex].y;
+    float3 posShadowSpace = mul(_DirectionalShadowMatrices[dirShadowData.tileIndex],float4(surface.worldPos+normalBias,1)).xyz;
     float atten = FilterDirShadow(posShadowSpace);
 
     #if defined(_CASCADE_BLEND_SOFT)
         if(shadowData.cascadeBlend < 1)
         {
-            normalBias = surface.normal * data.normalBias * _CascadeData[shadowData.cascadeIndex+1].y;
-            posShadowSpace = mul(_DirectionalShadowMatrices[data.tileIndex+1],float4(surface.worldPos + normalBias,1)).xyz;
+            normalBias = surface.normal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex+1].y;
+            posShadowSpace = mul(_DirectionalShadowMatrices[dirShadowData.tileIndex+1],float4(surface.worldPos + normalBias,1)).xyz;
             float atten2 = FilterDirShadow(posShadowSpace);
             atten = lerp(atten2,atten,shadowData.cascadeBlend);
         }
     #endif
-    return lerp(1,atten,data.strength);
+    return lerp(1,atten,dirShadowData.strength);
+}
+
+float GetBakedShadow(DirectionalShadowData dirShadowData,ShadowData shadowData){
+    return shadowData.shadowMask[dirShadowData.occlusionMaskChannel];
+}
+
+float MixRealtimeAndBakedShadows(float realtimeShadow,float bakedShadow,float dirShadowStrength,float shadowStrength){
+    float shadow = realtimeShadow;
+    #if defined(_SHADOW_MASK_DISTANCE)
+        shadow = lerp(bakedShadow,realtimeShadow,shadowStrength);
+    #elif defined(_SHADOW_MASK)
+        realtimeShadow = lerp(1,realtimeShadow,shadowStrength);
+        shadow = min(bakedShadow,realtimeShadow);
+    #endif
+    return lerp(1,shadow,dirShadowStrength);
+    // return lerp(bakedShadow,realtimeShadow,dirShadowStrength);
+}
+
+float GetDirShadowAttenuation(DirectionalShadowData dirShadowData,ShadowData shadowData,Surface surface){
+    #if defined(_RECEIVE_SHADOW_OFF)
+        return 1;
+    #endif
+    float bakedShadow = 1;
+
+    #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
+        bakedShadow = GetBakedShadow(dirShadowData,shadowData);
+    #endif
+
+    if(dirShadowData.strength * shadowData.strength <= 0)
+        return bakedShadow;
+
+    float realtimeShadow = GetDirShadowAttenuationRealtime(dirShadowData,shadowData,surface);
+    return MixRealtimeAndBakedShadows(realtimeShadow,bakedShadow,dirShadowData.strength,shadowData.strength);
 }
 #endif  //CRP_SHADOWS_HLSL

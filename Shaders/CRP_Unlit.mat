@@ -30,6 +30,7 @@ Material:
     - _CullMode: 2
     - _DstMode: 0
     - _SrcMode: 1
+    - _TileId: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

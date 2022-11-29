@@ -126,6 +126,9 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
     return M;
 }
 
+#if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
+    #define SHADOWS_SHADOWMASK
+#endif
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #endif // UNITY_INPUT_HLSL

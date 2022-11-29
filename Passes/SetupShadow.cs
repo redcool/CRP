@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
+
     public struct LightShadowInfo
     {
         public int lightIndex;
@@ -16,6 +17,8 @@ namespace PowerUtilities
         public float shadowStrength;
         public float shadowNormalBias;
         public int shadowedLightIndex;
+        // shadow mask
+        public int occlusionMaskChannel;
     }
 
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/" + nameof(SetupShadow))]
@@ -32,7 +35,7 @@ namespace PowerUtilities
             _CascadeCullingSpheres = Shader.PropertyToID(nameof(_CascadeCullingSpheres)),
             _CascadeData = Shader.PropertyToID(nameof(_CascadeData)),
             _ShadowDistance = Shader.PropertyToID(nameof(_ShadowDistance)),
-            _ShadowDistanceFade = Shader.PropertyToID(nameof(_ShadowDistanceFade)),
+            _ShadowDistanceFade = Shader.PropertyToID(nameof(_ShadowDistanceFade)), //{1/distance,distanceFade factor,cascadeFade factor}
             _ShadowAtlasSize = Shader.PropertyToID(nameof(_ShadowAtlasSize))
         ;
 
@@ -52,10 +55,11 @@ namespace PowerUtilities
         Matrix4x4[] dirLightShadowMatrices;
 
         Vector4[]
-            dirLightShadowData,//{shadow strength,tile index, normal bias,0}
+            dirLightShadowData,//{shadow strength,tile index, normal bias,shadow Mask channel}
             cascadeCCullingSpheres = new Vector4[MAX_CASCADES], //{xyz:sphere center, w: dist2}
             cascadeData = new Vector4[MAX_CASCADES] //{x: 1/dist2,y: filterMode Atten}
             ;
+
 
         public override void OnRender()
         {
@@ -122,7 +126,8 @@ namespace PowerUtilities
 
                 dirLightShadowData[i] = new Vector4(shadowInfo.shadowStrength,
                     shadowInfo.shadowedLightIndex * maxCascadeCount,
-                    shadowInfo.shadowNormalBias + MIN_SHADOW_NORMAL_BIAS // min : 1
+                    shadowInfo.shadowNormalBias + MIN_SHADOW_NORMAL_BIAS ,// min : 1
+                    shadowInfo.occlusionMaskChannel
                     );
 
             }
@@ -131,16 +136,21 @@ namespace PowerUtilities
 
         public bool SetupShadowInfo(Light light, int id, out LightShadowInfo shadowInfo)
         {
-            shadowInfo = default(LightShadowInfo);
+            shadowInfo = default;
 
+            var isInnerBounds = cullingResults.GetShadowCasterBounds(id, out var bounds);
             var isInvalidShadowLight =
                 light.shadows == LightShadows.None ||
                 light.shadowStrength <= 0 ||
-                !cullingResults.GetShadowCasterBounds(id, out var bounds)
+                !isInnerBounds
                 ;
+
+            light.HasShadowMask(out shadowInfo.occlusionMaskChannel);
 
             if (!isInvalidShadowLight)
             {
+                var bakingOutput = light.bakingOutput;
+
                 shadowInfo = new LightShadowInfo
                 {
                     lightIndex = id,
@@ -148,8 +158,9 @@ namespace PowerUtilities
                     shadowNearPlane = light.shadowNearPlane,
                     shadowStrength = light.shadowStrength,
                     shadowNormalBias = light.shadowNormalBias,
-                    shadowedLightIndex = 0 // will get light id outer this method
-                };
+                    shadowedLightIndex = 0, // will get light id outer this method
+                    occlusionMaskChannel = bakingOutput.occlusionMaskChannel
+            };
             }
             return !isInvalidShadowLight;
         }
@@ -201,7 +212,7 @@ namespace PowerUtilities
             float f = 1f - cascadeFade;
             Cmd.SetGlobalVector(_ShadowDistanceFade, new Vector4(1f / shadowDistance, 1f / distanceFade, 1f / (1f - f * f)));
             Cmd.SetGlobalVector(_ShadowAtlasSize, new Vector4(atlasSize, 1f / atlasSize));
-
+            
             Cmd.EndSampleExecute(sampleName, ref context);
             //Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
         }
