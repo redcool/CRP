@@ -35,7 +35,8 @@ TEXTURE3D_FLOAT(unity_ProbeVolumeSH);
 SAMPLER(samplerunity_ProbeVolumeSH);
 
 struct GI{
-    float3 diffuse;
+    float3 diffuse; // sh,lightmap
+    float3 specular; // envColor
     float4 shadowMask;
 };
 
@@ -94,13 +95,27 @@ float4 SampleBakedShadow(float2 uv,float3 position){
     #endif
 }
 
-GI GetGI(float2 lightmapUV,Surface surface){
+float3 SampleIBL(TEXTURECUBE_PARAM(iblMap,sampler_iblMap),float4 hdrParams,float3 viewDir,float3 normal,float rough){
+    float3 reflectDir = reflect(-viewDir,normal);
+    float mip = rough * (1.7 - 0.7 * rough) * 6;
+    float4 envColor = SAMPLE_TEXTURECUBE_LOD(iblMap,sampler_iblMap,reflectDir,mip);
+    envColor.xyz = DecodeHDREnvironment(envColor,hdrParams);
+    return envColor.xyz;
+}
+
+float3 SampleUnityIBL(float3 viewDir,float3 normal,float rough){
+    return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,unity_SpecCube0_HDR,viewDir,normal,rough);
+}
+
+GI GetGI(float2 lightmapUV,Surface surface,BRDF brdf){
     GI gi = (GI)0;
     #if defined(LIGHTMAP_ON)
     gi.diffuse += SampleLightmap(lightmapUV);
     #else
     gi.diffuse += SampleProbes(surface.worldPos,surface.normal); 
     #endif
+
+    gi.specular = SampleUnityIBL(surface.viewDir,surface.normal,brdf.a);
 
     #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
     gi.shadowMask = SampleBakedShadow(lightmapUV,surface.worldPos);

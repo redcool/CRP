@@ -88,8 +88,8 @@ namespace PowerUtilities
 
         int SetupShadows()
         {
-            var maxLightCount = Mathf.Min(lightShadowSettings.maxLightCount, cullingResults.visibleLights.Length);
-            var maxShadowedDirLightCount = Mathf.Min(maxLightCount,lightShadowSettings.maxShadowedDirLightCount);
+            var maxLightCount = lightShadowSettings.maxLightCount;
+            var maxShadowedDirLightCount = lightShadowSettings.maxShadowedDirLightCount;
             var maxCascadeCount = lightShadowSettings.maxCascades;
 
             if (maxShadowedDirLightCount <= 0)

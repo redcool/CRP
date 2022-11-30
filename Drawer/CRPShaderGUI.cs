@@ -30,6 +30,9 @@ public class CRPShaderGUI : ShaderGUI
 
     private void UpdateShadowCasters()
     {
+        if (materials == null)
+            return;
+
         foreach (Material mat in materials)
         {
             var _ShadowMode = FindProperty("_ShadowMode", properties);

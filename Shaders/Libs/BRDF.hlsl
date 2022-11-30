@@ -4,7 +4,7 @@
 struct BRDF{
     float3 diffuse;
     float3 specular;
-    float a,a2;
+    float roughness,a,a2;
 };
 
 
@@ -13,9 +13,9 @@ BRDF GetBRDF(Surface s){
     BRDF b = (BRDF)0;
     b.diffuse = s.albedo * s.oneMinusReflectivity;
     b.specular = lerp(0.04,s.albedo,s.metallic);
-    float r = 1 - s.smoothness;
-    b.a = r * r;
-    b.a2 = b.a*b.a;
+    b.roughness = 1 - s.smoothness;
+    b.a = max(HALF_MIN_SQRT,b.roughness * b.roughness);
+    b.a2 = max(HALF_MIN,b.a*b.a);
 
     return b;
 }

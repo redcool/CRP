@@ -41,12 +41,12 @@
         o.uv = TRANSFORM_TEX(v.uv, _MainTex);
         
         float3 worldPos = TransformObjectToWorld(v.vertex.xyz);
-        float3 wn = TransformObjectToWorldNormal(v.normal);
+        float3 worldNormal = TransformObjectToWorldNormal(v.normal);
         float3 wt = TransformObjectToWorldDir(v.tangent.xyz);
-        float3 wb = cross(wn,wt) * v.tangent.w;
-        o.tSpace0 = float4(wt.x,wb.x,wn.x,worldPos.x);
-        o.tSpace1 = float4(wt.y,wb.y,wn.y,worldPos.y);
-        o.tSpace2 = float4(wt.z,wb.z,wn.z,worldPos.z);
+        float3 wb = cross(worldNormal,wt) * v.tangent.w;
+        o.tSpace0 = float4(wt.x,wb.x,worldNormal.x,worldPos.x);
+        o.tSpace1 = float4(wt.y,wb.y,worldNormal.y,worldPos.y);
+        o.tSpace2 = float4(wt.z,wb.z,worldNormal.z,worldPos.z);
 
         o.lightmapUV = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
 
@@ -60,8 +60,8 @@
         ClipLOD(i.vertex.xy);
 
         float3 worldPos = float3(i.tSpace0.w,i.tSpace1.w,i.tSpace2.w);
-        float3 wn = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);
-        wn = normalize(wn);
+        float3 worldNormal = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);
+        worldNormal = normalize(worldNormal);
 
         half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex, i.uv) * _Color;
         #if defined(_CLIPPING)
@@ -71,7 +71,7 @@
         half4 pbrMask = SAMPLE_TEXTURE2D(_PBRMask,sampler_PBRMask,i.uv);
 
         Surface surface = (Surface)0;
-        surface.normal = wn;
+        surface.normal = worldNormal;
         surface.albedo = mainTex.xyz;
         surface.alpha = mainTex.w;
 
@@ -85,9 +85,16 @@
         surface.depth = -TransformWorldToView(worldPos).z;
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
 
-        GI gi = GetGI(i.lightmapUV,surface);
+        BRDF brdf = GetBRDF(surface);
+
+        GI gi = GetGI(i.lightmapUV,surface,brdf);
+
+        ShadowData shadowData = GetShadowData(surface);
+        shadowData.shadowMask = gi.shadowMask;
+
 // return _DirectionalLightShadowData[0].w==1;
-        half3 col = GetLighting(surface,gi);
+        half3 col = CalcLighting(surface,gi,brdf,shadowData);
+        
         col.xyz += GetEmission(i.uv);
         return half4(col,surface.alpha);
     }

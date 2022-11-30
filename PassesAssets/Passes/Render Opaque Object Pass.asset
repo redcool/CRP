@@ -33,4 +33,4 @@ MonoBehaviour:
   enableDynamicBatch: 0
   enableInstanced: 1
   enableSRPBatch: 1
-  perObjectData: 1821
+  perObjectData: 1823

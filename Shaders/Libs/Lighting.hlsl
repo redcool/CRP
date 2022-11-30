@@ -28,18 +28,23 @@ float3 CalcLight(Light light,Surface surface,BRDF brdf){
     return (brdf.diffuse + brdf.specular * specTerm) * radiance;
 }
 
-float3 GetLighting(Surface surface,GI gi){
-    BRDF brdf = GetBRDF(surface);
+float3 CalcGI(Surface surface,GI gi,BRDF brdf){
+    float surfaceReduction = 1/(brdf.a2+1);
+    float grazingTerm = saturate(surface.metallic+surface.smoothness);
+    float nv = saturate(dot(surface.normal,surface.viewDir));
+    float fresnelTerm = Pow4(1-nv);
+    float3 specularGI = gi.specular * lerp(brdf.specular,grazingTerm,fresnelTerm) * surfaceReduction;
+    float3 diffuseGI = gi.diffuse * brdf.diffuse;
+    return (diffuseGI + specularGI) * surface.occlusion;
+}
 
-    ShadowData shadowData = GetShadowData(surface);
-    shadowData.shadowMask = gi.shadowMask;
-
-    float3 col = (gi.diffuse * brdf.diffuse) * surface.occlusion;
+float3 CalcLighting(Surface surface,GI gi,BRDF brdf,ShadowData shadowData){
+    float3 col = CalcGI(surface,gi,brdf);
 
     int lightCount = GetLightCount();
     for(int i=0;i<lightCount;i++){
         Light l = GetLight(i,surface,shadowData);
-        col += CalcLight(l,surface);
+        col += CalcLight(l,surface,brdf);
     }
     return col;
 }
