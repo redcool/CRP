@@ -102,10 +102,10 @@ half3 SampleIBL(TEXTURECUBE_PARAM(iblMap,sampler_iblMap),float4 hdrParams,float3
     envColor.xyz = DecodeHDREnvironment(envColor,hdrParams);
     return envColor.xyz;
 }
-float4 _IBL_HDR;
+
 float3 SampleUnityIBL(float3 viewDir,float3 normal,float rough){
     float4 hdrParams = max(float4(1,1,0,0),unity_SpecCube0_HDR);
-    return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,_IBL_HDR,viewDir,normal,rough);
+    return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,hdrParams,viewDir,normal,rough);
 }
 
 GI GetGI(float2 lightmapUV,Surface surface,BRDF brdf){
