@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: CRP:PowerUtilities:SetupVariables
   isFoldout: 0
   overridePassName: 
-  gameCameraTag: 
+  gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 1
   variables:
   - name: unity_SpecCube0
-    type: 2
+    type: 1
     textureValue: {fileID: 8900000, guid: 612545002917b8347826a86b6276044a, type: 3}
     vectorValue: {x: 0, y: 0, z: 0, w: 0}
     floatValue: 0

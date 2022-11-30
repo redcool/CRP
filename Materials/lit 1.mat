@@ -39,12 +39,12 @@ Material:
     - _CullOff: 0.5
     - _DstMode: 0
     - _FresnelIntensity: 1
-    - _Metallic: 0.794
+    - _Metallic: 0.74
     - _Occlusion: 0
     - _PremulAlpha: 0
     - _ReceiveShadowOff: 1
     - _ShadowMode: 1
-    - _Smoothness: 0.498
+    - _Smoothness: 0.726
     - _SrcMode: 1
     - _ZWrite: 1
     m_Colors:

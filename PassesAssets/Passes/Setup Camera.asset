@@ -15,6 +15,5 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: 
-  enabledCameraTypes: -1
   isInterrupt: 0
   isSkip: 0
