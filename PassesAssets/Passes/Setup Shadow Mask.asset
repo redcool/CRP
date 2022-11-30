@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: 
-  cameraTag: MainCamera
+  gameCameraTag: MainCamera
+  enabledCameraTypes: -1
   isInterrupt: 0
   isSkip: 0
   shadowMaskMode: 2

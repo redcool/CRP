@@ -18,6 +18,7 @@ namespace PowerUtilities
 
         public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();
+        List<BasePass> needCleanupList = new List<BasePass>();
 
         public CRP(CRPAsset asset)
         {
@@ -28,16 +29,15 @@ namespace PowerUtilities
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)
         {
-            if (!Asset || Asset.passes == null || 
+            if (!Asset || Asset.passes == null ||
                 Asset.passes.Length == 0 ||
-                cameras.Length ==0)
+                cameras.Length == 0)
                 return;
 
             CameraStates.cameras = cameras;
 
             ExecutePasses(Asset.beginPasses, ref context, cameras[0], 0);
 
-            //foreach (var camera in cameras)
             for (int i = 0; i < cameras.Length; i++)
             {
                 CameraStates.cameraIndex = i;
@@ -46,11 +46,22 @@ namespace PowerUtilities
 
                 ExecutePasses(Asset.passes, ref context, camera, i);
             }
-            ExecutePasses(Asset.endPasses, ref context, cameras[cameras.Length-1], cameras.Length-1);
+            ExecutePasses(Asset.endPasses, ref context, cameras[cameras.Length - 1], cameras.Length - 1);
 
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
+            //cleanup
+            Cleanup();
+
+            cmd.Execute(ref context);
             context.Submit();
+        }
+
+        private void Cleanup()
+        {
+            for (int i = 0; i < needCleanupList.Count; i++)
+            {
+                needCleanupList[i].Cleanup();
+            }
+            needCleanupList.Clear();
         }
 
         void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
@@ -61,6 +72,9 @@ namespace PowerUtilities
             {
                 if (pass == null || pass.isSkip)
                     continue;
+                
+                if(pass.NeedCleanup())
+                    needCleanupList.Add(pass);  
 
                 pass.Render(ref context, camera);
 

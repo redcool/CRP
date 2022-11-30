@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: Render Opaque Object Pass
-  cameraTag: 
+  gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
   drawOpaques: 1
@@ -33,4 +33,4 @@ MonoBehaviour:
   enableDynamicBatch: 0
   enableInstanced: 1
   enableSRPBatch: 1
-  perObjectData: 1823
+  perObjectData: -1

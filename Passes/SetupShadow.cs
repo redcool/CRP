@@ -67,8 +67,18 @@ namespace PowerUtilities
                 return;
 
             shadowedDirLightCount = SetupShadows();
-            RenderShadows();
+
+            //
+            if(!camera.IsReflectionCamera())
+                RenderShadows();
+
+            SendShadowParams();
             SetShadowKeywords();
+        }
+        public override bool NeedCleanup() => true;
+        public override void Cleanup()
+        {
+            Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
         }
 
         void SetShadowKeywords()
@@ -174,22 +184,25 @@ namespace PowerUtilities
             _ => 1
         };
 
-        public void RenderShadows()
+
+        void SetupShadowTarget(int atlasSize)
         {
-            var atlasSize = (int)lightShadowSettings.atlasSize;
-            var cascadeCount = lightShadowSettings.maxCascades;
-            var shadowDistance = lightShadowSettings.maxShadowDistance;
-            var distanceFade = lightShadowSettings.distanceFade;
-            var cascadeFade = lightShadowSettings.cascadeFade;
-
-            var sampleName = nameof(RenderShadows);
-            Cmd.BeginSampleExecute(sampleName, ref context);
-
             Cmd.GetTemporaryRT(_DirectionalShadowAtlas, atlasSize, atlasSize, 32,
                 FilterMode.Bilinear, RenderTextureFormat.Shadowmap);
 
             Cmd.SetRenderTarget(_DirectionalShadowAtlas, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
             Cmd.ClearRenderTarget(true, false, Color.clear);
+        }
+
+        public void RenderShadows()
+        {
+            var atlasSize = (int)lightShadowSettings.atlasSize;
+            var cascadeCount = lightShadowSettings.maxCascades;
+
+            var sampleName = nameof(RenderShadows);
+            Cmd.BeginSampleExecute(sampleName, ref context);
+
+            SetupShadowTarget(atlasSize);
 
             var splitCount = GetAtlasRowCount(shadowedDirLightCount * cascadeCount);
             var tileSize = atlasSize / splitCount;
@@ -200,6 +213,17 @@ namespace PowerUtilities
 
             Cmd.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
             Cmd.SetGlobalDepthBias(0, 0);
+
+            Cmd.EndSampleExecute(sampleName, ref context);
+        }
+
+        private void SendShadowParams()
+        {
+            var atlasSize = (int)lightShadowSettings.atlasSize;
+            var cascadeCount = lightShadowSettings.maxCascades;
+            var shadowDistance = lightShadowSettings.maxShadowDistance;
+            var distanceFade = lightShadowSettings.distanceFade;
+            var cascadeFade = lightShadowSettings.cascadeFade;
 
             Cmd.SetGlobalMatrixArray(_DirectionalShadowMatrices, dirLightShadowMatrices);
 
@@ -212,9 +236,6 @@ namespace PowerUtilities
             float f = 1f - cascadeFade;
             Cmd.SetGlobalVector(_ShadowDistanceFade, new Vector4(1f / shadowDistance, 1f / distanceFade, 1f / (1f - f * f)));
             Cmd.SetGlobalVector(_ShadowAtlasSize, new Vector4(atlasSize, 1f / atlasSize));
-            
-            Cmd.EndSampleExecute(sampleName, ref context);
-            //Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
         }
 
         Rect GetTileRect(int id, int splitCount, int tileSize)
@@ -222,8 +243,6 @@ namespace PowerUtilities
             var offset = new Vector2(id % splitCount, id / splitCount);
             return new Rect(offset.x * tileSize, offset.y * tileSize, tileSize, tileSize);
         }
-
-
 
         void ConvertToShadowAtlasMatrix(ref Matrix4x4 m, Vector2 offset, float splitCount, int splitId)
         {

@@ -32,7 +32,7 @@ float3 CalcGI(Surface surface,GI gi,BRDF brdf){
     float surfaceReduction = 1/(brdf.a2+1);
     float grazingTerm = saturate(surface.metallic+surface.smoothness);
     float nv = saturate(dot(surface.normal,surface.viewDir));
-    float fresnelTerm = Pow4(1-nv);
+    float fresnelTerm = Pow4(1-nv) * surface.fresnelIntensity;
     float3 specularGI = gi.specular * lerp(brdf.specular,grazingTerm,fresnelTerm) * surfaceReduction;
     float3 diffuseGI = gi.diffuse * brdf.diffuse;
     return (diffuseGI + specularGI) * surface.occlusion;

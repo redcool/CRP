@@ -16,9 +16,9 @@ namespace PowerUtilities
         [Tooltip("Pass name show in FrameDebugger")]
         public string overridePassName;
 
-        [Header("Filters")]
-        [Tooltip("Execute when camera's tag equals,otherwise skip")]
-        public string cameraTag;
+        [Header("Filters (all)")]
+        [Tooltip(" Execute when camera's tag equals,otherwise skip")]
+        public string gameCameraTag;
 
         [Header("Render flow")]
         [Tooltip("When pass done, break render flow?")]
@@ -53,11 +53,13 @@ namespace PowerUtilities
         {
             this.context = context;
             this.camera = camera;
+            var passName = PassName();
 
             if (!CanExecute())
                 return;
+            //if(camera.IsReflectionCamera())
+            //Debug.Log(passName);
 
-            var passName = PassName();
             Cmd.name = passName;
             Cmd.BeginSampleExecute(Cmd.name, ref context);
 
@@ -69,13 +71,23 @@ namespace PowerUtilities
 
         public abstract void OnRender();
 
-        public virtual bool CanExecute() => 
-            string.IsNullOrEmpty(cameraTag) ? true : camera.CompareTag(cameraTag) || 
-            camera.cameraType == CameraType.SceneView ||
-            camera.cameraType == CameraType.Preview;
+        public virtual bool CanExecute()
+        {
+            if (camera.cameraType == CameraType.Game)
+            {
+                return string.IsNullOrEmpty(gameCameraTag) ? true : camera.CompareTag(gameCameraTag);
+            }
+            return true;
+            //return enabledCameraTypes.HasFlag(camera.cameraType);
+        }
 
-        public bool IsCullingResultsValid() => cullingResults != default(CullingResults);
+        public bool IsCullingResultsValid() => cullingResults != default;
 
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
+        public virtual bool NeedCleanup() => false;
+        public virtual void Cleanup()
+        {
+
+        }
     }
 }

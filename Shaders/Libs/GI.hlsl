@@ -77,9 +77,9 @@ half3 SampleProbes(float3 position,float3 normal){
     return SampleSH9(normal);
 }
 
-float4 SampleBakedShadow(float2 uv,float3 position){
+half4 SampleBakedShadow(float2 uv,float3 position){
     #if defined(LIGHTMAP_ON)
-        float4 shadowMask = SAMPLE_TEXTURE2D(unity_ShadowMask,samplerunity_ShadowMask,uv);
+        half4 shadowMask = SAMPLE_TEXTURE2D(unity_ShadowMask,samplerunity_ShadowMask,uv);
         return shadowMask;
     #else
         if(unity_ProbeVolumeParams.x){ // lppv
@@ -95,16 +95,17 @@ float4 SampleBakedShadow(float2 uv,float3 position){
     #endif
 }
 
-float3 SampleIBL(TEXTURECUBE_PARAM(iblMap,sampler_iblMap),float4 hdrParams,float3 viewDir,float3 normal,float rough){
+half3 SampleIBL(TEXTURECUBE_PARAM(iblMap,sampler_iblMap),float4 hdrParams,float3 viewDir,float3 normal,float rough){
     float3 reflectDir = reflect(-viewDir,normal);
     float mip = rough * (1.7 - 0.7 * rough) * 6;
     float4 envColor = SAMPLE_TEXTURECUBE_LOD(iblMap,sampler_iblMap,reflectDir,mip);
     envColor.xyz = DecodeHDREnvironment(envColor,hdrParams);
     return envColor.xyz;
 }
-
+float4 _IBL_HDR;
 float3 SampleUnityIBL(float3 viewDir,float3 normal,float rough){
-    return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,unity_SpecCube0_HDR,viewDir,normal,rough);
+    float4 hdrParams = max(float4(1,1,0,0),unity_SpecCube0_HDR);
+    return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,_IBL_HDR,viewDir,normal,rough);
 }
 
 GI GetGI(float2 lightmapUV,Surface surface,BRDF brdf){

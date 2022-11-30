@@ -9,6 +9,7 @@ Shader "CRP/Lit"
         _Metallic("_Metallic",range(0,1)) = 0.5
         _Smoothness("_Smoothness",range(0,1)) = 0.5
         _Occlusion("_Occlusion",range(0,1)) = 0
+        _FresnelIntensity("_FresnelIntensity",range(0,1))=1
 
         [Header(Emission)]
         _EmissionMap("_EmissionMap",2d)="white"{}

@@ -56,7 +56,16 @@ namespace Assets.CRP.Test
             DrawObjects();
             DrawGizmos();
 
-            cmd.Blit(_CameraTarget, BuiltinRenderTextureType.CameraTarget, TestRPAsset.asset.blitMat);
+
+            if (CanExecute(camera))
+            {
+                cmd.BeginSample("final blit");
+                if (camera.cameraType != CameraType.Reflection)
+                {
+                    cmd.Blit(_CameraTarget, BuiltinRenderTextureType.CameraTarget, TestRPAsset.asset.blitMat);
+                }
+                cmd.EndSample("final blit");
+            }
 
             Submit();
         }
@@ -77,25 +86,27 @@ namespace Assets.CRP.Test
 
             cmd.GetTemporaryRT(_CameraTarget, desc);
             cmd.GetTemporaryRT(_CameraTexture, desc);
+            cmd.GetTemporaryRT(_CameraDepthTexture, desc);
 
             desc.colorFormat = RenderTextureFormat.Depth;
             desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
-            cmd.GetTemporaryRT(_CameraDepthTexture, desc);
             cmd.GetTemporaryRT(_CameraDepthTarget, desc);
 
         }
-        bool isMainCamera(Camera c)
+        bool CanExecute(Camera c)
         {
-            return c.CompareTag("MainCamera") || c.cameraType == CameraType.SceneView;
+            //return c.CompareTag("MainCamera") || c.cameraType == CameraType.SceneView;
+            return c.cameraType != CameraType.Reflection;
         }
         public void Setup()
         {
             context.SetupCameraProperties(camera);
 
-            if(isMainCamera(camera))
+            if (CanExecute(camera))
+            {
                 SetupTextures();
-
-            cmd.SetRenderTarget(new RenderTargetIdentifier(_CameraTarget), new RenderTargetIdentifier(_CameraDepthTarget));
+                cmd.SetRenderTarget(_CameraTarget, (RenderTargetIdentifier)_CameraDepthTarget);
+            }
             
             cmd.ClearRenderTarget(camera.clearFlags <= CameraClearFlags.Depth,
                 camera.clearFlags == CameraClearFlags.Color,
@@ -130,7 +141,7 @@ namespace Assets.CRP.Test
 
             context.DrawSkybox(camera);
 
-            if(isMainCamera(camera))
+            if(CanExecute(camera))
                 BlitTextures();
 
             filterSettings.renderQueueRange = RenderQueueRange.transparent;

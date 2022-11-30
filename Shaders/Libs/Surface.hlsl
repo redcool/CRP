@@ -10,6 +10,7 @@ struct Surface{
     float3 worldPos;
     float depth;
     float dither;
+    float fresnelIntensity;
 };
 
 void PremultiplyAlpha(inout Surface s){

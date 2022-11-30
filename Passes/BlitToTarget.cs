@@ -27,6 +27,9 @@ namespace PowerUtilities
 
         public override bool CanExecute()
         {
+            if (camera.IsReflectionCamera())
+                return false;
+
             var isSourceOk = isCurrentActive || !string.IsNullOrEmpty(sourceName);
             var isTargetOk = isDefaultCameraTarget || !string.IsNullOrEmpty(targetName);
             return base.CanExecute() && isSourceOk && isTargetOk;

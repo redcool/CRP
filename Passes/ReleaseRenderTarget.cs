@@ -14,6 +14,14 @@ namespace PowerUtilities
         public string[] targetNames = new[] { "_CameraTarget"} ;
         int [] targetIds;
 
+        public override bool CanExecute()
+        {
+            if (camera.IsReflectionCamera())
+                return false;
+
+            return base.CanExecute();
+        }
+
         public override void OnRender()
         {
             if (targetNames==null)

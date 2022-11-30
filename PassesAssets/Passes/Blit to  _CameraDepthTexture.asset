@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: BlitToCameraDepthTexture
-  cameraTag: MainCamera
+  gameCameraTag: MainCamera
+  enabledCameraTypes: 3
   isInterrupt: 0
   isSkip: 0
   sourceName: _CameraDepthTarget

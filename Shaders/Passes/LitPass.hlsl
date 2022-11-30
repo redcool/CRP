@@ -84,17 +84,19 @@
         surface.worldPos = worldPos;
         surface.depth = -TransformWorldToView(worldPos).z;
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
+        surface.fresnelIntensity = _FresnelIntensity;
 
         BRDF brdf = GetBRDF(surface);
-
+// return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,1,surface.viewDir,surface.normal,brdf.roughness).xyzx;
+// return SampleUnityIBL(surface.viewDir,surface.normal,brdf.roughness).xyzx;
         GI gi = GetGI(i.lightmapUV,surface,brdf);
-
+// return gi.specular.xyzx;
         ShadowData shadowData = GetShadowData(surface);
         shadowData.shadowMask = gi.shadowMask;
 
 // return _DirectionalLightShadowData[0].w==1;
         half3 col = CalcLighting(surface,gi,brdf,shadowData);
-        
+
         col.xyz += GetEmission(i.uv);
         return half4(col,surface.alpha);
     }

@@ -15,9 +15,9 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   cameraTag: 
+  enabledCameraTypes: 15
   isInterrupt: 0
   isSkip: 0
-  isSetupCameraProperties: 0
   targetNames:
   - _CameraTarget
   depthTargetName: _CameraDepthTarget

@@ -26,6 +26,9 @@ namespace PowerUtilities
 
         public override bool CanExecute()
         {
+            if (camera.IsReflectionCamera())
+                return false;
+
             var isok = base.CanExecute();
             return isok;
         }

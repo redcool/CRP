@@ -15,6 +15,7 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: Final Blit To CameraTarget
   cameraTag: 
+  enabledCameraTypes: 15
   isInterrupt: 0
   isSkip: 0
   sourceName: 

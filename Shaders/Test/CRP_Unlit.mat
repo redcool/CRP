@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CRP_Unlit
-  m_Shader: {fileID: 4800000, guid: 6ba69367ec5ad064c82dd2da2ab1d8cc, type: 3}
+  m_Shader: {fileID: 4800000, guid: 4ca0b2c4e4a6a2b40ac2e411e5ce4a9f, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -26,9 +26,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _CascadeId: 0
     - _CullMode: 2
     - _DstMode: 0
     - _SrcMode: 1
+    - _TileId: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
