@@ -2,16 +2,32 @@ Shader "CRP/Lit"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
-        _Color("_Color",color) = (1,1,1,1)
+        // [Group(_)]
+        [GroupItem(_)] _MainTex ("Texture", 2D) = "white" {}
+        [GroupItem(_)] _Color("_Color",color) = (1,1,1,1)
 
-        _PBRMask("_PBRMask",2d)="white"{}
-        _Metallic("_Metallic",range(0,1)) = 0.5
-        _Smoothness("_Smoothness",range(0,1)) = 0.5
-        _Occlusion("_Occlusion",range(0,1)) = 0
+        [GroupItem(_)] _PBRMask("_PBRMask(M,S,O)",2d)="white"{}
+        [GroupItem(_)] _Metallic("_Metallic",range(0,1)) = 0.5
+        [GroupItem(_)] _Smoothness("_Smoothness",range(0,1)) = 0.5
+        [GroupItem(_)] _Occlusion("_Occlusion",range(0,1)) = 0
+        
+        [Header(Env)]
         _FresnelIntensity("_FresnelIntensity",range(0,1))=1
 
+        [Header(NormalMap)]
+        [GroupToggle(,_NORMAL_MAP_ON)]_NormalMapOn("_NormalMapOn",int) = 0
+        _NormalMap("_NormalMap",2d)="bump"{}
+        _NormalMapScale("_NormalMapScale",range(0,5)) = 1
+
+        [Header(Detail)]
+        [GroupToggle(,_DETAIL_MAP_ON)]_DetailMapOn("_DetailMapOn",int) = 0
+        _DetailMap("_DetailMap(w : mask)",2d) = "white"{}
+        _DetailMapScale("_DetailMapScale",range(0,2)) = 1
+        _DetailNormalMap("_DetailNormalMap",2d)="bump"{}
+        _DetailNormalMapScale("_DetailNormalMapScale",range(0,5)) = 1
+
         [Header(Emission)]
+        [GroupToggle(,_EMISSION_MAP_ON)]_EmissionMapOn("_EmissionMapOn",int) = 0
         _EmissionMap("_EmissionMap",2d)="white"{}
         [hdr]_EmissionColor("_EmissionColor",color) = (0,0,0,0)
         
@@ -54,6 +70,9 @@ Shader "CRP/Lit"
             #pragma shader_feature _CLIPPING
             #pragma shader_feature _PREMULTIPLY_ALPHA
             #pragma shader_feature _RECEIVE_SHADOW_OFF
+            #pragma shader_feature _NORMAL_MAP_ON
+            #pragma shader_feature _DETAIL_MAP_ON
+            #pragma shader_feature _EMISSION_MAP_ON
 
             #pragma multi_compile_instancing
             #pragma multi_compile _ _DIRECTIONAL_PCF3 _DIRECTIONAL_PCF5 _DIRECTIONAL_PCF7

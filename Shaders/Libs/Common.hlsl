@@ -18,4 +18,12 @@ void ClipLOD(float2 screenPos){
     #endif
 }
 
+float3 TransformToTangent(float3 tSpace0,float3 tSpace1,float3 tSpace2,float3 tn){
+    return float3(
+        dot(tSpace0,tn),
+        dot(tSpace1,tn),
+        dot(tSpace2,tn)
+    );
+}
+
 #endif //CRP_COMMON_HLSL

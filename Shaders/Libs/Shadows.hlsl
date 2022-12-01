@@ -110,14 +110,14 @@ float FilterDirShadow(float3 posShadowSpace){
 }
 
 float GetDirShadowAttenuationRealtime(DirectionalShadowData dirShadowData,ShadowData shadowData,Surface surface){
-    float3 normalBias = surface.normal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex].y;
+    float3 normalBias = surface.vertexNormal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex].y;
     float3 posShadowSpace = mul(_DirectionalShadowMatrices[dirShadowData.tileIndex],float4(surface.worldPos+normalBias,1)).xyz;
     float atten = FilterDirShadow(posShadowSpace);
 
     #if defined(_CASCADE_BLEND_SOFT)
         if(shadowData.cascadeBlend < 1)
         {
-            normalBias = surface.normal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex+1].y;
+            normalBias = surface.vertexNormal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex+1].y;
             posShadowSpace = mul(_DirectionalShadowMatrices[dirShadowData.tileIndex+1],float4(surface.worldPos + normalBias,1)).xyz;
             float atten2 = FilterDirShadow(posShadowSpace);
             atten = lerp(atten2,atten,shadowData.cascadeBlend);

@@ -21,7 +21,7 @@
     struct v2f
     {
         float4 vertex : SV_POSITION;
-        float2 uv : TEXCOORD0;
+        float4 uv : TEXCOORD0;
         float4 tSpace0:TEXCOORD1;
         float4 tSpace1:TEXCOORD2;
         float4 tSpace2:TEXCOORD3;
@@ -38,15 +38,15 @@
         UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
         o.vertex = TransformObjectToHClip(v.vertex.xyz);
-        o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+        o.uv = float4(TRANSFORM_TEX(v.uv, _MainTex),v.uv);
         
         float3 worldPos = TransformObjectToWorld(v.vertex.xyz);
-        float3 worldNormal = TransformObjectToWorldNormal(v.normal);
-        float3 wt = TransformObjectToWorldDir(v.tangent.xyz);
-        float3 wb = cross(worldNormal,wt) * v.tangent.w;
-        o.tSpace0 = float4(wt.x,wb.x,worldNormal.x,worldPos.x);
-        o.tSpace1 = float4(wt.y,wb.y,worldNormal.y,worldPos.y);
-        o.tSpace2 = float4(wt.z,wb.z,worldNormal.z,worldPos.z);
+        float3 n = TransformObjectToWorldNormal(v.normal);
+        float3 t = TransformObjectToWorldDir(v.tangent.xyz);
+        float3 b = cross(n,t) * v.tangent.w * GetOddNegativeScale();
+        o.tSpace0 = float4(t.x,b.x,n.x,worldPos.x);
+        o.tSpace1 = float4(t.y,b.y,n.y,worldPos.y);
+        o.tSpace2 = float4(t.z,b.z,n.z,worldPos.z);
 
         o.lightmapUV = v.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
 
@@ -60,20 +60,22 @@
         ClipLOD(i.vertex.xy);
 
         float3 worldPos = float3(i.tSpace0.w,i.tSpace1.w,i.tSpace2.w);
-        float3 worldNormal = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);
-        worldNormal = normalize(worldNormal);
+        float3 vertexNormal = float3(i.tSpace0.z,i.tSpace1.z,i.tSpace2.z);
 
-        half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex, i.uv) * _Color;
+        half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex, i.uv.xy) * _Color;
         #if defined(_CLIPPING)
             clip(mainTex.w - _CullOff);
         #endif
         
-        half4 pbrMask = SAMPLE_TEXTURE2D(_PBRMask,sampler_PBRMask,i.uv);
+        half4 pbrMask = SAMPLE_TEXTURE2D(_PBRMask,sampler_PBRMask,i.uv.xy);
 
         Surface surface = (Surface)0;
-        surface.normal = worldNormal;
         surface.albedo = mainTex.xyz;
+        float detailMask = ApplyDetailMap(surface.albedo/**/,i.uv.zw);
         surface.alpha = mainTex.w;
+
+        surface.normal = surface.vertexNormal = normalize(vertexNormal);
+        ApplyNormal(surface.normal/**/,i.uv.zw,i.tSpace0.xyz,i.tSpace1.xyz,i.tSpace2.xyz,detailMask);
 
         surface.metallic = pbrMask.x * _Metallic;
         surface.oneMinusReflectivity = 0.96 - 0.96 * surface.metallic;
@@ -87,8 +89,7 @@
         surface.fresnelIntensity = _FresnelIntensity;
 
         BRDF brdf = GetBRDF(surface);
-// return SampleIBL(unity_SpecCube0,samplerunity_SpecCube0,1,surface.viewDir,surface.normal,brdf.roughness).xyzx;
-// return SampleUnityIBL(surface.viewDir,surface.normal,brdf.roughness).xyzx;
+
         GI gi = GetGI(i.lightmapUV,surface,brdf);
 // return gi.specular.xyzx;
         ShadowData shadowData = GetShadowData(surface);

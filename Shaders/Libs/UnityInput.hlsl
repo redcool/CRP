@@ -131,4 +131,6 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
 #endif
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
+    #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
 #endif // UNITY_INPUT_HLSL
