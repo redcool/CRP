@@ -6,6 +6,9 @@
 float DistanceSquared(float3 p1,float3 p2){
     return dot(p1-p2,p1-p2);
 }
+float Pow2(float x){
+    return x*x;
+}
 
 void ClipLOD(float2 screenPos){
     #if defined(LOD_FADE_CROSSFADE)

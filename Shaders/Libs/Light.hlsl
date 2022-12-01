@@ -2,6 +2,7 @@
 #define CRP_LIGHT_HLSL
 
 #define MAX_LIGHT_COUNT 8
+#define MAX_OTHER_LIGHT_COUNT 64
 
 CBUFFER_START(_CustomLights)
 int _DirectionalLightCount;
@@ -9,6 +10,11 @@ half4 _DirectionalLightColors[MAX_LIGHT_COUNT];
 float4 _DirectionalLightDirections[MAX_LIGHT_COUNT];
 float4 _DirectionalLightShadowData[MAX_LIGHT_COUNT]; // {x:shadow strength,y: light tileId,z: NormalBiasFactor,w: shadowMask Channel}
 float4 _DirectionalLightShadowMaskChannel;
+
+int _OtherLightCount;
+half4 _OtherLightColors[MAX_OTHER_LIGHT_COUNT];
+float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
+float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
 CBUFFER_END
 
 struct Light{
@@ -19,6 +25,9 @@ struct Light{
 
 int GetLightCount(){
     return _DirectionalLightCount;
+}
+int GetOtherLightCount(){
+    return _OtherLightCount;
 }
 
 DirectionalShadowData GetDirLightShadowData(int lightId,ShadowData shadowData){
@@ -38,6 +47,20 @@ Light GetLight(int id,Surface surface,ShadowData shadowData){
     DirectionalShadowData dirShadowData = GetDirLightShadowData(id,shadowData);
     l.attenuation = GetDirShadowAttenuation(dirShadowData,shadowData,surface);
     // l.attenuation = shadowData.cascadeIndex * 0.25;
+    return l;
+}
+
+Light GetOtherLight(int id,Surface surface){
+    Light l = (Light)0;
+    l.color = _OtherLightColors[id];
+    float3 dir = _OtherLightPositions[id].xyz - surface.worldPos;
+    l.direction = normalize(dir);
+
+    float dist2 = dot(dir,dir) + 0.00001;
+    float range = _OtherLightPositions[id].w;
+    float rangeAtten = Pow2(saturate(1 - Pow2(dist2*range)));
+    
+    l.attenuation = rangeAtten/dist2;
     return l;
 }
 

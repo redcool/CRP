@@ -28,10 +28,11 @@ namespace PowerUtilities
             Hard,Soft,Dither
         }
 
-        [Header("Light")]
-        [Range(1, 8)] public int maxLightCount = 8;
+        [Header("Lights")]
+        [Range(1, 8)] public int maxDirLightCount = 8;
+        [Range(0,64)]public int maxOtherLightCount = 64;
 
-        [Header("Shadow")]
+        [Header("Light Shadow")]
         [Range(0, 8)] public int maxShadowedDirLightCount = 8;
         [Range(1, 4)] public int maxCascades = 4;
         

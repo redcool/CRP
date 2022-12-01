@@ -98,7 +98,7 @@ namespace PowerUtilities
 
         int SetupShadows()
         {
-            var maxLightCount = lightShadowSettings.maxLightCount;
+            var maxLightCount = lightShadowSettings.maxDirLightCount;
             var maxShadowedDirLightCount = lightShadowSettings.maxShadowedDirLightCount;
             var maxCascadeCount = lightShadowSettings.maxCascades;
 

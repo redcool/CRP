@@ -46,6 +46,13 @@ float3 CalcLighting(Surface surface,GI gi,BRDF brdf,ShadowData shadowData){
         Light l = GetLight(i,surface,shadowData);
         col += CalcLight(l,surface,brdf);
     }
+    
+    int otherLightCount = GetOtherLightCount();
+    for(int i=0;i<otherLightCount;i++){
+        Light l = GetOtherLight(i,surface);
+        col += CalcLight(l,surface,brdf);
+    }
+
     return col;
 }
 #endif //CRP_LIGHTING_HLSL
