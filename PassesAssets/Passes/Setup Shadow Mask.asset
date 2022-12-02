@@ -17,4 +17,4 @@ MonoBehaviour:
   gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
-  shadowMaskMode: 1
+  shadowMaskMode: 2

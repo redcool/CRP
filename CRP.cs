@@ -23,6 +23,7 @@ namespace PowerUtilities
             Asset=asset;
 
             GraphicsSettings.lightsUseLinearIntensity = true;
+            EditorInit();
         }
 
         protected override void Render(ScriptableRenderContext context, Camera[] cameras)

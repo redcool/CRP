@@ -49,7 +49,7 @@ float3 CalcLighting(Surface surface,GI gi,BRDF brdf,ShadowData shadowData){
     
     int otherLightCount = GetOtherLightCount();
     for(int i=0;i<otherLightCount;i++){
-        Light l = GetOtherLight(i,surface);
+        Light l = GetOtherLight(i,surface,shadowData);
         col += CalcLight(l,surface,brdf);
     }
 

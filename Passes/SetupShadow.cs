@@ -36,7 +36,9 @@ namespace PowerUtilities
             _CascadeData = Shader.PropertyToID(nameof(_CascadeData)),
             _ShadowDistance = Shader.PropertyToID(nameof(_ShadowDistance)),
             _ShadowDistanceFade = Shader.PropertyToID(nameof(_ShadowDistanceFade)), //{1/distance,distanceFade factor,cascadeFade factor}
-            _ShadowAtlasSize = Shader.PropertyToID(nameof(_ShadowAtlasSize))
+            _ShadowAtlasSize = Shader.PropertyToID(nameof(_ShadowAtlasSize)),
+
+            _OtherLightShadowData = Shader.PropertyToID(nameof(_OtherLightShadowData))
         ;
 
         const float MIN_SHADOW_NORMAL_BIAS = 1f;
@@ -57,7 +59,8 @@ namespace PowerUtilities
         Vector4[]
             dirLightShadowData,//{shadow strength,tile index, normal bias,shadow Mask channel}
             cascadeCCullingSpheres = new Vector4[MAX_CASCADES], //{xyz:sphere center, w: dist2}
-            cascadeData = new Vector4[MAX_CASCADES] //{x: 1/dist2,y: filterMode Atten}
+            cascadeData = new Vector4[MAX_CASCADES], //{x: 1/dist2,y: filterMode Atten}
+            otherLightShadowData  //{shadow strength,tile index, normal bias,shadow Mask channel}
             ;
 
 
@@ -66,15 +69,48 @@ namespace PowerUtilities
             if (!IsCullingResultsValid())
                 return;
 
-            shadowedDirLightCount = SetupShadows();
-
+            shadowedDirLightCount = SetupDirLightShadows();
+            SetupOtherLightShadows();
             //
             if(!camera.IsReflectionCamera())
                 RenderShadows();
 
-            SendShadowParams();
+            SendDirLightShadowParams();
             SetShadowKeywords();
+
+            SendOtherLightShadowParams();
         }
+
+        private void SetupOtherLightShadows()
+        {
+            var maxOtherLightCount = CRP.Asset.lightSettings.maxOtherLightCount;
+
+            if(otherLightShadowData == null || otherLightShadowData.Length != maxOtherLightCount)
+            {
+                otherLightShadowData = new Vector4[MAX_CASCADES];
+            }
+
+            for (int i = 0; i < cullingResults.visibleLights.Length; i++)
+            {
+                var vLight = cullingResults.visibleLights[i];
+                if(vLight.lightType == LightType.Point ||
+                    vLight.lightType == LightType.Spot
+                )
+                {
+                    if(SetupShadowInfo(vLight.light, i, out var shadowInfo))
+                    {
+                        otherLightShadowData[i] = new Vector4(shadowInfo.shadowStrength, 0, 0, shadowInfo.occlusionMaskChannel);
+                    }
+
+                }
+            }
+        }
+
+        void SendOtherLightShadowParams()
+        {
+            Cmd.SetGlobalVectorArray(_OtherLightShadowData, otherLightShadowData);
+        }
+
         public override bool NeedCleanup() => true;
         public override void Cleanup()
         {
@@ -96,7 +132,7 @@ namespace PowerUtilities
             }
         }
 
-        int SetupShadows()
+        int SetupDirLightShadows()
         {
             var maxLightCount = lightShadowSettings.maxDirLightCount;
             var maxShadowedDirLightCount = lightShadowSettings.maxShadowedDirLightCount;
@@ -105,15 +141,8 @@ namespace PowerUtilities
             if (maxShadowedDirLightCount <= 0)
                 return 0;
 
+            InitDirLights(maxLightCount, maxShadowedDirLightCount, maxCascadeCount);
 
-            if (dirLightShadowInfos == null || dirLightShadowInfos.Length != maxLightCount)
-            {
-                dirLightShadowData = new Vector4[maxLightCount];
-                dirLightShadowInfos = new LightShadowInfo[maxLightCount];
-            }
-
-            if (dirLightShadowMatrices == null || dirLightShadowMatrices.Length != maxShadowedDirLightCount * maxCascadeCount)
-                dirLightShadowMatrices = new Matrix4x4[maxShadowedDirLightCount * maxCascadeCount];
 
             var shadowedDirLightCount = 0;
 
@@ -129,19 +158,26 @@ namespace PowerUtilities
                     shadowInfo.shadowedLightIndex = shadowedDirLightCount;
                     dirLightShadowInfos[shadowedDirLightCount++] = shadowInfo;
                 }
-                else
-                {
-                    dirLightShadowInfos[i] = shadowInfo; // no shadow, restore to default
-                }
 
                 dirLightShadowData[i] = new Vector4(shadowInfo.shadowStrength,
                     shadowInfo.shadowedLightIndex * maxCascadeCount,
-                    shadowInfo.shadowNormalBias + MIN_SHADOW_NORMAL_BIAS ,// min : 1
+                    shadowInfo.shadowNormalBias + MIN_SHADOW_NORMAL_BIAS,// min : 1
                     shadowInfo.occlusionMaskChannel
                     );
-
             }
             return shadowedDirLightCount;
+        }
+
+        void InitDirLights(int maxLightCount, int maxShadowedDirLightCount, int maxCascadeCount)
+        {
+            if (dirLightShadowInfos == null || dirLightShadowInfos.Length != maxLightCount)
+            {
+                dirLightShadowData = new Vector4[maxLightCount];
+                dirLightShadowInfos = new LightShadowInfo[maxLightCount];
+            }
+
+            if (dirLightShadowMatrices == null || dirLightShadowMatrices.Length != maxShadowedDirLightCount * maxCascadeCount)
+                dirLightShadowMatrices = new Matrix4x4[maxShadowedDirLightCount * maxCascadeCount];
         }
 
         public bool SetupShadowInfo(Light light, int id, out LightShadowInfo shadowInfo)
@@ -217,7 +253,7 @@ namespace PowerUtilities
             Cmd.EndSampleExecute(sampleName, ref context);
         }
 
-        private void SendShadowParams()
+        private void SendDirLightShadowParams()
         {
             var atlasSize = (int)lightShadowSettings.atlasSize;
             var cascadeCount = lightShadowSettings.maxCascades;

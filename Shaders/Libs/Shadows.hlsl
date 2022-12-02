@@ -126,8 +126,12 @@ float GetDirShadowAttenuationRealtime(DirectionalShadowData dirShadowData,Shadow
     return lerp(1,atten,dirShadowData.strength);
 }
 
-float GetBakedShadow(DirectionalShadowData dirShadowData,ShadowData shadowData){
-    return shadowData.shadowMask[dirShadowData.occlusionMaskChannel];
+float GetBakedShadow(int occlusionMaskChannel,ShadowData shadowData){
+    #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
+    return shadowData.shadowMask[occlusionMaskChannel];
+    #else
+    return 1;
+    #endif
 }
 
 float MixRealtimeAndBakedShadows(float realtimeShadow,float bakedShadow,float dirShadowStrength,float shadowStrength){
@@ -146,16 +150,25 @@ float GetDirShadowAttenuation(DirectionalShadowData dirShadowData,ShadowData sha
     #if defined(_RECEIVE_SHADOW_OFF)
         return 1;
     #endif
-    float bakedShadow = 1;
 
-    #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
-        bakedShadow = GetBakedShadow(dirShadowData,shadowData);
-    #endif
-
+    float bakedShadow = GetBakedShadow(dirShadowData.occlusionMaskChannel,shadowData);
     if(dirShadowData.strength * shadowData.strength <= 0)
         return bakedShadow;
 
     float realtimeShadow = GetDirShadowAttenuationRealtime(dirShadowData,shadowData,surface);
     return MixRealtimeAndBakedShadows(realtimeShadow,bakedShadow,dirShadowData.strength,shadowData.strength);
+}
+
+struct OtherShadowData{
+    float strength;
+    int occlusionMaskChannel;
+};
+
+float GetOtherShadowAttenuation(OtherShadowData otherShadowData,ShadowData shadowData,Surface surface){
+    #if defined(_RECEIVE_SHADOW_OFF)
+        return 1;
+    #endif
+    float bakedShadow = GetBakedShadow(otherShadowData.occlusionMaskChannel,shadowData);
+    return bakedShadow;
 }
 #endif  //CRP_SHADOWS_HLSL
