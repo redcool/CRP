@@ -15,6 +15,7 @@ int _OtherLightCount;
 half4 _OtherLightColors[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
+float4 _OtherLightSpotAngles[MAX_OTHER_LIGHT_COUNT];
 CBUFFER_END
 
 struct Light{
@@ -59,8 +60,16 @@ Light GetOtherLight(int id,Surface surface){
     float dist2 = dot(dir,dir) + 0.00001;
     float range = _OtherLightPositions[id].w;
     float rangeAtten = Pow2(saturate(1 - Pow2(dist2*range)));
-    
-    l.attenuation = rangeAtten/dist2;
+    float4 spotAngles = _OtherLightSpotAngles[id];
+
+    // pow(da + b,2)
+    float spotAngleAtten = saturate(dot(_OtherLightDirections[id].xyz,l.direction) * spotAngles.x + spotAngles.y);
+    spotAngleAtten *= spotAngleAtten;
+
+// spotAngleAtten = saturate(dot(_OtherLightDirections[id].xyz,l.direction)-0.5);
+    l.attenuation = spotAngleAtten * rangeAtten/dist2;
+
+    // l.attenuation = smoothstep(1/range,0,dist2);
     return l;
 }
 

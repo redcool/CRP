@@ -15,7 +15,6 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: MainCamera
-  enabledCameraTypes: -1
   isInterrupt: 0
   isSkip: 0
-  shadowMaskMode: 2
+  shadowMaskMode: 1

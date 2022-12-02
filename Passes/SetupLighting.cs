@@ -19,7 +19,8 @@ namespace PowerUtilities
             _OtherLightCount = Shader.PropertyToID(nameof(_OtherLightCount)),
             _OtherLightPositions = Shader.PropertyToID(nameof(_OtherLightPositions)),
             _OtherLightDirections = Shader.PropertyToID(nameof(_OtherLightDirections)),
-            _OtherLightColors = Shader.PropertyToID(nameof(_OtherLightColors))
+            _OtherLightColors = Shader.PropertyToID(nameof(_OtherLightColors)),
+            _OtherLightSpotAngles = Shader.PropertyToID(nameof(_OtherLightSpotAngles))
             ;
 
         Vector4[] dirLightColors;
@@ -28,6 +29,7 @@ namespace PowerUtilities
         Vector4[] otherLightPositions;
         Vector4[] otherLightDirections;
         Vector4[] otherLightColors;
+        Vector4[] otherLightSpotAngles;
 
         public override void OnRender()
         {
@@ -82,6 +84,7 @@ namespace PowerUtilities
                 otherLightColors = new Vector4[maxOtherLightCount];
                 otherLightDirections = new Vector4[maxOtherLightCount];
                 otherLightPositions = new Vector4[maxOtherLightCount];
+                otherLightSpotAngles = new Vector4[maxOtherLightCount];
             }
         }
 
@@ -95,6 +98,7 @@ namespace PowerUtilities
             Cmd.SetGlobalVectorArray(_OtherLightPositions, otherLightPositions);
             Cmd.SetGlobalVectorArray(_OtherLightColors,otherLightColors);
             Cmd.SetGlobalVectorArray(_OtherLightDirections, otherLightDirections);
+            Cmd.SetGlobalVectorArray(_OtherLightSpotAngles, otherLightSpotAngles);
         }
 
         void SetupDirLight(int id,ref VisibleLight vlight)
@@ -109,11 +113,16 @@ namespace PowerUtilities
             var pos = vlight.localToWorldMatrix.GetColumn(3);
             pos.w = 1f/(vlight.range * vlight.range + 0.0001f);
             otherLightPositions[id] = pos;
+            otherLightSpotAngles[id] = new Vector4(0, 1);
         }
         void SetupSpotLight(int id, ref VisibleLight vlight)
         {
             SetupPointLight(id,ref vlight);
-
+            otherLightDirections[id] = -vlight.localToWorldMatrix.GetColumn(2);
+            var innerCos = Mathf.Cos(vlight.light.innerSpotAngle * Mathf.Deg2Rad * 0.5f);
+            var outerCos = Mathf.Cos(vlight.spotAngle * Mathf.Deg2Rad * 0.5f);
+            var invertRange = 1f/(innerCos - outerCos + 0.001f);
+            otherLightSpotAngles[id] = new Vector4(invertRange,-outerCos * invertRange);
         }
     }
 }

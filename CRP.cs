@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
+
 
 namespace PowerUtilities
 {
-    public class CRP : RenderPipeline
+    public partial class CRP : RenderPipeline
     {
         public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
 
