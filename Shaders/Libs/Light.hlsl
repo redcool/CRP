@@ -82,7 +82,6 @@ Light GetOtherLight(int id,Surface surface,ShadowData shadowData){
     float shadowAtten = GetOtherShadowAttenuation(otherShadowData,shadowData,surface);
 
     l.attenuation = shadowAtten * spotAngleAtten * rangeAtten/dist2;
-
     // l.attenuation = smoothstep(1/range,0,dist2);
     return l;
 }

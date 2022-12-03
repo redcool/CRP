@@ -29,8 +29,7 @@ namespace PowerUtilities
         }
 
         [Header("Lights")]
-        [Range(1, 8)] public int maxDirLightCount = 8;
-        [Range(0,64)]public int maxOtherLightCount = 64;
+        [Range(0, 8)] public int maxDirLightCount = 8;
 
         [Header("Light Shadow")]
         [Range(0, 8)] public int maxShadowedDirLightCount = 8;
@@ -46,6 +45,9 @@ namespace PowerUtilities
 
         public FilterMode filterMode;
         public CascadeBlendMode cascadeBlendMode;
+
+        [Header("Other Lights")]
+        [Range(0,64)]public int maxOtherLightCount = 64;
     }
 
 }

@@ -46,13 +46,21 @@ float3 CalcLighting(Surface surface,GI gi,BRDF brdf,ShadowData shadowData){
         Light l = GetLight(i,surface,shadowData);
         col += CalcLight(l,surface,brdf);
     }
-    
-    int otherLightCount = GetOtherLightCount();
-    for(int i=0;i<otherLightCount;i++){
-        Light l = GetOtherLight(i,surface,shadowData);
-        col += CalcLight(l,surface,brdf);
-    }
 
+    #if defined(_LIGHTS_PER_OBJECT)
+        for(int i=0;i<min(unity_LightData.y,8);i++){
+            int lightIndex = unity_LightIndices[(uint)j/4][(uint)j%4];
+            Light l = GetOtherLight(lightIndex,surface,shadowData);
+            color += CalcLight(l,surface,brdf);
+        }
+    #else
+        int otherLightCount = GetOtherLightCount();
+        for(int i=0;i<otherLightCount;i++){
+            Light l = GetOtherLight(i,surface,shadowData);
+            return l.attenuation;
+            col += CalcLight(l,surface,brdf);
+        }
+    #endif
     return col;
 }
 #endif //CRP_LIGHTING_HLSL

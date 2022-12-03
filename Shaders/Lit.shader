@@ -80,6 +80,7 @@ Shader "CRP/Lit"
             #pragma multi_compile _ LIGHTMAP_ON
             #pragma multi_compile _ _SHADOW_MASK_DISTANCE _SHADOW_MASK
             #pragma multi_compile _ LOD_FADE_CROSSFADE
+            #pragma multi_compile _ _LIGHTS_PER_OBJECT
 
             #include "Passes/LitPass.hlsl"
             

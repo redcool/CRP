@@ -33,7 +33,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2e7585ca21a6d2e418c71b4476fb740a, type: 2}
   - {fileID: 11400000, guid: 966319daca1ec094592b8d6739fdaf0c, type: 2}
   lightSettings:
-    maxLightCount: 4
+    maxDirLightCount: 8
     maxShadowedDirLightCount: 3
     maxCascades: 4
     cascadeRatio1: 0.1
@@ -45,3 +45,4 @@ MonoBehaviour:
     distanceFade: 0.11
     filterMode: 0
     cascadeBlendMode: 0
+    maxOtherLightCount: 64

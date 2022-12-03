@@ -5,12 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using UnityEngine;
+using Unity.Collections;
 
 namespace PowerUtilities
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(SetupLighting))]
     public class SetupLighting : BasePass
     {
+        [Header(nameof(SetupLighting))]
+        public bool useLightPerObject;
+
+        const string _LIGHTS_PER_OBJECT = nameof(_LIGHTS_PER_OBJECT);
+
         public static readonly int
             _DirectionalLightCount = Shader.PropertyToID(nameof(_DirectionalLightCount)),
             _DirectionalLightColors = Shader.PropertyToID(nameof(_DirectionalLightColors)),
@@ -37,6 +43,40 @@ namespace PowerUtilities
                 return;
 
             SetupLights();
+
+            //SetupLightIndices();
+        }
+        void SetupLightIndices()
+        {
+            var maxOtherLightCount = CRP.Asset.lightSettings.maxOtherLightCount;
+
+            int otherLightCount = 0;
+
+            var indexMap = cullingResults.GetLightIndexMap(Allocator.Temp);
+            var vLights = cullingResults.visibleLights;
+            for (int i = 0; i < vLights.Length; i++)
+            {
+                var newIndex = -1;
+                var vlight = vLights[i];
+                if (vlight.lightType == LightType.Point || vlight.lightType == LightType.Spot)
+                {
+                    if (otherLightCount < maxOtherLightCount)
+                        newIndex = otherLightCount++;
+                }
+
+                indexMap[i] = newIndex;
+            }
+
+            if (useLightPerObject)
+            {
+                for (int i = vLights.Length - 1; i < indexMap.Length; i++)
+                {
+                    indexMap[i] = -1;
+                }
+                cullingResults.SetLightIndexMap(indexMap);
+                indexMap.Dispose();
+            }
+            Cmd.SetShaderKeyords(useLightPerObject, _LIGHTS_PER_OBJECT);
         }
 
         void SetupLights()
@@ -48,9 +88,11 @@ namespace PowerUtilities
 
             int dirLightCount = 0, otherLightCount = 0;
 
+            var indexMap = cullingResults.GetLightIndexMap(Allocator.Temp);
             var vLights = cullingResults.visibleLights;
             for (int i = 0; i < vLights.Length; i++)
             {
+                var newIndex = -1;
                 var vlight = vLights[i];
                 switch (vlight.lightType)
                 {
@@ -60,11 +102,17 @@ namespace PowerUtilities
                         break;
                     case LightType.Point:
                         if (otherLightCount < maxOtherLightCount)
+                        {
+                            newIndex = otherLightCount;
                             SetupPointLight(otherLightCount++, ref vlight);
+                        }
                         break;
                     case LightType.Spot:
                         if (otherLightCount < maxOtherLightCount)
+                        {
+                            newIndex = otherLightCount;
                             SetupSpotLight(otherLightCount++, ref vlight);
+                        }
                         break;
                 }
             }
@@ -88,17 +136,23 @@ namespace PowerUtilities
             }
         }
 
-        private void SendLightInfo(int dirLightCount,int otherLightCount)
+        private void SendLightInfo(int dirLightCount, int otherLightCount)
         {
-            Cmd.SetGlobalVectorArray(_DirectionalLightDirections, dirLightDirections);
-            Cmd.SetGlobalVectorArray(_DirectionalLightColors, dirLightColors);
             Cmd.SetGlobalInt(_DirectionalLightCount, dirLightCount);
+            if (dirLightCount > 0)
+            {
+                Cmd.SetGlobalVectorArray(_DirectionalLightDirections, dirLightDirections);
+                Cmd.SetGlobalVectorArray(_DirectionalLightColors, dirLightColors);
+            }
 
             Cmd.SetGlobalInt(_OtherLightCount, otherLightCount);
-            Cmd.SetGlobalVectorArray(_OtherLightPositions, otherLightPositions);
-            Cmd.SetGlobalVectorArray(_OtherLightColors,otherLightColors);
-            Cmd.SetGlobalVectorArray(_OtherLightDirections, otherLightDirections);
-            Cmd.SetGlobalVectorArray(_OtherLightSpotAngles, otherLightSpotAngles);
+            if (otherLightCount > 0)
+            {
+                Cmd.SetGlobalVectorArray(_OtherLightPositions, otherLightPositions);
+                Cmd.SetGlobalVectorArray(_OtherLightColors, otherLightColors);
+                Cmd.SetGlobalVectorArray(_OtherLightDirections, otherLightDirections);
+                Cmd.SetGlobalVectorArray(_OtherLightSpotAngles, otherLightSpotAngles);
+            }
         }
 
         void SetupDirLight(int id,ref VisibleLight vlight)

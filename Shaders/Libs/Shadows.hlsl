@@ -128,10 +128,10 @@ float GetDirShadowAttenuationRealtime(DirectionalShadowData dirShadowData,Shadow
 
 float GetBakedShadow(int occlusionMaskChannel,ShadowData shadowData){
     #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
-    return shadowData.shadowMask[occlusionMaskChannel];
-    #else
-    return 1;
+        if(occlusionMaskChannel>=0)
+            return lerp(1,shadowData.shadowMask[occlusionMaskChannel],shadowData.strength);
     #endif
+    return 1;
 }
 
 float MixRealtimeAndBakedShadows(float realtimeShadow,float bakedShadow,float dirShadowStrength,float shadowStrength){

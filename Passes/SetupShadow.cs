@@ -254,6 +254,12 @@ namespace PowerUtilities
 
         private void SendDirLightShadowParams()
         {
+            var maxLightCount = lightShadowSettings.maxDirLightCount;
+            var maxShadowedDirLightCount = lightShadowSettings.maxShadowedDirLightCount;
+
+            if (maxLightCount == 0 || maxShadowedDirLightCount == 0)
+                return;
+
             var atlasSize = (int)lightShadowSettings.atlasSize;
             var cascadeCount = lightShadowSettings.maxCascades;
             var shadowDistance = lightShadowSettings.maxShadowDistance;
