@@ -126,7 +126,7 @@ Material:
     - _ReceiveShadowOn: 1
     - _ReceiveShadows: 1
     - _ShadowMode: 1
-    - _Smoothness: 0.428
+    - _Smoothness: 0.13
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

@@ -52,7 +52,6 @@ namespace PowerUtilities
             "_CASCADE_BLEND_SOFT","_CASCADE_BLEND_DITHER"
         };
 
-        int shadowedDirLightCount = 0;
         LightShadowInfo[] dirLightShadowInfos;
         Matrix4x4[] dirLightShadowMatrices;
 
@@ -69,11 +68,11 @@ namespace PowerUtilities
             if (!IsCullingResultsValid())
                 return;
 
-            shadowedDirLightCount = SetupDirLightShadows();
+            var shadowedDirLightCount = SetupDirLightShadows();
             SetupOtherLightShadows();
             //
             if(!camera.IsReflectionCamera())
-                RenderShadows();
+                RenderDirLightShadows(shadowedDirLightCount);
 
             SendDirLightShadowParams();
             SetShadowKeywords();
@@ -230,12 +229,12 @@ namespace PowerUtilities
             Cmd.ClearRenderTarget(true, false, Color.clear);
         }
 
-        public void RenderShadows()
+        public void RenderDirLightShadows(int shadowedDirLightCount)
         {
             var atlasSize = (int)lightShadowSettings.atlasSize;
             var cascadeCount = lightShadowSettings.maxCascades;
 
-            var sampleName = nameof(RenderShadows);
+            var sampleName = nameof(RenderDirLightShadows);
             Cmd.BeginSampleExecute(sampleName, ref context);
 
             SetupShadowTarget(atlasSize);
