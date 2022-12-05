@@ -24,12 +24,16 @@ namespace PowerUtilities
         int _OtherShadowMatrices = Shader.PropertyToID(nameof(_OtherShadowMatrices));
         int _OtherShadowData = Shader.PropertyToID(nameof(_OtherShadowData));
         int _OtherLightCount = Shader.PropertyToID(nameof(_OtherLightCount));
+        int _OtherLightPositions = Shader.PropertyToID(nameof(_OtherLightPositions));
+        int _OtherLightDirections = Shader.PropertyToID(nameof(_OtherLightDirections));
 
         Matrix4x4[] otherShadowMatrices;
-        Vector4[] otherShadowData;
+        Vector4[] otherShadowData; //{light index,}
+        Vector4[] otherLightPositions, otherLightDirections;
 
         const int atlasSize = 1024;
         const int maxShadowedLightCount = 16;
+        const int maxOtherLightCount = 64;
         OtherShadowInfo[] shadowInfos = new OtherShadowInfo[maxShadowedLightCount];
 
 
@@ -43,24 +47,33 @@ namespace PowerUtilities
             Cmd.SetRenderTarget(_OtherShadowMap, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store);
             Cmd.ClearRenderTarget(true, false, Color.clear);
 
+            if (otherShadowData == null || otherShadowData.Length != maxOtherLightCount)
+            {
+                otherShadowData = new Vector4[maxOtherLightCount];
+                otherLightDirections = new Vector4[maxOtherLightCount];
+                otherLightPositions = new Vector4[maxOtherLightCount];
+            }
+            var lightCount = SetupLightInfos();
             var shadowedLightCount = SetupShadowInfos();
             RenderShadowLights(shadowedLightCount);
 
-            Cmd.SetGlobalInt(_OtherLightCount, shadowedLightCount);
+            Cmd.SetGlobalInt(_OtherLightCount, lightCount);
+            Cmd.SetGlobalVectorArray(_OtherShadowData, otherShadowData);
+            Cmd.SetGlobalVectorArray(_OtherLightDirections, otherLightDirections);
+            Cmd.SetGlobalVectorArray(_OtherLightPositions, otherLightPositions);
         }
 
         void RenderShadowLights(int shadowedLightCount)
         {
-            if(otherShadowData == null || otherShadowData.Length != maxShadowedLightCount)
+            if(otherShadowMatrices == null || otherShadowMatrices.Length != maxShadowedLightCount)
             {
-                otherShadowData = new Vector4[maxShadowedLightCount];
                 otherShadowMatrices = new Matrix4x4[maxShadowedLightCount];
             }
 
             var split = shadowedLightCount <=1 ? 1 : shadowedLightCount <=4 ? 2 : 4;
             var tileSize = atlasSize / split;
 
-            for (int i = 0; i < shadowedLightCount; i++)
+            for (int i = 0; i < shadowedLightCount;)
             {
                 var shadowInfo = shadowInfos[i];
 
@@ -70,9 +83,9 @@ namespace PowerUtilities
                 }
                 else
                 {
-
                     RenderSpotShadow(shadowInfo, i, split, tileSize);
                 }
+                i += shadowInfo.isPoint ? 6 : 1;
             }
 
             Cmd.SetGlobalDepthBias(0, 0);
@@ -81,7 +94,28 @@ namespace PowerUtilities
 
         private void RenderPointShadow(OtherShadowInfo shadowInfo,int id,int split,int tileSize)
         {
-            
+            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex);
+
+            var fovBias = 0;
+
+            for (int i = 0; i < 6; i++)
+            {
+                cullingResults.ComputePointShadowMatricesAndCullingPrimitives(shadowInfo.lightIndex, (CubemapFace)i, fovBias,
+                    out var viewMatirx, out var projMatrix, out var splitData);
+                settings.splitData = splitData;
+
+                var index = id + i;
+                var offset = new Vector2(index % split,index/ tileSize);
+                var viewportRect = new Rect(offset.x * tileSize,offset.y * tileSize,tileSize,tileSize);
+                Cmd.SetViewport(viewportRect);
+                Cmd.SetViewProjectionMatrices(viewMatirx, projMatrix);
+                Cmd.SetGlobalDepthBias(0, shadowInfo.bias);
+                ExecuteCommand();
+
+                context.DrawShadows(ref settings);
+                //
+                otherShadowMatrices[index] = TestRenderDirShadow.ToTextureMatrix(projMatrix * viewMatirx, split, offset.x, offset.y);
+            }
         }
 
         void RenderSpotShadow(OtherShadowInfo shadowInfo, int id, int split, int tileSize)
@@ -101,9 +135,31 @@ namespace PowerUtilities
             ExecuteCommand();
             context.DrawShadows(ref settings);
             //
-            //otherShadowMatrices[id] = TestRenderDirShadow.ToTextureMatrix(projMatrix * viewMatrix, split, offset.x, offset.y);
-            otherShadowMatrices[id] = SetupShadow.ConvertToShadowAtlasMatrix(projMatrix * viewMatrix, offset, split);
-            otherShadowData[id] = new Vector4(id,0);
+            otherShadowMatrices[id] = TestRenderDirShadow.ToTextureMatrix(projMatrix * viewMatrix, split, offset.x, offset.y);
+        }
+
+        int SetupLightInfos()
+        {
+            var lightCount = 0;
+
+            for (int i = 0; i < cullingResults.visibleLights.Length; i++)
+            {
+                var vLight = cullingResults.visibleLights[i];
+                var isPoint = vLight.lightType == LightType.Point;
+                if (!(isPoint || vLight.lightType == LightType.Spot))
+                    continue;
+
+                if (lightCount >= maxOtherLightCount)
+                    break;
+
+                otherLightPositions[lightCount] = vLight.localToWorldMatrix.GetColumn(3);
+                otherLightDirections[lightCount] = -vLight.localToWorldMatrix.GetColumn(2);
+                //otherShadowData[lightCount] = new Vector4(i, isPoint ? 1 : 0);
+
+                lightCount++;
+            }
+
+            return lightCount;
         }
 
         int SetupShadowInfos()
@@ -128,7 +184,10 @@ namespace PowerUtilities
                     strength = vLight.light.shadowStrength,
                     isPoint = isPoint,
                 };
-                shadowedOtherLightCount++;
+
+                otherShadowData[i] = new Vector4(shadowedOtherLightCount, isPoint ? 1 : 0);
+
+                shadowedOtherLightCount += isPoint ? 6 : 1;
             }
 
             return shadowedOtherLightCount;

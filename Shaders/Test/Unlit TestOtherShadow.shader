@@ -29,12 +29,15 @@ Shader "CRP/Unlit TestOtherShadow"
         UNITY_VERTEX_INPUT_INSTANCE_ID
         UNITY_VERTEX_OUTPUT_STEREO
     };
-#define MAX_COUNT 16
+#define MAX_SHADOWED_COUNT 16
+#define MAX_OTHER_LIGHT_COUNT 64
 
     sampler2D _MainTex;
     sampler2D _OtherShadowMap;
-    float4x4 _OtherShadowMatrices[MAX_COUNT];
-    float4 _OtherShadowData[MAX_COUNT];
+    float4x4 _OtherShadowMatrices[MAX_SHADOWED_COUNT];
+    float4 _OtherShadowData[MAX_OTHER_LIGHT_COUNT];
+    float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
+    float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
     int _OtherLightCount;
 
     // CBUFFER_START(UnityPerMaterial)
@@ -63,10 +66,23 @@ Shader "CRP/Unlit TestOtherShadow"
     float GetShadow(float3 worldPos){
         float shadow = 0;
         for(int i=0;i<_OtherLightCount;i++){
-            float4 posShadow = mul(_OtherShadowMatrices[i],float4(worldPos,1));
+            float tileIndex = _OtherShadowData[i].x;
+            bool isPoint = _OtherShadowData[i].y;
+
+            float3 lightPos = _OtherLightPositions[i];
+            float3 dir = lightPos - worldPos;
+            
+            float3 lightDir = _OtherLightDirections[i];
+
+            if(isPoint){
+                float faceOffset = CubeMapFaceID(-dir);
+                tileIndex += faceOffset;
+            }
+            float4 posShadow = mul(_OtherShadowMatrices[tileIndex],float4(worldPos,1));
             posShadow.xyz /= posShadow.w;
 
             shadow += tex2D(_OtherShadowMap,posShadow.xy).x < posShadow.z;
+            // return shadow;
         }
         return shadow;
     }

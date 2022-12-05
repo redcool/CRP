@@ -44,7 +44,7 @@ namespace PowerUtilities
 
             SetupLights();
 
-            //SetupLightIndices();
+            SetupLightIndices();
         }
         void SetupLightIndices()
         {
@@ -88,11 +88,9 @@ namespace PowerUtilities
 
             int dirLightCount = 0, otherLightCount = 0;
 
-            var indexMap = cullingResults.GetLightIndexMap(Allocator.Temp);
             var vLights = cullingResults.visibleLights;
             for (int i = 0; i < vLights.Length; i++)
             {
-                var newIndex = -1;
                 var vlight = vLights[i];
                 switch (vlight.lightType)
                 {
@@ -103,14 +101,12 @@ namespace PowerUtilities
                     case LightType.Point:
                         if (otherLightCount < maxOtherLightCount)
                         {
-                            newIndex = otherLightCount;
                             SetupPointLight(otherLightCount++, ref vlight);
                         }
                         break;
                     case LightType.Spot:
                         if (otherLightCount < maxOtherLightCount)
                         {
-                            newIndex = otherLightCount;
                             SetupSpotLight(otherLightCount++, ref vlight);
                         }
                         break;
