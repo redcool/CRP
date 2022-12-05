@@ -16,7 +16,7 @@ half4 _OtherLightColors[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightSpotAngles[MAX_OTHER_LIGHT_COUNT];
-float4 _OtherLightShadowData[MAX_OTHER_LIGHT_COUNT];
+float4 _OtherShadowData[MAX_OTHER_LIGHT_COUNT];
 CBUFFER_END
 
 struct Light{
@@ -54,15 +54,19 @@ Light GetLight(int id,Surface surface,ShadowData shadowData){
 
 OtherShadowData GetOtherShadowData(int id){
     OtherShadowData data = (OtherShadowData)0;
-    data.strength = _OtherLightShadowData[id].x;
-    data.occlusionMaskChannel = _OtherLightShadowData[id].w;
+    data.strength = _OtherShadowData[id].x;
+    data.occlusionMaskChannel = _OtherShadowData[id].w;
+    data.tileIndex = _OtherShadowData[id].y;
+    data.isPoint = _OtherShadowData[id].z > 0;
     return data;
 }
 
 Light GetOtherLight(int id,Surface surface,ShadowData shadowData){
     Light l = (Light)0;
     l.color = _OtherLightColors[id];
-    float3 dir = _OtherLightPositions[id].xyz - surface.worldPos;
+
+    float3 lightPos = _OtherLightPositions[id].xyz;
+    float3 dir = lightPos - surface.worldPos;
     l.direction = normalize(dir);
 
     float dist2 = dot(dir,dir) + 0.00001;
@@ -73,12 +77,16 @@ Light GetOtherLight(int id,Surface surface,ShadowData shadowData){
     float4 spotAngles = _OtherLightSpotAngles[id];
 
     // pow(da + b,2)
-    float spotAngleAtten = saturate(dot(_OtherLightDirections[id].xyz,l.direction) * spotAngles.x + spotAngles.y);
+    float3 spotDirection = _OtherLightDirections[id].xyz;
+    float spotAngleAtten = saturate(dot(spotDirection,l.direction) * spotAngles.x + spotAngles.y);
     spotAngleAtten *= spotAngleAtten;
 // spotAngleAtten = saturate(dot(_OtherLightDirections[id].xyz,l.direction)-0.5);
 
 // shadowMask atten
-    OtherShadowData otherShadowData  = GetOtherShadowData(id);
+    OtherShadowData otherShadowData = GetOtherShadowData(id);
+    otherShadowData.lightPos = lightPos;
+    otherShadowData.lightDir = l.direction;
+    otherShadowData.spotDir = spotDirection;
     float shadowAtten = GetOtherShadowAttenuation(otherShadowData,shadowData,surface);
 
     l.attenuation = shadowAtten * spotAngleAtten * rangeAtten/dist2;

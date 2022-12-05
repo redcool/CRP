@@ -48,7 +48,7 @@ namespace PowerUtilities
         }
         void SetupLightIndices()
         {
-            var maxOtherLightCount = CRP.Asset.lightSettings.maxOtherLightCount;
+            var maxOtherLightCount = CRP.Asset.otherLightSettings.maxOtherLightCount;
 
             int otherLightCount = 0;
 
@@ -81,8 +81,8 @@ namespace PowerUtilities
 
         void SetupLights()
         {
-            var maxDirLightCount = CRP.Asset.lightSettings.maxDirLightCount;
-            var maxOtherLightCount = CRP.Asset.lightSettings.maxOtherLightCount;
+            var maxDirLightCount = CRP.Asset.directionalLightSettings.maxDirLightCount;
+            var maxOtherLightCount = CRP.Asset.otherLightSettings.maxOtherLightCount;
 
             Init(maxDirLightCount, maxOtherLightCount);
 

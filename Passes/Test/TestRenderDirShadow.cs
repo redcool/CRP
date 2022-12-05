@@ -9,8 +9,8 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
-    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/Test/" + nameof(TestRenderShadow))]
-    internal class TestRenderShadow : BasePass
+    [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/Test/" + nameof(TestRenderDirShadow))]
+    internal class TestRenderDirShadow : BasePass
     {
         readonly int _MainLightShadowMap = Shader.PropertyToID(nameof(_MainLightShadowMap));
         readonly int _MainLightShadowMapMatrices = Shader.PropertyToID(nameof(_MainLightShadowMapMatrices));
@@ -174,7 +174,7 @@ namespace PowerUtilities
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>
-        Matrix4x4 ToTextureMatrix(Matrix4x4 m,int splitCount,float x,float y)
+        public static Matrix4x4 ToTextureMatrix(Matrix4x4 m,int splitCount,float x,float y)
         {
             if(SystemInfo.usesReversedZBuffer)
             {
@@ -188,25 +188,7 @@ namespace PowerUtilities
                 0, 0, 0, 1
                 );
 
-            //float scale = 1f / splitCount;
-            //var offset = new Vector2(x, y);
-            //m.m00 = (0.5f * (m.m00 + m.m30) + offset.x * m.m30) * scale;
-            //m.m01 = (0.5f * (m.m01 + m.m31) + offset.x * m.m31) * scale;
-            //m.m02 = (0.5f * (m.m02 + m.m32) + offset.x * m.m32) * scale;
-            //m.m03 = (0.5f * (m.m03 + m.m33) + offset.x * m.m33) * scale;
-            //m.m10 = (0.5f * (m.m10 + m.m30) + offset.y * m.m30) * scale;
-            //m.m11 = (0.5f * (m.m11 + m.m31) + offset.y * m.m31) * scale;
-            //m.m12 = (0.5f * (m.m12 + m.m32) + offset.y * m.m32) * scale;
-            //m.m13 = (0.5f * (m.m13 + m.m33) + offset.y * m.m33) * scale;
-            //m.m20 = 0.5f * (m.m20 + m.m30);
-            //m.m21 = 0.5f * (m.m21 + m.m31);
-            //m.m22 = 0.5f * (m.m22 + m.m32);
-            //m.m23 = 0.5f * (m.m23 + m.m33);
-            //return m;
-
-
             return mat * m;
-
         }
     }
 }

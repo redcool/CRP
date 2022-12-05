@@ -16,8 +16,23 @@
 #define MAX_SHADOWED_DIR_LIGHT_COUNT 8
 #define MAX_CASCADE_COUNT 4
 
+#if defined(_OTHER_PCF3)
+    #define OTHER_FILTER_SAMPLES 4
+    #define OTHER_FILTER_SETUP SampleShadow_ComputeSamples_Tent_3x3
+#elif defined(_OTHER_PCF5)
+    #define OTHER_FILTER_SAMPLES 9
+    #define OTHER_FILTER_SETUP SampleShadow_ComputeSamples_Tent_5x5
+#elif defined(_OTHER_PCF7)
+    #define OTHER_FILTER_SAMPLES 16
+    #define OTHER_FILTER_SETUP SampleShadow_ComputeSamples_Tent_7x7
+#endif
+
+#define MAX_SHADOWED_OTHER_LIGHT_COUNT 16
+
 
 TEXTURE2D_SHADOW(_DirectionalShadowAtlas);
+TEXTURE2D_SHADOW(_OtherShadowAtlas);
+
 #define SHADOW_SAMPLER sampler_linear_clamp_compare
 SAMPLER_CMP(SHADOW_SAMPLER);
 
@@ -29,6 +44,9 @@ CBUFFER_START(_CRPShadows)
     float _ShadowDistance;
     float4 _ShadowDistanceFade; //{1/distance,distanceFade factor,cascadeFade factor}
     float4 _ShadowAtlasSize; //{size ,1/size}
+
+    float4x4 _OtherShadowMatrices[MAX_SHADOWED_OTHER_LIGHT_COUNT];
+    float4 _OtherShadowTiles[MAX_SHADOWED_OTHER_LIGHT_COUNT];
 CBUFFER_END
 
 struct DirectionalShadowData{
@@ -43,6 +61,8 @@ struct ShadowData{
     float cascadeBlend;
     float4 shadowMask;
 };
+
+
 
 float FadeShadowStrength(float distance,float scale,float fade){
     return saturate( (1-distance*scale) * fade);
@@ -109,7 +129,7 @@ float FilterDirShadow(float3 posShadowSpace){
     #endif
 }
 
-float GetDirShadowAttenuationRealtime(DirectionalShadowData dirShadowData,ShadowData shadowData,Surface surface){
+float GetDirShadow(DirectionalShadowData dirShadowData,ShadowData shadowData,Surface surface){
     float3 normalBias = surface.vertexNormal * dirShadowData.normalBias * _CascadeData[shadowData.cascadeIndex].y;
     float3 posShadowSpace = mul(_DirectionalShadowMatrices[dirShadowData.tileIndex],float4(surface.worldPos+normalBias,1)).xyz;
     float atten = FilterDirShadow(posShadowSpace);
@@ -155,20 +175,73 @@ float GetDirShadowAttenuation(DirectionalShadowData dirShadowData,ShadowData sha
     if(dirShadowData.strength * shadowData.strength <= 0)
         return bakedShadow;
 
-    float realtimeShadow = GetDirShadowAttenuationRealtime(dirShadowData,shadowData,surface);
+    float realtimeShadow = GetDirShadow(dirShadowData,shadowData,surface);
     return MixRealtimeAndBakedShadows(realtimeShadow,bakedShadow,dirShadowData.strength,shadowData.strength);
 }
 
 struct OtherShadowData{
     float strength;
     int occlusionMaskChannel;
+    int tileIndex;
+    bool isPoint;
+    float3 lightPos;
+    float3 lightDir;
+    float3 spotDir;
 };
+
+float SampleOtherShadowAtlas(float3 posShadowSpace,float3 bounds){
+    posShadowSpace.xy = clamp(posShadowSpace.xy,bounds.xy,bounds.xy + bounds.z);
+    return SAMPLE_TEXTURE2D_SHADOW(_OtherShadowAtlas,SHADOW_SAMPLER,posShadowSpace).x;
+}
+
+static const float3 pointShadowPlanes[6]={
+    float3(-1,0,0),float3(1,0,0),
+    float3(0,-1,0),float3(0,1,0),
+    float3(0,0,-1),float3(0,0,1)
+};
+
+float FilterOtherShadow(float3 posShadowSpace,float3 bounds){
+    #if defined(OTHER_FILTER_SETUP)
+    real weights[OTHER_FILTER_SAMPLES];
+    real2 positions[OTHER_FILTER_SAMPLES];
+    float4 size = _ShadowAtlasSize.wwzz;
+    OTHER_FILTER_SETUP(size,posShadowSpace,weights,positions);
+    float shadow = 0;
+    for(int i=0;i<OTHER_FILTER_SAMPLES;i++){
+        shadow += SampleOtherShadowAtlas(float3(positions[i].xy,posShadowSpace.z),bounds) * weights[i];
+    }
+    return shadow;
+    #else
+    return SampleOtherShadowAtlas(posShadowSpace,bounds);
+    #endif
+}
+
+float GetOtherShadow(OtherShadowData otherShadowData,ShadowData shadowData,Surface surface){
+    float tileIndex = otherShadowData.tileIndex;
+    float3 lightPlane = otherShadowData.spotDir;
+    if(otherShadowData.isPoint){
+        float faceOffset = CubeMapFaceID(-otherShadowData.lightDir);
+        tileIndex += faceOffset;
+        lightPlane = pointShadowPlanes[faceOffset];
+    }
+
+    float4 tileData = _OtherShadowTiles[tileIndex];
+    float3 dir = otherShadowData.lightPos - surface.worldPos;
+    float dist = dot(dir,lightPlane);
+    float3 normalBias = surface.vertexNormal * dist * tileData.w;
+    float4 posShadowSpace = mul(_OtherShadowMatrices[tileIndex],float4(surface.worldPos + normalBias,1));
+    return FilterOtherShadow(posShadowSpace.xyz/posShadowSpace.w,tileData.xyz);
+}
 
 float GetOtherShadowAttenuation(OtherShadowData otherShadowData,ShadowData shadowData,Surface surface){
     #if defined(_RECEIVE_SHADOW_OFF)
         return 1;
     #endif
+
     float bakedShadow = GetBakedShadow(otherShadowData.occlusionMaskChannel,shadowData);
-    return bakedShadow;
+    if(otherShadowData.strength * shadowData.strength <=0)
+        return bakedShadow;
+    float realtimeShadow = GetOtherShadow(otherShadowData,shadowData,surface);
+    return MixRealtimeAndBakedShadows(realtimeShadow,bakedShadow,otherShadowData.strength,shadowData.strength);
 }
 #endif  //CRP_SHADOWS_HLSL

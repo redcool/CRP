@@ -25,7 +25,7 @@ namespace PowerUtilities
 
             if (camera.TryGetCullingParameters(out var cullingParams))
             {
-                cullingParams.shadowDistance = Mathf.Min(CRP.Asset.lightSettings.maxShadowDistance, camera.farClipPlane);
+                cullingParams.shadowDistance = Mathf.Min(CRP.Asset.directionalLightSettings.maxShadowDistance, camera.farClipPlane);
                 cullingResults = context.Cull(ref cullingParams);
             }
         }

@@ -7,22 +7,25 @@ using UnityEngine;
 
 namespace PowerUtilities
 {
-    [Serializable]
-    public class LightSettings
+    public enum TextureSize
     {
-        public enum TextureSize
-        {
-            _128 = 128,
-            _256 = _128*2,
-            _512 = _256*2,
-            _1k = _512*2,
-            _2k = _1k*2,
-            _4k = _2k*2,
-            _8k = _4k * 2
-        }
-        public enum FilterMode { 
-            PCF2,PCF3,PCF5,PCF7
-        }
+        _128 = 128,
+        _256 = _128 * 2,
+        _512 = _256 * 2,
+        _1k = _512 * 2,
+        _2k = _1k * 2,
+        _4k = _2k * 2,
+        _8k = _4k * 2
+    }
+    public enum PCFMode
+    {
+        PCF2, PCF3, PCF5, PCF7
+    }
+
+    [Serializable]
+    public class DirectionalLightSettings
+    {
+
         public enum CascadeBlendMode
         {
             Hard,Soft,Dither
@@ -43,11 +46,17 @@ namespace PowerUtilities
         [Min(0.001f)]public float maxShadowDistance = 100;
         [Range(0.001f, 1)] public float distanceFade = 0.1f;
 
-        public FilterMode filterMode;
+        public PCFMode pcfMode;
         public CascadeBlendMode cascadeBlendMode;
-
-        [Header("Other Lights")]
-        [Range(0,64)]public int maxOtherLightCount = 64;
     }
 
+    [Serializable]
+    public class OtherLightSettings
+    {
+        [Header("Other Lights")]
+        [Range(0, 64)] public int maxOtherLightCount = 64;
+        [Range(0, 16)] public int maxShadowedOtherLightCount = 16;
+        public TextureSize atlasSize = TextureSize._1k;
+        public PCFMode pcfMode;
+    }
 }

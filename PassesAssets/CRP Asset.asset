@@ -20,6 +20,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b1f2a9f6e217cc248885e5245d69d013, type: 2}
   - {fileID: 11400000, guid: eceb454839e10214eb77764c16a6f7bb, type: 2}
   - {fileID: 11400000, guid: 2fe3a29c1d53dfc4db5292b241a2055f, type: 2}
+  - {fileID: 11400000, guid: f10848adb940107459640f5b21a73086, type: 2}
   - {fileID: 11400000, guid: e7d306a20f55c9d41b6ee76e2ffb539f, type: 2}
   - {fileID: 11400000, guid: fcef7becb7dc73b4d90f3633c99952d4, type: 2}
   - {fileID: 11400000, guid: a03388a15d9f82a458328d0600d3f3bd, type: 2}
@@ -32,17 +33,21 @@ MonoBehaviour:
   endPasses:
   - {fileID: 11400000, guid: 2e7585ca21a6d2e418c71b4476fb740a, type: 2}
   - {fileID: 11400000, guid: 966319daca1ec094592b8d6739fdaf0c, type: 2}
-  lightSettings:
+  directionalLightSettings:
     maxDirLightCount: 8
-    maxShadowedDirLightCount: 3
+    maxShadowedDirLightCount: 8
     maxCascades: 4
     cascadeRatio1: 0.1
-    cascadeRatio2: 0.38
-    cascadeRatio3: 0.68
-    cascadeFade: 0.19
+    cascadeRatio2: 0.25
+    cascadeRatio3: 0.5
+    cascadeFade: 0.2
     atlasSize: 1024
     maxShadowDistance: 100
-    distanceFade: 0.11
-    filterMode: 0
+    distanceFade: 0.1
+    pcfMode: 0
     cascadeBlendMode: 0
+  otherLightSettings:
     maxOtherLightCount: 64
+    maxShadowedOtherLightCount: 16
+    atlasSize: 1024
+    pcfMode: 0

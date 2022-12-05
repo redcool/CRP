@@ -1,4 +1,4 @@
-Shader "CRP/Unlit TestShadow"
+Shader "CRP/Unlit TestOtherShadow"
 {
     Properties
     {
@@ -29,12 +29,13 @@ Shader "CRP/Unlit TestShadow"
         UNITY_VERTEX_INPUT_INSTANCE_ID
         UNITY_VERTEX_OUTPUT_STEREO
     };
+#define MAX_COUNT 16
 
     sampler2D _MainTex;
-    sampler2D _MainLightShadowMap;
-    float4x4 _MainLightShadowMapMatrices[4];
-    float4 _MainLightCascadeCullingSpheres[4];
-    float _TileId;
+    sampler2D _OtherShadowMap;
+    float4x4 _OtherShadowMatrices[MAX_COUNT];
+    float4 _OtherShadowData[MAX_COUNT];
+    int _OtherLightCount;
 
     // CBUFFER_START(UnityPerMaterial)
     UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
@@ -59,16 +60,15 @@ Shader "CRP/Unlit TestShadow"
         return o;
     }
 
-    int GetCascadeId(float3 worldPos){
-        int i=0;
-        for(;i<4;i++){
-            float3 sphereCenter = _MainLightCascadeCullingSpheres[i].xyz;
-            float sphereRadius = _MainLightCascadeCullingSpheres[i].w;
-            float dist = distance(worldPos,sphereCenter);
-            if(dist < sphereRadius)
-                break;
+    float GetShadow(float3 worldPos){
+        float shadow = 0;
+        for(int i=0;i<_OtherLightCount;i++){
+            float4 posShadow = mul(_OtherShadowMatrices[i],float4(worldPos,1));
+            posShadow.xyz /= posShadow.w;
+
+            shadow += tex2D(_OtherShadowMap,posShadow.xy).x < posShadow.z;
         }
-        return i;
+        return shadow;
     }
 
     half4 frag (v2f i) : SV_Target
@@ -76,32 +76,13 @@ Shader "CRP/Unlit TestShadow"
         UNITY_SETUP_INSTANCE_ID(i);
         UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
-        int cascadeId = GetCascadeId(i.worldPos);
-        if(cascadeId>=4)
-            return 1;
-        
-        float3 posShadow = mul(_MainLightShadowMapMatrices[cascadeId],float4(i.worldPos,1)).xyz;
-
-        float shadow = tex2D(_MainLightShadowMap,posShadow.xy).x < posShadow.z;
+        float shadow = GetShadow(i.worldPos);
         return shadow;
 
         half4 col = tex2D(_MainTex, i.uv) * _Color;
         return col;
     }
 
-    half4 frag1 (v2f i) : SV_Target
-    {
-        UNITY_SETUP_INSTANCE_ID(i);
-        UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
-        
-        float3 posShadow = mul(_MainLightShadowMapMatrices[_TileId],float4(i.worldPos,1)).xyz;
-
-        float shadow = tex2D(_MainLightShadowMap,posShadow.xy).x < posShadow.z;
-        return shadow;
-
-        half4 col = tex2D(_MainTex, i.uv) * _Color;
-        return col;
-    }
     ENDHLSL
 
     SubShader

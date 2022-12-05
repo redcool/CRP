@@ -18,7 +18,8 @@ namespace PowerUtilities
         public BasePass[] endPasses;
 
         [Header("Light Settings")]
-        public LightSettings lightSettings;
+        public DirectionalLightSettings directionalLightSettings;
+        public OtherLightSettings otherLightSettings;
 
         protected override RenderPipeline CreatePipeline()
         {
