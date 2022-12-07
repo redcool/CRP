@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class CRPShaderGUI : ShaderGUI
     public override void OnGUI(MaterialEditor editor, MaterialProperty[] properties)
     {
         this.materialEditor = editor;
-        this.materials = materialEditor.targets as Material[];
+        this.materials = materialEditor.targets.Select( item=> (Material)item).ToArray();
         this.properties = properties;
 
         EditorGUI.BeginChangeCheck();
