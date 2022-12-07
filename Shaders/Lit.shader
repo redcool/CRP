@@ -40,7 +40,7 @@ Shader "CRP/Lit"
         [Enum(UnityEngine.Rendering.BlendMode)]_DstMode("_DstMode",int) = 0
 
         [Header(ShadowCaster)]
-        [GroupEnum(,SHADOW_NONE SHADOW_HARD SHADOW_DITHER,true)]_ShadowMode("_ShadowMode",int) = 1
+        [GroupEnum(,SHADOW_HARD SHADOW_DITHER,true)]_ShadowMode("_ShadowMode",int) = 1
         [GroupToggle(,_RECEIVE_SHADOW_OFF)]_ReceiveShadowOff("_ReceiveShadowOff",int) = 1
 
         [Header(Render States)]
@@ -100,7 +100,6 @@ Shader "CRP/Lit"
             #pragma multi_compile_instancing
             #pragma shader_feature _CLIPPING
             #pragma shader_feature SHADOW_DITHER
-            #pragma shader_featuer SHADOW_HARD
             #pragma multi_compile _ LOD_FADE_CROSSFADE
 
             #include "Passes/ShadowCasterPass.hlsl"

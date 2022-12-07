@@ -24,6 +24,7 @@ struct appdata{
 struct v2f{
     float4 vertex:SV_POSITION;
     float2 uv:TEXCOORD;
+    float3 worldPos:TEXCOORD1;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -40,6 +41,7 @@ v2f vert(appdata v){
         o.vertex.z = max(o.vertex.z,o.vertex.w * UNITY_NEAR_CLIP_VALUE);
     #endif
     o.uv = TRANSFORM_TEX(v.uv,_MainTex);
+    o.worldPos = worldPos;
     return o;
 }
 
@@ -50,7 +52,7 @@ void frag(v2f i){
     #if defined(_CLIPPING)
         float clipOff = _CullOff;
         #if defined(SHADOW_DITHER)
-            clipOff += InterleavedGradientNoise(i.vertex.xy,0);
+            clipOff += InterleavedGradientNoise(i.worldPos.xy,0)>0.5;
         #endif
         half4 mainTex = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv) * _Color;
         clip(mainTex.w - clipOff);
