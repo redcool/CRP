@@ -140,10 +140,18 @@ namespace PowerUtilities
 
             for (int i = 0; i < cullingResults.visibleLights.Length; i++)
             {
+                otherShadowData[i].y = -1; // tileIndex default is no shadowed;
+
                 var vLight = cullingResults.visibleLights[i];
                 var isPoint = vLight.lightType == LightType.Point;
                 if (!(isPoint || vLight.lightType == LightType.Spot))
                     continue;
+
+                var shadowedCount = isPoint ? 6 : 1;
+                if(shadowedOtherLightCount + shadowedCount >= maxShadowedOtherLightCount)
+                {
+                    continue;
+                }
 
                 if (shadowedOtherLightCount >= maxShadowedOtherLightCount)
                     break;
@@ -159,7 +167,7 @@ namespace PowerUtilities
                         shadowBias = vLight.light.shadowBias,
                     };
 
-                    shadowedOtherLightCount += isPoint ? 6 : 1;
+                    shadowedOtherLightCount += shadowedCount;
                 }
 
             }
