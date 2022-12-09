@@ -9,7 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: lit
   m_Shader: {fileID: 4800000, guid: 622383f0dc10c584283c0b053cf5a20e, type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - SHADOW_DITHER
   m_InvalidKeywords:
   - _EMISSION
   m_LightmapFlags: 0
@@ -33,6 +34,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DetailMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -50,6 +55,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -93,15 +102,20 @@ Material:
     - _CullOff: 0.5
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
+    - _DetailMapOn: 0
+    - _DetailMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstMode: 0
+    - _EmissionMapOn: 0
     - _EnvironmentReflections: 1
     - _FresnelIntensity: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0.879
+    - _NormalMapOn: 0
+    - _NormalMapScale: 1
     - _Occlusion: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

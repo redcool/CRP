@@ -218,7 +218,7 @@ float FilterOtherShadow(float3 posShadowSpace,float3 bounds){
 
 float GetOtherShadow(OtherShadowData otherShadowData,ShadowData shadowData,Surface surface){
     float tileIndex = otherShadowData.tileIndex;
-    if(tileIndex<=0) // no shadowed light
+    if(tileIndex<0) // no shadowed light
         return 1;
     
     float3 lightPlane = otherShadowData.spotDir;
