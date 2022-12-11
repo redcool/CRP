@@ -11,7 +11,7 @@ namespace PowerUtilities
     public static class CommandBufferEx
     {
 
-        static RenderTextureDescriptor staticDescriptor = default(RenderTextureDescriptor);
+        static RenderTextureDescriptor defaultDescriptor = default;
         public static void ClearRenderTarget(this CommandBuffer cmd, Camera camera, float depth = 1, uint stencil = 0)
         {
             var isClearDepth = camera.clearFlags <= CameraClearFlags.Depth;
@@ -36,7 +36,7 @@ namespace PowerUtilities
             if (targetIds == null || targetIds.Length == 0)
                 return;
 
-            var desc = staticDescriptor;
+            var desc = defaultDescriptor;
             desc.SetupColorDescriptor(camera, renderScale);
             if (hasDepth)
                 desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
@@ -52,7 +52,7 @@ namespace PowerUtilities
             if (targetIds == null || targetIds.Length == 0)
                 return;
 
-            var desc = staticDescriptor;
+            var desc = defaultDescriptor;
             desc.SetupDepthDescriptor(camera, renderScale);
 
             foreach (var item in targetIds)

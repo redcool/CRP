@@ -13,6 +13,7 @@ float4 _TimeParameters; // t, sin(t), cos(t)
 #if !defined(USING_STEREO_MATRICES)
 float3 _WorldSpaceCameraPos;
 #endif
+float4 _ProjectionParams;
 
 CBUFFER_START(UnityPerDraw)
 // Space block Feature

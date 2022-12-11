@@ -9,19 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
-  m_Name: Blit to  _CameraDepthTexture
+  m_Script: {fileID: 11500000, guid: ab9052a6e3ec60a4299a8694f18b05f1, type: 3}
+  m_Name: Post Stack Pass
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: BlitToCameraDepthTexture
+  overridePassName: 
   gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
   isReset: 0
-  sourceName: _CameraDepthTarget
-  isCurrentActive: 0
-  targetName: _CameraDepthTexture
-  isDefaultCameraTarget: 0
-  isNeedCreateTarget: 0
-  blitMat: {fileID: 0}
-  pass: 0
+  bloomPrefilterRenderScale: 1
+  cameraTarget: _CameraTarget
+  postStackMaterial: {fileID: 2100000, guid: f583684fd650b044d89138009eb7251d, type: 2}
+  maxIterates: 7
+  minSize: 2
+  threshold: 0.39
+  thresholdKnee: 0
+  intensity: 1.8

@@ -15,13 +15,13 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: BlitToCameraTexture
   gameCameraTag: MainCamera
-  enabledCameraTypes: 3
   isInterrupt: 0
   isSkip: 0
+  isReset: 0
   sourceName: _CameraTarget
   isCurrentActive: 0
   targetName: _CameraTexture
   isDefaultCameraTarget: 0
   isNeedCreateTarget: 0
-  blitMat: {fileID: 0}
+  blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   pass: 0

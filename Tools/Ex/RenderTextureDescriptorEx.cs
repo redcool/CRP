@@ -16,7 +16,7 @@ namespace PowerUtilities
             desc.height = (int)(camera.pixelHeight * renderScale);
             desc.msaaSamples = 1;
             desc.dimension = TextureDimension.Tex2D;
-            desc.colorFormat = RenderTextureFormat.ARGB32;
+            desc.colorFormat = RenderTextureFormat.Default;
             //desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
         }
 

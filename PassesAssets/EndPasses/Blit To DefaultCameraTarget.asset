@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: Final Blit To CameraTarget
-  cameraTag: 
-  enabledCameraTypes: 15
+  gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
+  isReset: 0
   sourceName: 
   isCurrentActive: 1
   targetName: 

@@ -27,6 +27,8 @@ namespace PowerUtilities
         [Tooltip("Skip this pass?")]
         public bool isSkip;
 
+        public bool isReset;
+
         [NonSerialized]public ScriptableRenderContext context;
         [NonSerialized]public Camera camera;
 
@@ -42,6 +44,7 @@ namespace PowerUtilities
                 return cmd;
             }
         }
+        protected int executeCount;
 
         public void ExecuteCommand()
         {
@@ -51,12 +54,17 @@ namespace PowerUtilities
 
         public void Render(ref ScriptableRenderContext context,Camera camera)
         {
+            TryReset();
+
             this.context = context;
             this.camera = camera;
             var passName = PassName();
 
             if (!CanExecute())
                 return;
+            
+            TryInit();
+
             //if(camera.IsReflectionCamera())
             //Debug.Log(passName);
 
@@ -69,7 +77,26 @@ namespace PowerUtilities
             Cmd.EndSampleExecute(Cmd.name, ref context);
         }
 
-        public abstract void OnRender();
+        /// <summary>
+        /// init once 
+        /// </summary>
+        private void TryInit()
+        {
+            if (executeCount == 0)
+            {
+                Init();
+            }
+            executeCount++;
+        }
+
+        private void TryReset()
+        {
+            if (isReset)
+            {
+                isReset = false;
+                executeCount = 0;
+            }
+        }
 
         public virtual bool CanExecute()
         {
@@ -82,12 +109,11 @@ namespace PowerUtilities
         }
 
         public bool IsCullingResultsValid() => cullingResults != default;
+        public abstract void OnRender();
 
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
         public virtual bool NeedCleanup() => false;
-        public virtual void Cleanup()
-        {
-
-        }
+        public virtual void Cleanup() { }
+        public virtual void Init() { }
     }
 }
