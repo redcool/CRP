@@ -17,6 +17,8 @@ namespace PowerUtilities
             PreFilter=0,
             Copy = 1,
             Combine = 2,
+            Horizontal = 3,
+            Vertical = 4,
         }
 
         [Range(0.1f,1)]public float bloomPrefilterRenderScale = 1;
@@ -28,11 +30,13 @@ namespace PowerUtilities
         [Min(0)]public float threshold;
         [Range(0,1)]public float thresholdKnee;
         [Min(0)] public float intensity;
+        public bool useGaussianBlur;
 
 
         public static readonly int 
             _BloomPrefilterMap = Shader.PropertyToID(nameof(_BloomPrefilterMap)),
             _SourceTex = Shader.PropertyToID(nameof(_SourceTex)),
+            _SourceTex_Texel= Shader.PropertyToID(nameof(_SourceTex_Texel)),
             _BloomThreshold = Shader.PropertyToID(nameof(_BloomThreshold)),
             _BloomIntensity = Shader.PropertyToID(nameof(_BloomIntensity))
             ;
@@ -45,7 +49,7 @@ namespace PowerUtilities
             _CameraTarget = Shader.PropertyToID(cameraTarget);
 
             _BloomPyramid0 = Shader.PropertyToID(nameof(_BloomPyramid0));
-            for (int i = 1; i < 16; i++)
+            for (int i = 1; i < 16 * 2; i++)
             {
                 Shader.PropertyToID("_BloomPyramid" + i);
             }
@@ -59,9 +63,9 @@ namespace PowerUtilities
         public override void OnRender()
         {
             int width = (int)(camera.pixelWidth * bloomPrefilterRenderScale);
-            int height =(int)( camera.pixelHeight * bloomPrefilterRenderScale);
+            int height = (int)(camera.pixelHeight * bloomPrefilterRenderScale);
 
-            Cmd.GetTemporaryRT(_BloomPrefilterMap,width,height,0,FilterMode.Bilinear,RenderTextureFormat.Default);
+            Cmd.GetTemporaryRT(_BloomPrefilterMap, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
 
             var thresholdVec = new Vector4();
             thresholdVec.x = Mathf.GammaToLinearSpace(threshold);
@@ -71,20 +75,28 @@ namespace PowerUtilities
             thresholdVec.y -= thresholdVec.x;
 
             Cmd.SetGlobalVector(_BloomThreshold, thresholdVec);
-
             Blit(_CameraTarget, _BloomPrefilterMap, postStackMaterial, (int)Pass.PreFilter);
 
             var fromId = _BloomPrefilterMap;
             var toId = _BloomPyramid0;
 
-            DownSamples(width, height, fromId, toId,out var maxId,out var maxCount);
+            int maxCount = 0, maxId = 0, lastId = 0;
 
-            UpSamples(maxId, maxCount);
+            if (useGaussianBlur)
+            {
+                DownSamplesGaussian(width, height, fromId, toId, out maxId, out maxCount);
+                UpSamplesGaussian(maxId, maxCount, out lastId);
+            }
+            else
+            {
+                DownSamples(width, height, fromId, toId, out maxId, out maxCount);
+                UpSamples(maxId, maxCount, out lastId);
+            }
 
             Cmd.SetGlobalFloat(_BloomIntensity, intensity);
-            Blit(_BloomPyramid0, _CameraTarget, postStackMaterial, (int)Pass.Combine);
+            Blit(lastId, _CameraTarget, postStackMaterial, (int)Pass.Combine);
 
-            Clean(maxId,maxCount);
+            Clean(maxId, maxCount);
         }
 
         void DownSamples(int width,int height,int fromId, int toId,out int maxId,out int maxCount)
@@ -94,10 +106,12 @@ namespace PowerUtilities
             height /= 2;
 
             Cmd.BeginSampleExecute(nameof(DownSamples), ref context);
-            for (int i = 0; i < maxIterates-1; i++)
+            for (int i = 0; i < maxIterates; i++)
             {
-                if(width< minSize || height< minSize) break;
+                if(width< minSize || height< minSize) 
+                    break;
 
+                var midId = toId - 1;
                 Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
                 Blit(fromId, toId, postStackMaterial, (int)Pass.Copy);
 
@@ -111,24 +125,77 @@ namespace PowerUtilities
             Cmd.EndSampleExecute(nameof(DownSamples), ref context);
         }
 
-        void UpSamples(int maxId,int maxCount)
+        void UpSamples(int maxId, int maxCount, out int lastId)
         {
-            if(maxCount < 1)
-            {
+            lastId = 0;
+            if (maxCount < 1)
                 return;
-            }
+
             var fromId = maxId;
             var toId = fromId - 1;
 
-            Cmd.BeginSampleExecute("UpSamples", ref context);
+            Cmd.BeginSampleExecute(nameof(UpSamples), ref context);
             for (int i = maxCount; i > 0; i--)
             {
                 Blit(fromId, toId, postStackMaterial, (int)Pass.Copy);
                 fromId -= 1;
                 toId -= 1;
             }
-            Cmd.EndSampleExecute("UpSamples", ref context);
+            Cmd.EndSampleExecute(nameof(UpSamples), ref context);
+            lastId = toId + 1;
         }
+
+        void DownSamplesGaussian(int width, int height, int fromId, int toId, out int maxId, out int maxCount)
+        {
+            maxId = maxCount = 0;
+            width /= 2;
+            height /= 2;
+
+            toId++;
+
+            Cmd.BeginSampleExecute(nameof(DownSamplesGaussian), ref context);
+            for (int i = 0; i < maxIterates; i++)
+            {
+                if (width < minSize || height < minSize)
+                    break;
+
+                var midId = toId - 1;
+                Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
+                Cmd.GetTemporaryRT(midId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
+                Cmd.SetGlobalVector(_SourceTex_Texel, new Vector4(1f / width, 1f / height, width, height));
+                Blit(fromId, midId, postStackMaterial, (int)Pass.Horizontal);
+                Blit(midId, toId, postStackMaterial, (int)Pass.Vertical);
+
+                fromId = toId;
+                toId += 2;
+
+                width /= 2; height /= 2;
+                maxCount = i;
+            }
+            maxId = fromId;
+            Cmd.EndSampleExecute(nameof(DownSamplesGaussian), ref context);
+        }
+
+        void UpSamplesGaussian(int maxId, int maxCount,out int lastId)
+        {
+            lastId = 0;
+            if (maxCount < 1)
+                return;
+
+            var fromId = maxId;
+            var toId = fromId - 2;
+
+            Cmd.BeginSampleExecute(nameof(UpSamplesGaussian), ref context);
+            for (int i = maxCount; i > 0; i--)
+            {
+                Blit(fromId, toId, postStackMaterial, (int)Pass.Copy);
+                fromId -= 2;
+                toId -= 2;
+            }
+            Cmd.EndSampleExecute(nameof(UpSamplesGaussian), ref context);
+            lastId = toId + 2;
+        }
+
         private void Clean(int maxId,int maxCount)
         {
             for (int i = maxCount-1; i >= 0; i--)

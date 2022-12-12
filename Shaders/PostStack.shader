@@ -17,7 +17,7 @@ Shader "Hidden/CRP/PostStack"
             ztest always
             cull off
 
-        Pass 
+        Pass  
         {
             name "Prefilter"
             HLSLPROGRAM
@@ -42,6 +42,24 @@ Shader "Hidden/CRP/PostStack"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment fragCombine
+            
+            ENDHLSL
+        }
+        Pass 
+        {
+            Name "Horizontal"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragHorizontal
+            
+            ENDHLSL
+        }
+        Pass 
+        {
+            Name "Vertical"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragVertical
             
             ENDHLSL
         }

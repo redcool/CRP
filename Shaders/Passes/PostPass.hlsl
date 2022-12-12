@@ -10,7 +10,7 @@
 
     sampler2D _SourceTex;
     sampler2D _CameraTexture;
-    // float4 _SourceTex_Texel;
+    float4 _SourceTex_Texel;
 
     v2f vert(uint vid:SV_VERTEXID){
         v2f o = (v2f)0;
@@ -54,5 +54,36 @@
         half4 col = tex2D(_SourceTex,i.uv);
         half4 col2 = tex2D(_CameraTexture,i.uv);
         return half4(col.xyz*_BloomIntensity+col2.xyz,1);
+    }
+
+    half4 fragHorizontal(v2f i):SV_TARGET{
+        static float weights[5] = {.1,.2,.4,.2,.1};
+        static float2 uvOffsets[5] = {
+            float2(-2,0)* _SourceTex_Texel.xy,
+            float2(-1,0)* _SourceTex_Texel.xy,
+            float2(0,0)* _SourceTex_Texel.xy,
+            float2(1,0)* _SourceTex_Texel.xy,
+            float2(2,0)* _SourceTex_Texel.xy
+        };
+        half4 c = 0;
+        for(uint x=0;x<5;x++){
+            c += tex2D(_SourceTex,i.uv+uvOffsets[x]) * weights[x];
+        }
+        return c;
+    }
+    half4 fragVertical(v2f i):SV_TARGET{
+        static float weights[5] = {.1,.2,.4,.2,.1};
+        static float2 uvOffsets[5] = {
+            float2(0,-2)* _SourceTex_Texel.xy,
+            float2(0,-1)* _SourceTex_Texel.xy,
+            float2(0,0)* _SourceTex_Texel.xy,
+            float2(0,1)* _SourceTex_Texel.xy,
+            float2(0,2)* _SourceTex_Texel.xy
+        };
+        half4 c = 0;
+        for(uint x=0;x<5;x++){
+            c += tex2D(_SourceTex,i.uv+uvOffsets[x]) * weights[x];
+        }
+        return c;
     }
 #endif //POST_PASS_HLSL
