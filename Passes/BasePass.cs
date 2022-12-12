@@ -111,9 +111,20 @@ namespace PowerUtilities
         public bool IsCullingResultsValid() => cullingResults != default;
         public abstract void OnRender();
 
+
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
         public virtual bool NeedCleanup() => false;
+
+        /// <summary>
+        /// when NeedCleanup() is true
+        /// call Cleanup when renderPipeline is done.
+        /// </summary>
         public virtual void Cleanup() { }
+
+        /// <summary>
+        /// only call once before OnRender
+        /// set isReset = true,will reset pass
+        /// </summary>
         public virtual void Init() { }
     }
 }
