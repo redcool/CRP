@@ -52,3 +52,6 @@ MonoBehaviour:
     maxShadowedOtherLightCount: 16
     atlasSize: 1024
     pcfMode: 0
+  pipelineSettings:
+    isHdr: 1
+    toneMapper: 0

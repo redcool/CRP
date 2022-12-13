@@ -18,12 +18,17 @@ namespace PowerUtilities
         [Header("Target")]
         public string targetName;
         public bool isDefaultCameraTarget;
-        public bool isNeedCreateTarget;
+        //public bool isNeedCreateTarget;
 
         [Header("Material")]
         public Material blitMat;
         [Range(0, 15)]
+        [Tooltip("ToneMappingPass is None,use this")]
         public int pass = 0;
+
+        [Header("ToneMapping")]
+        [Tooltip("ToneMapping should apply the last blit pass")]
+        public ToneMappingPass toneMappingPass;
 
         public override bool CanExecute()
         {
@@ -44,14 +49,17 @@ namespace PowerUtilities
             RenderTargetIdentifier sourceId = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : sourceNameId;
             RenderTargetIdentifier targetId = isDefaultCameraTarget ? BuiltinRenderTextureType.CameraTarget : targetNameId;
 
-            if (!isDefaultCameraTarget && isNeedCreateTarget)
-            {
-                targetId = targetNameId;
-                Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
-            }
+            //if (!isDefaultCameraTarget && isNeedCreateTarget)
+            //{
+            //    targetId = targetNameId;
+            //    Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
+            //}
 
-            Blit(sourceId, targetId,blitMat,pass);
+            Blit(sourceId, targetId,blitMat,GetPassId());
         }
+
+        bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;
+        int GetPassId() => IsApplyTone() ? (int)toneMappingPass : pass;
 
         private void Blit(RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material blitMat,int pass)
         {
@@ -64,5 +72,6 @@ namespace PowerUtilities
                 Cmd.Blit(sourceId, targetId, blitMat, pass);
             }
         }
+
     }
 }

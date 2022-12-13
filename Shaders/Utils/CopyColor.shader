@@ -6,57 +6,55 @@ Shader "CRP/Utils/CopyColor"
     }
 
     HLSLINCLUDE
-    #include "../Libs/UnityInput.hlsl"
-
-    struct appdata
-    {
-        float4 vertex : POSITION;
-        float2 uv : TEXCOORD0;
-    };
-
-    struct v2f
-    {
-        float2 uv : TEXCOORD0;
-        float4 vertex : SV_POSITION;
-    };
-
-    sampler2D _MainTex;
-
-    CBUFFER_START(UnityPerMaterial)
-    float4 _MainTex_ST;
-    CBUFFER_END
-
-    v2f vert (appdata v)
-    {
-        v2f o;
-        o.vertex = TransformObjectToHClip(v.vertex.xyz);
-        o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-        #if defined(UNITY_UV_STARTS_AT_TOP)
-        o.uv.y = 1-o.uv.y;
-        #endif
-        return o;
-    }
-
-    half4 frag (v2f i) : SV_Target
-    {
-        half4 col = tex2D(_MainTex, i.uv);
-        return col;
-    }
+    #include "CopyColorPass.hlsl"
     ENDHLSL
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 100
+        Cull off
+        zwrite off
+        ztest always
 
-        Pass
+        Pass //0
         {
+            Name "CopyColor"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
-            
             ENDHLSL
         }
+
+        Pass
+        {
+            Name "CopyColor Reinhard"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragReinhard
+            ENDHLSL
+        }
+        Pass //2 
+        {
+            Name "CopyColor ACESFitted"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragACESFitted
+            ENDHLSL
+        }
+        Pass
+        {
+            Name "CopyColor ACESFilm"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragACESFilm
+            ENDHLSL
+        }       
+        Pass //4
+        {
+            Name "CopyColor GTTone"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragGTTone
+            ENDHLSL
+        }           
     }
 }

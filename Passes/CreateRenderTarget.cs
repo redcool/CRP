@@ -35,8 +35,10 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
+            var isHdr = CRP.Asset.pipelineSettings.isHdr;
+
             RenderingTools.RenderTargetNameToInt(targetNames, ref targetIds);
-            Cmd.CreateTargets(camera, targetIds, renderScale,isTargetHasDepth);
+            Cmd.CreateTargets(camera, targetIds, renderScale,isTargetHasDepth,isHdr);
 
             RenderingTools.RenderTargetNameToInt(depthTargetNames, ref depthIds);
             Cmd.CreateDepthTargets(camera, depthIds, renderScale);

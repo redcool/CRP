@@ -21,6 +21,9 @@ namespace PowerUtilities
         public DirectionalLightSettings directionalLightSettings;
         public OtherLightSettings otherLightSettings;
 
+        [Header("Pipeline Settings")]
+        public PipelineSettings pipelineSettings;
+
         protected override RenderPipeline CreatePipeline()
         {
             return new CRP(this);

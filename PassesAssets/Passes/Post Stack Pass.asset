@@ -23,8 +23,12 @@ MonoBehaviour:
   postStackMaterial: {fileID: 2100000, guid: f583684fd650b044d89138009eb7251d, type: 2}
   maxIterates: 3
   minSize: 2
-  threshold: 0.3
+  threshold: 0.5
   thresholdKnee: 0
-  intensity: 10
+  maxLuma: 100
+  isHdr: 1
+  bloomMode: 1
+  intensity: 2.51
+  scatter: 0.487
   useGaussianBlur: 1
   isCombineBicubicFilter: 0

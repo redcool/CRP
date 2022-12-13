@@ -14,12 +14,21 @@ namespace PowerUtilities
     {
         public enum Pass
         {
-            PreFilter=0,
-            Copy = 1,
-            Combine = 2,
-            Horizontal = 3,
-            Vertical = 4,
+            PreFilter,
+            Copy,
+            Combine,
+            Horizontal,
+            Vertical,
+
+            CombineScatter,
+            CombineScatterFinal,
         }
+        public enum BloomMode
+        {
+            Add,
+            Scatter
+        }
+
         [Header("Bloom")]
         [Range(0.1f,1)]public float bloomPrefilterRenderScale = 1;
         public string cameraTarget = "_CameraTarget";
@@ -28,9 +37,19 @@ namespace PowerUtilities
         const int MAX_ITERATORS = 16;
         [Range(0, MAX_ITERATORS)]public int maxIterates = MAX_ITERATORS;
         [Min(2)]public int minSize = 2;
+
         [Min(0)]public float threshold = 0.3f;
         [Range(0,1)]public float thresholdKnee = 0;
-        [Min(0)] public float intensity = 10;
+        [Range(0.1f, 100)] public float maxLuma = 10;
+
+        [Header("Bloom Intensity")]
+        public bool isHdr;
+        public BloomMode bloomMode;
+        [Min(0)] public float intensity = 1;
+
+        [Tooltip("Scatter Mode use this value")]
+        [Range(0.005f, 0.99f)] public float scatter = 0.1f;
+
         public bool useGaussianBlur;
         public bool isCombineBicubicFilter;
 
@@ -42,6 +61,7 @@ namespace PowerUtilities
             _SourceTex2 = Shader.PropertyToID(nameof(_SourceTex2)),
             _BloomThreshold = Shader.PropertyToID(nameof(_BloomThreshold)),
             _BloomIntensity = Shader.PropertyToID(nameof(_BloomIntensity)),
+            _BloomFinalIntensity = Shader.PropertyToID(nameof(_BloomFinalIntensity)),
             _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter))
             ;
         int _CameraTarget;
@@ -64,28 +84,20 @@ namespace PowerUtilities
             return base.CanExecute() && postStackMaterial && maxIterates>0;
         }
 
+        RenderTextureFormat GetTextureFormat() => isHdr ? RenderTextureFormat.DefaultHDR: RenderTextureFormat.Default;
+
         public override void OnRender()
         {
             int width = (int)(camera.pixelWidth * bloomPrefilterRenderScale);
             int height = (int)(camera.pixelHeight * bloomPrefilterRenderScale);
 
-            Cmd.GetTemporaryRT(_BloomPrefilterMap, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
-
-            var thresholdVec = new Vector4();
-            thresholdVec.x = Mathf.GammaToLinearSpace(threshold);
-            thresholdVec.y = thresholdVec.x * thresholdKnee;
-            thresholdVec.z = 2 * thresholdVec.y;
-            thresholdVec.w = 0.25f / (thresholdVec.y + 1e-5f);
-            thresholdVec.y -= thresholdVec.x;
-
-            Cmd.SetGlobalVector(_BloomThreshold, thresholdVec);
-            Blit(_CameraTarget, _BloomPrefilterMap, postStackMaterial, (int)Pass.PreFilter);
-            //Blit(_BloomPrefilterMap, _CameraTarget, postStackMaterial, (int)Pass.Copy);
+            BloomPrefilter(width, height);
+            //Cmd.BlitTriangle(_BloomPrefilterMap, _CameraTarget, postStackMaterial, (int)Pass.Copy);
             //return;
             var fromId = _BloomPrefilterMap;
             var toId = _BloomPyramid0;
 
-            int maxCount = 0, maxId = 0, lastId = 0;
+            int maxCount = 0, maxId = 0;
 
             if (useGaussianBlur)
             {
@@ -95,18 +107,65 @@ namespace PowerUtilities
             {
                 DownSamples(width, height, fromId, toId, out maxId, out maxCount);
             }
-            //lastId = maxId;
 
+            int lastId = maxId;
             UpSamples(maxId, maxCount, out lastId, useGaussianBlur ? 2 : 1);
 
-            Cmd.SetGlobalFloat(_BloomIntensity, intensity);
-            Cmd.SetGlobalFloat(_BloomCombineBicubicFilter, isCombineBicubicFilter?1:0);
-            Cmd.SetGlobalTexture(_SourceTex2, "_CameraTexture");
-            Blit(lastId, _CameraTarget, postStackMaterial, (int)Pass.Combine);
+            CombineBloom(lastId);
 
             Clean(maxId, maxCount);
         }
 
+        private void BloomPrefilter(int width, int height)
+        {
+            Cmd.GetTemporaryRT(_BloomPrefilterMap, width, height, 0, FilterMode.Bilinear, GetTextureFormat());
+
+            var thresholdVec = new Vector4();
+            thresholdVec.x = Mathf.GammaToLinearSpace(threshold);
+            thresholdVec.y = thresholdVec.x * thresholdKnee;
+            thresholdVec.z = 2 * thresholdVec.y;
+            //thresholdVec.w = 0.25f / (thresholdVec.y + 1e-5f);
+            //thresholdVec.y -= thresholdVec.x;
+            thresholdVec.w = maxLuma;
+
+            Cmd.SetGlobalVector(_BloomThreshold, thresholdVec);
+            Cmd.BlitTriangle(_CameraTarget, _BloomPrefilterMap, postStackMaterial, (int)Pass.PreFilter);
+        }
+
+        void CombineBloom(int lastId)
+        {
+            var finalPass = GetCombineFinalPassAndFinalIntensity(out var finalIntensity);
+
+            Cmd.SetGlobalFloat(_BloomIntensity, finalIntensity);
+            Cmd.SetGlobalFloat(_BloomCombineBicubicFilter, isCombineBicubicFilter ? 1 : 0);
+            Cmd.SetGlobalTexture(_SourceTex2, "_CameraTexture");
+            Cmd.BlitTriangle(lastId, _CameraTarget, postStackMaterial, (int)finalPass);
+        }
+
+        Pass GetCombineFinalPassAndFinalIntensity(out float finalIntensity)
+        {
+            finalIntensity = intensity;
+            if (bloomMode == BloomMode.Add)
+            {
+                return Pass.Combine;
+            }
+            finalIntensity = Mathf.Min(1,intensity);
+            return Pass.CombineScatterFinal;
+        }
+
+        Pass GetCombinePassAndIntensity(out float bloomIntensity)
+        {
+            bloomIntensity = 1;
+
+            var combinePass = Pass.Combine;
+            if (bloomMode == BloomMode.Scatter)
+            {
+                combinePass = Pass.CombineScatter;
+                bloomIntensity = scatter;
+            }
+
+            return combinePass;
+        }
         void DownSamples(int width,int height,int fromId, int toId,out int maxId,out int maxCount)
         {
             maxId = maxCount= 0;
@@ -119,8 +178,8 @@ namespace PowerUtilities
                 if(width< minSize || height< minSize) 
                     break;
 
-                Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
-                Blit(fromId, toId, postStackMaterial, (int)Pass.Copy);
+                Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, GetTextureFormat());
+                Cmd.BlitTriangle(fromId, toId, postStackMaterial, (int)Pass.Copy);
 
                 fromId = toId;
                 toId++;
@@ -148,11 +207,11 @@ namespace PowerUtilities
                     break;
 
                 var midId = toId - 1;
-                Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
-                Cmd.GetTemporaryRT(midId, width, height, 0, FilterMode.Bilinear, RenderTextureFormat.Default);
+                Cmd.GetTemporaryRT(toId, width, height, 0, FilterMode.Bilinear, GetTextureFormat());
+                Cmd.GetTemporaryRT(midId, width, height, 0, FilterMode.Bilinear, GetTextureFormat());
                 Cmd.SetGlobalVector(_SourceTex_Texel, new Vector4(1f / width, 1f / height, width, height));
-                Blit(fromId, midId, postStackMaterial, (int)Pass.Horizontal);
-                Blit(midId, toId, postStackMaterial, (int)Pass.Vertical);
+                Cmd.BlitTriangle(fromId, midId, postStackMaterial, (int)Pass.Horizontal);
+                Cmd.BlitTriangle(midId, toId, postStackMaterial, (int)Pass.Vertical);
 
                 fromId = toId;
                 toId += 2;
@@ -164,10 +223,10 @@ namespace PowerUtilities
             Cmd.EndSampleExecute(nameof(DownSamplesGaussian), ref context);
         }
 
-        void UpSamples(int maxId, int maxCount, out int lastId, int stepCount=1)
+        void UpSamples(int maxId, int maxCount, out int lastId, int stepCount = 1)
         {
             lastId = maxId;
-            
+
             // 0 is prefileter pass, no use, so 1 is last
             const int LAST_COUNT = 1;
             if (maxCount <= LAST_COUNT)
@@ -176,12 +235,15 @@ namespace PowerUtilities
             var fromId = maxId;
             var toId = fromId - stepCount;
 
+            Pass combinePass = GetCombinePassAndIntensity(out var bloomIntensity);
+            Cmd.SetGlobalFloat(_BloomIntensity, bloomIntensity);
+
             Cmd.BeginSampleExecute(nameof(UpSamples), ref context);
 
             for (int i = maxCount; i > LAST_COUNT; i--)
             {
-                Cmd.SetGlobalTexture(_SourceTex2, toId - 1);
-                Blit(fromId, toId, postStackMaterial, (int)Pass.Combine);
+                Cmd.SetGlobalTexture(_SourceTex2, toId + 1);
+                Cmd.BlitTriangle(fromId, toId, postStackMaterial, (int)combinePass);
                 fromId -= stepCount;
                 toId -= stepCount;
             }
@@ -189,19 +251,15 @@ namespace PowerUtilities
             lastId = toId + stepCount;
         }
 
+
         private void Clean(int maxId,int maxCount)
         {
+            Cmd.ReleaseTemporaryRT(_BloomPrefilterMap);
             for (int i = maxCount-1; i >= 0; i--)
             {
                 Cmd.ReleaseTemporaryRT(maxId--);
             }
         }
 
-        public void Blit(int sourceId,int targetId,Material mat, int pass)
-        {
-            Cmd.SetGlobalTexture(_SourceTex, sourceId);
-            Cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
-            Cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
-        }
     }
 }

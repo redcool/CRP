@@ -13,6 +13,12 @@
     TEXTURE2D(_SourceTex2);SAMPLER(sampler_SourceTex2);
     float4 _SourceTex_Texel;
 
+    TEXTURE2D(_CameraTexture);SAMPLER(sampler_CameraTexture);
+    
+    float4 _BloomThreshold;
+    float _BloomIntensity;
+    bool _BloomCombineBicubicFilter;
+
     v2f vert(uint vid:SV_VERTEXID){
         v2f o = (v2f)0;
         o.vertex = float4(
@@ -31,53 +37,51 @@
         return o;
     }
 
-    half4 SampleSourceTex(float2 uv){
+    float4 SampleSourceTex(float2 uv){
         return SAMPLE_TEXTURE2D(_SourceTex,sampler_SourceTex,uv);
     }
-    half4 SampleSourceTex2(float2 uv){
+    float4 SampleSourceTex2(float2 uv){
         return SAMPLE_TEXTURE2D(_SourceTex2,sampler_SourceTex2,uv);
     }
+    float4 SampleBloomTex(float2 uv){
+        if(_BloomCombineBicubicFilter){
+            return SampleTexture2DBicubic(_SourceTex,sampler_SourceTex,uv,_SourceTex_Texel.zwxy,1,0);
+        }else{
+            return SampleSourceTex(uv);
+        }
+    }
 
-    float4 _BloomThreshold;
-    half3 ApplyBloomThreshold(half3 col){
-        float luma = dot(half3(0.2,0.7,0.02),col);
+    float3 ApplyBloomThreshold(float3 col){
+        float luma = dot(float3(0.2,0.7,0.02),col);
         // luma = smoothstep(0,1,luma);
         
         luma -= _BloomThreshold.x + _BloomThreshold.z;
-        return luma * col;
+        return clamp(luma * col,0,_BloomThreshold.w);
 
-        float maxValue = Max3(col.x,col.y,col.z);
-        float soft = maxValue + _BloomThreshold.y;
-        soft = clamp(soft,0,_BloomThreshold.z);
-        float weight = max(soft,maxValue - _BloomThreshold.x);
-        weight /= max(maxValue,1e-5);
-        return col * weight;
+        // float maxValue = Max3(col.x,col.y,col.z);
+        // float soft = maxValue + _BloomThreshold.y;
+        // soft = clamp(soft,0,_BloomThreshold.z);
+        // float weight = max(soft,maxValue - _BloomThreshold.x);
+        // weight /= max(maxValue,1e-5);
+        // return col * weight;
     }
 
-    half4 fragPrefilter (v2f i) : SV_Target{
-        half4 col = SampleSourceTex(i.uv);
-        return half4(ApplyBloomThreshold(col.xyz),1);
+    float4 fragPrefilter (v2f i) : SV_Target{
+        float4 col = SampleSourceTex(i.uv);
+        return float4(ApplyBloomThreshold(col.xyz),1);
     }
 
-    half4 fragCopy(v2f i):SV_Target{
+    float4 fragCopy(v2f i):SV_Target{
         return SampleSourceTex(i.uv);
     }
 
-    float _BloomIntensity;
-    bool _BloomCombineBicubicFilter;
-    half4 fragCombine(v2f i):SV_Target{
-        half4 bloomCol = 0;
-        if(_BloomCombineBicubicFilter){
-            bloomCol = SampleTexture2DBicubic(_SourceTex,sampler_SourceTex,i.uv,_SourceTex_Texel.zwxy,1,0);
-        }else{
-            bloomCol = SampleSourceTex(i.uv);
-        }
-
-        half4 screenCol = SampleSourceTex2(i.uv);
-        return half4(bloomCol.xyz*_BloomIntensity+screenCol.xyz,1);
+    float4 fragCombine(v2f i):SV_Target{
+        float4 bloomCol = SampleBloomTex(i.uv);
+        float4 screenCol = SampleSourceTex2(i.uv);
+        return float4(bloomCol.xyz*_BloomIntensity+screenCol.xyz,1);
     }
 
-    half4 fragHorizontal(v2f i):SV_TARGET{
+    float4 fragHorizontal(v2f i):SV_TARGET{
         static float weights[5] = {.1,.2,.4,.2,.1};
         static float2 uvOffsets[5] = {
             float2(-2,0)* _SourceTex_Texel.xy,
@@ -86,14 +90,14 @@
             float2(1,0)* _SourceTex_Texel.xy,
             float2(2,0)* _SourceTex_Texel.xy
         };
-        half4 c = 0;
+        float4 c = 0;
         for(uint x=0;x<5;x++){
             c += SampleSourceTex(i.uv+uvOffsets[x]) * weights[x];
         }
         return c;
     }
 
-    half4 fragVertical(v2f i):SV_TARGET{
+    float4 fragVertical(v2f i):SV_TARGET{
         static float weights[5] = {.1,.2,.4,.2,.1};
         static float2 uvOffsets[5] = {
             float2(0,-2)* _SourceTex_Texel.xy,
@@ -102,10 +106,26 @@
             float2(0,1)* _SourceTex_Texel.xy,
             float2(0,2)* _SourceTex_Texel.xy
         };
-        half4 c = 0;
+        float4 c = 0;
         for(uint x=0;x<5;x++){
             c += SampleSourceTex(i.uv+uvOffsets[x]) * weights[x];
         }
         return c;
+    }
+
+    float4 fragCombineScatter(v2f i):SV_Target{
+        float4 bloomCol = SampleBloomTex(i.uv);
+
+        float4 screenCol = SampleSourceTex2(i.uv);
+        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),1);
+    }
+
+    float4 fragCombineScatterFinal(v2f i):SV_Target{
+        float4 bloomCol = SampleBloomTex(i.uv);
+
+        float4 screenCol = SampleSourceTex2(i.uv);
+        bloomCol.xyz += screenCol.xyz ;//- ApplyBloomThreshold(screenCol.xyz);
+
+        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),1);
     }
 #endif //POST_PASS_HLSL

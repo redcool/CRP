@@ -27,7 +27,7 @@ Shader "Hidden/CRP/PostStack"
             ENDHLSL
         }
 
-        Pass 
+        Pass  // 1
         {
             Name "Copy"
             HLSLPROGRAM
@@ -45,7 +45,7 @@ Shader "Hidden/CRP/PostStack"
             
             ENDHLSL
         }
-        Pass 
+        Pass //3
         {
             Name "Horizontal"
             HLSLPROGRAM
@@ -63,5 +63,23 @@ Shader "Hidden/CRP/PostStack"
             
             ENDHLSL
         }
+        Pass //5
+        {
+            Name "CombineScatter"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragCombineScatter
+            
+            ENDHLSL
+        }
+        Pass 
+        {
+            Name "CombineScatterFinaly"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragCombineScatterFinal
+            
+            ENDHLSL
+        }        
     }
 }

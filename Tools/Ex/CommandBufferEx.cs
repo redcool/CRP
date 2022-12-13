@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
+using UnityEngine.Networking.Types;
 
 namespace PowerUtilities
 {
@@ -31,13 +33,13 @@ namespace PowerUtilities
         }
 
 
-        public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1,bool hasDepth=false)
+        public static void CreateTargets(this CommandBuffer Cmd, Camera camera, int[] targetIds, float renderScale = 1,bool hasDepth=false,bool isHdr=false)
         {
             if (targetIds == null || targetIds.Length == 0)
                 return;
 
             var desc = defaultDescriptor;
-            desc.SetupColorDescriptor(camera, renderScale);
+            desc.SetupColorDescriptor(camera, renderScale,isHdr);
             if (hasDepth)
                 desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
 
@@ -92,6 +94,13 @@ namespace PowerUtilities
                 else
                     cmd.DisableShaderKeyword(item);
             }
+        }
+
+        public static void BlitTriangle(this CommandBuffer cmd,int sourceId,int targetId,Material mat,int pass)
+        {
+            cmd.SetGlobalTexture(ShaderPropertyIds._SourceTex, sourceId);
+            cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
+            cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
         }
     }
 }
