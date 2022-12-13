@@ -21,8 +21,10 @@ MonoBehaviour:
   bloomPrefilterRenderScale: 1
   cameraTarget: _CameraTarget
   postStackMaterial: {fileID: 2100000, guid: f583684fd650b044d89138009eb7251d, type: 2}
-  maxIterates: 6
+  maxIterates: 3
   minSize: 2
-  threshold: 0.39
+  threshold: 0.3
   thresholdKnee: 0
-  intensity: 2.46
+  intensity: 10
+  useGaussianBlur: 1
+  isCombineBicubicFilter: 0

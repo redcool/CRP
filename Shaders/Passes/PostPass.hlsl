@@ -10,7 +10,7 @@
     };
 
     TEXTURE2D(_SourceTex);SAMPLER(sampler_SourceTex);
-    TEXTURE2D(_CameraTexture);SAMPLER(sampler_CameraTexture);
+    TEXTURE2D(_SourceTex2);SAMPLER(sampler_SourceTex2);
     float4 _SourceTex_Texel;
 
     v2f vert(uint vid:SV_VERTEXID){
@@ -34,8 +34,8 @@
     half4 SampleSourceTex(float2 uv){
         return SAMPLE_TEXTURE2D(_SourceTex,sampler_SourceTex,uv);
     }
-    half4 SampleCameraTex(float2 uv){
-        return SAMPLE_TEXTURE2D(_CameraTexture,sampler_CameraTexture,uv);
+    half4 SampleSourceTex2(float2 uv){
+        return SAMPLE_TEXTURE2D(_SourceTex2,sampler_SourceTex2,uv);
     }
 
     float4 _BloomThreshold;
@@ -73,7 +73,7 @@
             bloomCol = SampleSourceTex(i.uv);
         }
 
-        half4 screenCol = SampleCameraTex(i.uv);
+        half4 screenCol = SampleSourceTex2(i.uv);
         return half4(bloomCol.xyz*_BloomIntensity+screenCol.xyz,1);
     }
 

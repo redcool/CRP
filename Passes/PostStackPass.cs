@@ -39,6 +39,7 @@ namespace PowerUtilities
             _BloomPrefilterMap = Shader.PropertyToID(nameof(_BloomPrefilterMap)),
             _SourceTex = Shader.PropertyToID(nameof(_SourceTex)),
             _SourceTex_Texel= Shader.PropertyToID(nameof(_SourceTex_Texel)),
+            _SourceTex2 = Shader.PropertyToID(nameof(_SourceTex2)),
             _BloomThreshold = Shader.PropertyToID(nameof(_BloomThreshold)),
             _BloomIntensity = Shader.PropertyToID(nameof(_BloomIntensity)),
             _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter))
@@ -100,6 +101,7 @@ namespace PowerUtilities
 
             Cmd.SetGlobalFloat(_BloomIntensity, intensity);
             Cmd.SetGlobalFloat(_BloomCombineBicubicFilter, isCombineBicubicFilter?1:0);
+            Cmd.SetGlobalTexture(_SourceTex2, "_CameraTexture");
             Blit(lastId, _CameraTarget, postStackMaterial, (int)Pass.Combine);
 
             Clean(maxId, maxCount);
@@ -178,14 +180,14 @@ namespace PowerUtilities
 
             for (int i = maxCount; i > LAST_COUNT; i--)
             {
-                Blit(fromId, toId, postStackMaterial, (int)Pass.Copy);
+                Cmd.SetGlobalTexture(_SourceTex2, toId - 1);
+                Blit(fromId, toId, postStackMaterial, (int)Pass.Combine);
                 fromId -= stepCount;
                 toId -= stepCount;
             }
             Cmd.EndSampleExecute(nameof(UpSamples), ref context);
             lastId = toId + stepCount;
         }
-
 
         private void Clean(int maxId,int maxCount)
         {
