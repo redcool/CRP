@@ -2,6 +2,7 @@
 #define COPY_COLOR_PASS_HLSL
     #include "../Libs/UnityInput.hlsl"
     #include "../../../PowerShaderLib/Lib/ToneMappers.hlsl"
+    #include "../../../PowerShaderLib/Lib/Colors.hlsl"
 
     struct appdata
     {
@@ -21,6 +22,14 @@
     float4 _MainTex_ST;
     CBUFFER_END
 
+    bool _ApplyColorGrading;
+
+    float3 ApplyColorGrading(float3 c){
+        if(_ApplyColorGrading)
+            c = ColorGrading(c);
+        return c;
+    }
+
     v2f vert (appdata v)
     {
         v2f o;
@@ -32,19 +41,29 @@
         return o;
     }
 
-    half4 frag (v2f i) : SV_Target{
-        return tex2D(_MainTex, i.uv);
+    float4 frag (v2f i) : SV_Target{
+        float3 c = tex2D(_MainTex, i.uv);
+        c = ApplyColorGrading(c);
+        return float4(c,1);
     }
-    half4 fragReinhard(v2f i):SV_Target{
-        return half4(Reinhard(tex2D(_MainTex,i.uv).xyz),1);
+    float4 fragReinhard(v2f i):SV_Target{
+        float3 c = tex2D(_MainTex, i.uv);
+        c = ApplyColorGrading(c);
+        return float4(Reinhard(c),1);
     }
-    half4 fragACESFitted(v2f i):SV_Target{
-        return half4(ACESFitted(tex2D(_MainTex,i.uv).xyz),1);
+    float4 fragACESFitted(v2f i):SV_Target{
+        float3 c = tex2D(_MainTex, i.uv);
+        c = ApplyColorGrading(c);
+        return float4(ACESFitted(c),1);
     }
-    half4 fragACESFilm(v2f i):SV_Target{
-        return half4(ACESFilm(tex2D(_MainTex,i.uv).xyz),1);
+    float4 fragACESFilm(v2f i):SV_Target{
+        float3 c = tex2D(_MainTex, i.uv);
+        c = ApplyColorGrading(c);
+        return float4(ACESFilm(c),1);
     }
-    half4 fragGTTone(v2f i):SV_Target{
-        return half4(GTTone(tex2D(_MainTex,i.uv).xyz),1);
+    float4 fragGTTone(v2f i):SV_Target{
+        float3 c = tex2D(_MainTex, i.uv);
+        c = ColorGrading(c);
+        return float4(GTTone(c),1);
     }        
 #endif //COPY_COLOR_PASS_HLSL

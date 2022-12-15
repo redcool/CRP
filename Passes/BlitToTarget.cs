@@ -11,6 +11,8 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(BlitToTarget))]
     public class BlitToTarget : BasePass
     {
+        [Header(nameof(BlitToTarget))]
+
         [Header("Source")]
         public string sourceName;
         public bool isCurrentActive;
@@ -25,6 +27,12 @@ namespace PowerUtilities
         [Range(0, 15)]
         [Tooltip("ToneMappingPass is None,use this")]
         public int pass = 0;
+
+        [Header("Color Grading")]
+        public ColorGradingSettings colorGradingSettings = new ColorGradingSettings
+        {
+            colorAdjust = new ColorAdjustSettings { colorFilter = Color.white}
+        };
 
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]
@@ -54,9 +62,11 @@ namespace PowerUtilities
             //    targetId = targetNameId;
             //    Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
             //}
-
+            colorGradingSettings.SetupColorGradingParams(Cmd);
             Blit(sourceId, targetId,blitMat,GetPassId());
         }
+
+
 
         bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;
         int GetPassId() => IsApplyTone() ? (int)toneMappingPass : pass;

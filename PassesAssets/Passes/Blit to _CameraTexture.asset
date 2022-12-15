@@ -22,7 +22,13 @@ MonoBehaviour:
   isCurrentActive: 0
   targetName: _CameraTexture
   isDefaultCameraTarget: 0
-  isNeedCreateTarget: 0
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
-  isApplyToneMapping: 0
   pass: 0
+  colorGradingSettings:
+    isApplyColorGrading: 0
+    colorAdjustSettings:
+      exposure: 0
+      contrast: 0
+      hueShift: 0
+      saturation: 0
+  toneMappingPass: 0
