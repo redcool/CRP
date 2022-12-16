@@ -24,10 +24,14 @@
 
     bool _ApplyColorGrading;
 
-    float3 ApplyColorGrading(float3 c){
+    float3 ApplyColorGrading(float3 c,bool useACES=false){
         if(_ApplyColorGrading)
-            c = ColorGrading(c);
+            c = ColorGrading(c,useACES);
         return c;
+    }
+
+    float4 GetMainTex(float2 uv){
+        return tex2D(_MainTex,uv);
     }
 
     v2f vert (appdata v)
@@ -42,27 +46,41 @@
     }
 
     float4 frag (v2f i) : SV_Target{
-        float3 c = tex2D(_MainTex, i.uv);
+        float3 c = GetMainTex(i.uv);
         c = ApplyColorGrading(c);
         return float4(c,1);
     }
     float4 fragReinhard(v2f i):SV_Target{
-        float3 c = tex2D(_MainTex, i.uv);
+        float3 c = GetMainTex( i.uv);
         c = ApplyColorGrading(c);
         return float4(Reinhard(c),1);
     }
+
     float4 fragACESFitted(v2f i):SV_Target{
-        float3 c = tex2D(_MainTex, i.uv);
-        c = ApplyColorGrading(c);
+        float3 c = GetMainTex( i.uv);
+        c = ApplyColorGrading(c,true);
         return float4(ACESFitted(c),1);
     }
     float4 fragACESFilm(v2f i):SV_Target{
-        float3 c = tex2D(_MainTex, i.uv);
-        c = ApplyColorGrading(c);
+        float3 c = GetMainTex( i.uv);
+        c = ApplyColorGrading(c,true);
         return float4(ACESFilm(c),1);
+        return float4(AcesTonemap(c),1);
     }
+    float4 fragACES(v2f i):SV_TARGET{
+        float3 c = GetMainTex( i.uv);
+        c = ApplyColorGrading(c,true);
+        return float4(AcesTonemap(c),1); 
+    }
+
+    float4 fragNeutralTone(v2f i):SV_TARGET{
+        float3 c = GetMainTex( i.uv);
+        c = ApplyColorGrading(c);
+        return float4(NeutralTonemap(c),1); 
+    }
+
     float4 fragGTTone(v2f i):SV_Target{
-        float3 c = tex2D(_MainTex, i.uv);
+        float3 c = GetMainTex( i.uv);
         c = ColorGrading(c);
         return float4(GTTone(c),1);
     }        

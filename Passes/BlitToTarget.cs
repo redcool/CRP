@@ -29,10 +29,7 @@ namespace PowerUtilities
         public int pass = 0;
 
         [Header("Color Grading")]
-        public ColorGradingSettings colorGradingSettings = new ColorGradingSettings
-        {
-            colorAdjust = new ColorAdjustSettings { colorFilter = Color.white}
-        };
+        public ColorGradingSettings colorGradingSettings;
 
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]

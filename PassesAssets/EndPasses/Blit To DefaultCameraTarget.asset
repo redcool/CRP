@@ -25,10 +25,32 @@ MonoBehaviour:
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   pass: 0
   colorGradingSettings:
-    isApplyColorGrading: 0
-    colorAdjustSettings:
+    isApplyColorGrading: 1
+    colorAdjust:
       exposure: 0
+      colorFilter: {r: 1, g: 1, b: 1, a: 1}
       contrast: 0
-      hueShift: 0
-      saturation: 0
-  toneMappingPass: 4
+      hueScale: 1
+      hueOffset: 0
+      saturation: 1
+      brightness: 1
+    whiteBalance:
+      temperature: 0
+      tint: 0
+    splitToning:
+      shadows: {r: 0, g: 0.27643013, b: 0.6698113, a: 1}
+      hightlights: {r: 0.9056604, g: 0.7061163, b: 0.07404765, a: 1}
+      balance: -0.02
+    channelMixer:
+      red: {x: 1, y: 0, z: 0}
+      green: {x: 0, y: 1, z: 0}
+      blue: {x: 0, y: 0, z: 1}
+    shadowsMidtonesHighlights:
+      shadows: {r: 1, g: 1, b: 1, a: 1}
+      midtones: {r: 1, g: 1, b: 1, a: 1}
+      highlights: {r: 1, g: 1, b: 1, a: 1}
+      shadowStart: 0
+      shadowsEnd: 0.3
+      highlightsStart: 0.55
+      highlightsEnd: 1
+  toneMappingPass: 0

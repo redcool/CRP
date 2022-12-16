@@ -50,6 +50,22 @@ Shader "CRP/Utils/CopyColor"
         }       
         Pass //4
         {
+            Name "CopyColor ACES"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragACES
+            ENDHLSL
+        }
+        Pass 
+        {
+            Name "CopyColor Neutral"
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment fragNeutralTone
+            ENDHLSL
+        }     
+        Pass //6
+        {
             Name "CopyColor GTTone"
             HLSLPROGRAM
             #pragma vertex vert
