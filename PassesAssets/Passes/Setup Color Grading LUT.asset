@@ -9,23 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 640da15ab1fd8ea4987da07bd14173ff, type: 3}
-  m_Name: Blit To DefaultCameraTarget
+  m_Script: {fileID: 11500000, guid: 4f004bfa891525643a1bb2ca1452baa8, type: 3}
+  m_Name: Setup Color Grading LUT
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: Final Blit To CameraTarget
-  gameCameraTag: 
+  overridePassName: 
+  gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
   isReset: 0
-  sourceName: 
-  isCurrentActive: 1
-  targetName: 
-  isDefaultCameraTarget: 1
-  blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
-  pass: 0
-  colorGradingSettings:
-    isApplyColorGrading: 1
+  gradingSettings:
+    colorLUTResolution: 32
+    isColorGradingUseLogC: 0
     colorAdjust:
       exposure: 0
       colorFilter: {r: 1, g: 1, b: 1, a: 1}
@@ -38,9 +33,9 @@ MonoBehaviour:
       temperature: 0
       tint: 0
     splitToning:
-      shadows: {r: 0, g: 0.27643013, b: 0.6698113, a: 1}
-      hightlights: {r: 0.9056604, g: 0.7061163, b: 0.07404765, a: 1}
-      balance: -0.02
+      shadows: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      hightlights: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      balance: 0
     channelMixer:
       red: {x: 1, y: 0, z: 0}
       green: {x: 0, y: 1, z: 0}
@@ -53,4 +48,4 @@ MonoBehaviour:
       shadowsEnd: 0.3
       highlightsStart: 0.55
       highlightsEnd: 1
-  toneMappingPass: 0
+  toneMappingPass: 3

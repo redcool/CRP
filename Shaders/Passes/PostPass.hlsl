@@ -21,19 +21,7 @@
 
     v2f vert(uint vid:SV_VERTEXID){
         v2f o = (v2f)0;
-        o.vertex = float4(
-            vid <= 1 ? -1 : 3,
-            vid == 1 ? 3 : -1,
-            0,1
-        );
-        o.uv = float2(
-            vid <= 1 ? 0 : 2,
-            vid == 1 ? 2 : 0
-        );
-        #if defined(UNITY_UV_STARTS_AT_TOP)
-        // if(_ProjectionParams.x < 0)
-            o.uv.y = 1 - o.uv.y;
-        #endif
+        FullScreenTriangleVert(vid,o.vertex/**/,o.uv/**/);
         return o;
     }
 

@@ -28,9 +28,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f5f39a12c83a7ec40be8bfcee5f0f929, type: 2}
   - {fileID: 11400000, guid: d8ac4cc41c12afa45af90792d3bf41c4, type: 2}
   - {fileID: 11400000, guid: 5d5e3948c2b4423488bdb01a1a0672c2, type: 2}
-  - {fileID: 11400000, guid: 0e30db48db09d634cba339e34fb609d1, type: 2}
   - {fileID: 11400000, guid: a03388a15d9f82a458328d0600d3f3bd, type: 2}
   - {fileID: 11400000, guid: 7001d6e37fa287942a00efc9f67988c8, type: 2}
+  - {fileID: 11400000, guid: 0e30db48db09d634cba339e34fb609d1, type: 2}
+  - {fileID: 11400000, guid: f8651887096f79e488b42b51719f6734, type: 2}
   endPasses:
   - {fileID: 11400000, guid: 2e7585ca21a6d2e418c71b4476fb740a, type: 2}
   - {fileID: 11400000, guid: 966319daca1ec094592b8d6739fdaf0c, type: 2}
@@ -54,4 +55,3 @@ MonoBehaviour:
     pcfMode: 0
   pipelineSettings:
     isHdr: 1
-    toneMapper: 0

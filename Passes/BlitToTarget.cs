@@ -24,16 +24,10 @@ namespace PowerUtilities
 
         [Header("Material")]
         public Material blitMat;
+
         [Range(0, 15)]
-        [Tooltip("ToneMappingPass is None,use this")]
         public int pass = 0;
-
-        [Header("Color Grading")]
-        public ColorGradingSettings colorGradingSettings;
-
-        [Header("ToneMapping")]
-        [Tooltip("ToneMapping should apply the last blit pass")]
-        public ToneMappingPass toneMappingPass;
+        public bool isApplyColorGrading;
 
         public override bool CanExecute()
         {
@@ -59,17 +53,15 @@ namespace PowerUtilities
             //    targetId = targetNameId;
             //    Cmd.GetTemporaryRT(targetNameId, camera.pixelWidth, camera.pixelHeight);
             //}
-            colorGradingSettings.SetupColorGradingParams(Cmd);
-            Blit(sourceId, targetId,blitMat,GetPassId());
+            Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, isApplyColorGrading ? 1 : 0);
+            Blit(sourceId, targetId, blitMat, pass);
         }
 
 
-
-        bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;
-        int GetPassId() => IsApplyTone() ? (int)toneMappingPass : pass;
-
         private void Blit(RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material blitMat,int pass)
         {
+            Cmd.SetRenderTarget(targetId);
+
             if (!blitMat)
             {
                 Cmd.Blit(sourceId, targetId);

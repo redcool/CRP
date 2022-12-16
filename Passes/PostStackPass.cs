@@ -53,7 +53,6 @@ namespace PowerUtilities
         public bool useGaussianBlur;
         public bool isCombineBicubicFilter;
 
-
         public static readonly int 
             _BloomPrefilterMap = Shader.PropertyToID(nameof(_BloomPrefilterMap)),
             _SourceTex = Shader.PropertyToID(nameof(_SourceTex)),
@@ -64,6 +63,7 @@ namespace PowerUtilities
             _BloomFinalIntensity = Shader.PropertyToID(nameof(_BloomFinalIntensity)),
             _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter))
             ;
+
         int _CameraTarget;
         int _BloomPyramid0;
 

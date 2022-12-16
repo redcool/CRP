@@ -96,9 +96,9 @@ namespace PowerUtilities
             }
         }
 
-        public static void BlitTriangle(this CommandBuffer cmd,int sourceId,int targetId,Material mat,int pass)
+        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass)
         {
-            cmd.SetGlobalTexture(ShaderPropertyIds._SourceTex, sourceId);
+            cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
             cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
             cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 using UnityEngine.Rendering;
 
 namespace PowerUtilities
@@ -63,7 +64,14 @@ namespace PowerUtilities
     [Serializable]
     public class ColorGradingSettings
     {
-        public bool isApplyColorGrading;
+        public enum ColorLUTResolution
+        {
+            _16=16,_32=32,_64=64
+        }
+
+        public ColorLUTResolution colorLUTResolution = ColorLUTResolution._32;
+        public bool isColorGradingUseLogC;
+
         public ColorAdjustSettings colorAdjust = new ColorAdjustSettings();
         public WhiteBalanceSettings whiteBalance = new WhiteBalanceSettings();
         public SplitToningSettings splitToning = new SplitToningSettings();
@@ -71,38 +79,4 @@ namespace PowerUtilities
         public ShadowsMidtonesHightlightsSettings shadowsMidtonesHighlights = new ShadowsMidtonesHightlightsSettings();
     }
 
-
-    public static class ColorGradingTools
-    {
-        public static void SetupColorGradingParams(this ColorGradingSettings gradingSettings, CommandBuffer cmd)
-        {
-            var colorAdjust = gradingSettings.colorAdjust;
-            cmd.SetGlobalFloat(ShaderPropertyIds._ApplyColorGrading, gradingSettings.isApplyColorGrading ? 1 : 0);
-            cmd.SetGlobalVector(ShaderPropertyIds._ColorAdjustments, new Vector4(
-                Mathf.Pow(2, colorAdjust.exposure),
-                colorAdjust.contrast + 1
-                ));
-
-            cmd.SetGlobalVector(ShaderPropertyIds._ColorFilter, colorAdjust.colorFilter);
-
-            cmd.SetGlobalVector(ShaderPropertyIds._ColorAdjustHSV, colorAdjust.GetHSV());
-
-            cmd.SetGlobalVector(ShaderPropertyIds._WhiteBalanceFactors, gradingSettings.whiteBalance.GetFactors());
-
-            var splitToning = gradingSettings.splitToning;
-            cmd.SetGlobalColor(ShaderPropertyIds._SplitToningShadows, new Color(splitToning.shadows.r, splitToning.shadows.g, splitToning.shadows.b, splitToning.balance));
-            cmd.SetGlobalColor(ShaderPropertyIds._SplitToningHighlights, splitToning.hightlights);
-
-            var channelMixer = gradingSettings.channelMixer;
-            cmd.SetGlobalVector(ShaderPropertyIds._ChannelMixerRed, channelMixer.red);
-            cmd.SetGlobalVector(ShaderPropertyIds._ChannelMixerGreen, channelMixer.green);
-            cmd.SetGlobalVector(ShaderPropertyIds._ChannelMixerBlue, channelMixer.blue);
-
-            var smh = gradingSettings.shadowsMidtonesHighlights;
-            cmd.SetGlobalColor(ShaderPropertyIds._SMHShadows, smh.shadows.linear);
-            cmd.SetGlobalColor(ShaderPropertyIds._SMHMidtones, smh.midtones.linear);
-            cmd.SetGlobalColor(ShaderPropertyIds._SMHHighlights,smh.highlights.linear);
-            cmd.SetGlobalVector(ShaderPropertyIds._SMHRange, new Vector4(smh.shadowStart,smh.shadowsEnd,smh.highlightsStart,smh.highlightsEnd));
-        }
-    }
 }
