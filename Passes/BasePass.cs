@@ -60,10 +60,10 @@ namespace PowerUtilities
             this.camera = camera;
             var passName = PassName();
 
+            TryInit();
+
             if (!CanExecute())
                 return;
-            
-            TryInit();
 
             //if(camera.IsReflectionCamera())
             //Debug.Log(passName);
@@ -78,7 +78,7 @@ namespace PowerUtilities
         }
 
         /// <summary>
-        /// init once 
+        /// Init once before OnRender
         /// </summary>
         private void TryInit()
         {

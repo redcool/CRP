@@ -29,9 +29,12 @@ namespace PowerUtilities
             Scatter
         }
 
+        [Header("Bloom Targets")]
+        public string cameraSourceName = "_CameraTarget";
+        public string cameraTargetName = "_PostCameraTarget";
+
         [Header("Bloom")]
         [Range(0.1f,1)]public float bloomPrefilterRenderScale = 1;
-        public string cameraTarget = "_CameraTarget";
         public Material postStackMaterial;
 
         const int MAX_ITERATORS = 16;
@@ -64,13 +67,16 @@ namespace PowerUtilities
             _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter))
             ;
 
-        int _CameraTarget;
-        int _BloomPyramid0;
+        int 
+            _CameraTarget,
+            _CameraSource,
+            _BloomPyramid0
+            ;
 
-        public override void Init()
+        void SetupShaderIDs()
         {
-            base.Init();
-            _CameraTarget = Shader.PropertyToID(cameraTarget);
+            _CameraTarget = Shader.PropertyToID(cameraTargetName);
+            _CameraSource = Shader.PropertyToID(cameraSourceName);
 
             _BloomPyramid0 = Shader.PropertyToID(nameof(_BloomPyramid0));
             for (int i = 1; i < MAX_ITERATORS * 2; i++)
@@ -79,15 +85,19 @@ namespace PowerUtilities
             }
         }
 
-        public override bool CanExecute()
-        {
-            return base.CanExecute() && postStackMaterial && maxIterates>0;
-        }
 
         RenderTextureFormat GetTextureFormat() => isHdr ? RenderTextureFormat.DefaultHDR: RenderTextureFormat.Default;
 
         public override void OnRender()
         {
+            SetupShaderIDs();
+
+            if(!postStackMaterial || maxIterates == 0)
+            {
+                Cmd.BlitTriangle(_CameraSource, _CameraTarget, postStackMaterial, (int)Pass.Copy);
+                return;
+            }
+
             int width = (int)(camera.pixelWidth * bloomPrefilterRenderScale);
             int height = (int)(camera.pixelHeight * bloomPrefilterRenderScale);
 
@@ -129,7 +139,7 @@ namespace PowerUtilities
             thresholdVec.w = maxLuma;
 
             Cmd.SetGlobalVector(_BloomThreshold, thresholdVec);
-            Cmd.BlitTriangle(_CameraTarget, _BloomPrefilterMap, postStackMaterial, (int)Pass.PreFilter);
+            Cmd.BlitTriangle(_CameraSource, _BloomPrefilterMap, postStackMaterial, (int)Pass.PreFilter);
         }
 
         void CombineBloom(int lastId)
@@ -138,7 +148,7 @@ namespace PowerUtilities
 
             Cmd.SetGlobalFloat(_BloomIntensity, finalIntensity);
             Cmd.SetGlobalFloat(_BloomCombineBicubicFilter, isCombineBicubicFilter ? 1 : 0);
-            Cmd.SetGlobalTexture(_SourceTex2, "_CameraTexture");
+            Cmd.SetGlobalTexture(_SourceTex2, _CameraSource);
             Cmd.BlitTriangle(lastId, _CameraTarget, postStackMaterial, (int)finalPass);
         }
 

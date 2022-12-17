@@ -63,12 +63,6 @@
         return SampleSourceTex(i.uv);
     }
 
-    float4 fragCombine(v2f i):SV_Target{
-        float4 bloomCol = SampleBloomTex(i.uv);
-        float4 screenCol = SampleSourceTex2(i.uv);
-        return float4(bloomCol.xyz*_BloomIntensity+screenCol.xyz,1);
-    }
-
     float4 fragHorizontal(v2f i):SV_TARGET{
         static float weights[5] = {.1,.2,.4,.2,.1};
         static float2 uvOffsets[5] = {
@@ -108,6 +102,11 @@
         return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),1);
     }
 
+    float4 fragCombine(v2f i):SV_Target{
+        float4 bloomCol = SampleBloomTex(i.uv);
+        float4 screenCol = SampleSourceTex2(i.uv);
+        return float4(bloomCol.xyz * _BloomIntensity + screenCol.xyz,1);
+    }
     float4 fragCombineScatterFinal(v2f i):SV_Target{
         float4 bloomCol = SampleBloomTex(i.uv);
 

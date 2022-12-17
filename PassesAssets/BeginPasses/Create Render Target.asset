@@ -22,7 +22,8 @@ MonoBehaviour:
   - _CameraTarget
   - _CameraTexture
   - _CameraDepthTexture
-  isTargetHasDepth: 1
+  - _PostCameraTarget
+  isTargetHasDepth: 0
   depthTargetNames:
   - _CameraDepthTarget
   renderScale: 1
