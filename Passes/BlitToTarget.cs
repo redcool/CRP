@@ -61,6 +61,7 @@ namespace PowerUtilities
         private void Blit(RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material blitMat,int pass)
         {
             Cmd.SetRenderTarget(targetId);
+            Cmd.SetViewport(camera.pixelRect);
 
             if (!blitMat)
             {

@@ -17,6 +17,7 @@ MonoBehaviour:
   gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
+  isReset: 0
   drawOpaques: 0
   drawSkybox: 0
   drawTransparents: 1

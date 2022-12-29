@@ -22,16 +22,16 @@ MonoBehaviour:
     colorLUTResolution: 32
     isColorGradingUseLogC: 0
     colorAdjust:
-      exposure: 0
-      colorFilter: {r: 1, g: 1, b: 1, a: 1}
-      contrast: 0
+      exposure: 1
+      colorFilter: {r: 1, g: 0.91194963, b: 0.91194963, a: 1}
+      contrast: 0.04
       hueScale: 1
       hueOffset: 0
       saturation: 1
       brightness: 1
     whiteBalance:
-      temperature: 0
-      tint: 0
+      temperature: -11.7
+      tint: -10.2
     splitToning:
       shadows: {r: 0.5, g: 0.5, b: 0.5, a: 1}
       hightlights: {r: 0.5, g: 0.5, b: 0.5, a: 1}
@@ -48,4 +48,4 @@ MonoBehaviour:
       shadowsEnd: 0.3
       highlightsStart: 0.55
       highlightsEnd: 1
-  toneMappingPass: 3
+  toneMappingPass: 0

@@ -57,8 +57,13 @@ namespace PowerUtilities
             _ColorGradingLUTParams = Shader.PropertyToID(nameof(_ColorGradingLUTParams)),
             _ColorGradingUseLogC = Shader.PropertyToID(nameof(_ColorGradingUseLogC))
             ;
+        static bool isCreated;
         public override void OnRender()
         {
+            if (isCreated)
+                return;
+
+            isCreated = true;
             SetupColorGradingParams(Cmd);
 
             SetupLUT(Cmd, gradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
@@ -68,6 +73,7 @@ namespace PowerUtilities
         public override void Cleanup()
         {
             Cmd.ReleaseTemporaryRT(_ColorGradingLUT);
+            isCreated = false;
         }
 
         bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;

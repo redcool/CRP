@@ -102,5 +102,13 @@ namespace PowerUtilities
             cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
             cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
         }
+
+        public static void BlitTriangleFinal(this CommandBuffer cmd,RenderTargetIdentifier sourceId, Material mat, int pass, Camera camera)
+        {
+            cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
+            cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
+            cmd.SetViewport(camera.pixelRect);
+            cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
+        }
     }
 }
