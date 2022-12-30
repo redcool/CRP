@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: CRP:PowerUtilities:TestRenderShadow
   isFoldout: 0
   overridePassName: 
-  cameraTag: 
+  gameCameraTag: 
   isInterrupt: 0
   isSkip: 1
+  isReset: 0
   atlasSize: 1024
   cascadeCount: 4
   splitRatio: {x: 0.1, y: 0.3, z: 0.6}

@@ -13,7 +13,7 @@ namespace PowerUtilities
     public static class CommandBufferEx
     {
 
-        static RenderTextureDescriptor defaultDescriptor = default;
+        static RenderTextureDescriptor defaultDescriptor = new RenderTextureDescriptor(1,1,RenderTextureFormat.Default,0,0);
         public static void ClearRenderTarget(this CommandBuffer cmd, Camera camera, float depth = 1, uint stencil = 0)
         {
             var isClearDepth = camera.clearFlags <= CameraClearFlags.Depth;
@@ -96,10 +96,12 @@ namespace PowerUtilities
             }
         }
 
-        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass)
+        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass,Camera camera=null)
         {
             cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
             cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
+            if(camera)
+                cmd.SetViewport(camera.pixelRect);
             cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
         }
 

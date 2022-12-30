@@ -38,10 +38,10 @@ void FullScreenTriangleVert(uint vertexId,out float4 posHClip,out float2 uv){
         vertexId <= 1 ? 0 : 2,
         vertexId == 1 ? 2 : 0
     );
-    #if defined(UNITY_UV_STARTS_AT_TOP)
-    // if(_ProjectionParams.x < 0)
+    // #if defined(UNITY_UV_STARTS_AT_TOP)
+    if(_ProjectionParams.x < 0)
         uv.y = 1 - uv.y;
-    #endif
+    // #endif
 }
 
 #endif //CRP_COMMON_HLSL

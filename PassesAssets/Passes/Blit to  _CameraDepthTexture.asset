@@ -19,22 +19,7 @@ MonoBehaviour:
   isSkip: 0
   isReset: 0
   sourceName: _CameraDepthTarget
-  isCurrentActive: 0
   targetName: _CameraDepthTexture
-  isDefaultCameraTarget: 0
   blitMat: {fileID: 0}
   pass: 0
-  colorGradingSettings:
-    isApplyColorGrading: 0
-    colorAdjust:
-      exposure: 0
-      colorFilter: {r: 1, g: 1, b: 1, a: 1}
-      contrast: 0
-      hueScale: 1
-      hueOffset: 0
-      saturation: 1
-      brightness: 1
-    whiteBalance:
-      temperature: 0
-      tint: 0
-  toneMappingPass: 0
+  isApplyColorGrading: 0

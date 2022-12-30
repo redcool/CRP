@@ -17,7 +17,6 @@ namespace PowerUtilities
             desc.msaaSamples = 1;
             desc.dimension = TextureDimension.Tex2D;
             desc.colorFormat = isHdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
-
             //desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
         }
 

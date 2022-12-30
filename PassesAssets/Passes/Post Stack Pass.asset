@@ -30,6 +30,6 @@ MonoBehaviour:
   isHdr: 1
   bloomMode: 1
   intensity: 1
-  scatter: 0.99
+  scatter: 0.69
   useGaussianBlur: 1
   isCombineBicubicFilter: 0

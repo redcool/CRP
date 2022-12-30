@@ -17,3 +17,4 @@ MonoBehaviour:
   gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
+  isReset: 0

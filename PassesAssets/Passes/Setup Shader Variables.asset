@@ -16,7 +16,8 @@ MonoBehaviour:
   overridePassName: 
   gameCameraTag: MainCamera
   isInterrupt: 0
-  isSkip: 1
+  isSkip: 0
+  isReset: 0
   variables:
   - name: unity_SpecCube0
     type: 1

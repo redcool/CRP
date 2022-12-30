@@ -16,12 +16,10 @@ MonoBehaviour:
   overridePassName: Final Blit To CameraTarget
   gameCameraTag: 
   isInterrupt: 0
-  isSkip: 0
+  isSkip: 1
   isReset: 0
   sourceName: _CameraTarget
-  isCurrentActive: 0
   targetName: 
-  isDefaultCameraTarget: 1
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   pass: 0
   isApplyColorGrading: 0

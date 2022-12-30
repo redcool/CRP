@@ -12,9 +12,11 @@ namespace PowerUtilities
     public class SetRenderTarget : BasePass
     {
         [Header("Render Targets")]
+        [Tooltip("set empty will set CameraTarget")]
         public string[] targetNames;
         RenderTargetIdentifier[] targetIds;
 
+        [Tooltip("set empty will set CameraTarget")]
         public string depthTargetName;
 
         [Header("Clear Options")]
@@ -32,13 +34,20 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
-            if (targetNames == null || targetNames.Length ==0)
-                return;
+            var isCameraTarget = (targetNames == null || targetNames.Length == 0);
+            if (isCameraTarget)
+            {
+                targetIds = new RenderTargetIdentifier[] { BuiltinRenderTextureType.CameraTarget };
+            }
+            else
+            {
+                RenderingTools.RenderTargetNameToIdentifier(targetNames, ref targetIds);
+            }
 
-            RenderingTools.RenderTargetNameToIdentifier(targetNames, ref targetIds);
-            var depthTargetId = string.IsNullOrEmpty(depthTargetName) ? targetIds[0] : new RenderTargetIdentifier(depthTargetName);
-
+            var depthTargetId = string.IsNullOrEmpty(depthTargetName) ? BuiltinRenderTextureType.CameraTarget : new RenderTargetIdentifier(depthTargetName);
             Cmd.SetRenderTarget(targetIds, depthTargetId);
+
+
             if (clearTarget)
             {
                 Cmd.ClearRenderTarget(camera);

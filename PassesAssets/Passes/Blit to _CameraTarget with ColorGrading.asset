@@ -19,9 +19,7 @@ MonoBehaviour:
   isSkip: 0
   isReset: 0
   sourceName: _PostCameraTarget
-  isCurrentActive: 0
-  targetName: _CameraTarget
-  isDefaultCameraTarget: 0
+  targetName: 
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   pass: 0
   isApplyColorGrading: 1

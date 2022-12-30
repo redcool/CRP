@@ -17,7 +17,9 @@ MonoBehaviour:
   gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
+  isReset: 0
   targetNames:
   - _CameraTarget
+  isDefaultTarget: 0
   depthTargetName: _CameraDepthTarget
   clearTarget: 1

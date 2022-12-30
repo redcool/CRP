@@ -2,18 +2,12 @@ Shader "CRP/Utils/CopyColor"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        // _SourceTex ("Texture", 2D) = "white" {}
     }
 
     HLSLINCLUDE
-    #include "../Libs/UnityInput.hlsl"
+    #include "../Libs/Common.hlsl"
     #include "../../../PowerShaderLib/Lib/Colors.hlsl"
-
-    struct appdata
-    {
-        float4 vertex : POSITION;
-        float2 uv : TEXCOORD0;
-    };
 
     struct v2f
     {
@@ -21,27 +15,21 @@ Shader "CRP/Utils/CopyColor"
         float4 vertex : SV_POSITION;
     };
 
-    sampler2D _MainTex;
+    sampler2D _SourceTex;
 
-    CBUFFER_START(UnityPerMaterial)
-    float4 _MainTex_ST;
     bool _ApplyColorGrading;
-    CBUFFER_END
 
-    v2f vert (appdata v)
+    v2f vert (uint vid:SV_VERTEXID)
     {
         v2f o;
-        o.vertex = TransformObjectToHClip(v.vertex.xyz);
-        o.uv = v.uv;
-        #if defined(UNITY_UV_STARTS_AT_TOP)
-        o.uv.y = 1-o.uv.y;
-        #endif
+        FullScreenTriangleVert(vid,o.vertex/**/,o.uv/**/);
+
         return o;
     }
 
     half4 frag (v2f i) : SV_Target
     {
-        half4 col = tex2D(_MainTex, i.uv);
+        half4 col = tex2D(_SourceTex, i.uv);
         if(_ApplyColorGrading)
             col.xyz = ApplyColorGradingLUT(col.xyz);
         return col;
