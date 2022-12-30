@@ -13,7 +13,7 @@
     TEXTURE2D(_SourceTex2);SAMPLER(sampler_SourceTex2);
     float4 _SourceTex_Texel;
 
-    TEXTURE2D(_CameraTexture);SAMPLER(sampler_CameraTexture);
+    // TEXTURE2D(_CameraTexture);SAMPLER(sampler_CameraTexture);
     
     float4 _BloomThreshold;
     float _BloomIntensity;
@@ -99,13 +99,13 @@
         float4 bloomCol = SampleBloomTex(i.uv);
 
         float4 screenCol = SampleSourceTex2(i.uv);
-        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),1);
+        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),screenCol.w);
     }
 
     float4 fragCombine(v2f i):SV_Target{
         float4 bloomCol = SampleBloomTex(i.uv);
         float4 screenCol = SampleSourceTex2(i.uv);
-        return float4(bloomCol.xyz * _BloomIntensity + screenCol.xyz,1);
+        return float4(bloomCol.xyz * _BloomIntensity + screenCol.xyz,screenCol.w);
     }
     float4 fragCombineScatterFinal(v2f i):SV_Target{
         float4 bloomCol = SampleBloomTex(i.uv);
@@ -113,6 +113,6 @@
         float4 screenCol = SampleSourceTex2(i.uv);
         bloomCol.xyz += screenCol.xyz ;//- ApplyBloomThreshold(screenCol.xyz);
 
-        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),1);
+        return float4(lerp(screenCol.xyz,bloomCol.xyz,_BloomIntensity),screenCol.w);
     }
 #endif //POST_PASS_HLSL

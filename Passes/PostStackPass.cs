@@ -64,7 +64,9 @@ namespace PowerUtilities
             _BloomThreshold = Shader.PropertyToID(nameof(_BloomThreshold)),
             _BloomIntensity = Shader.PropertyToID(nameof(_BloomIntensity)),
             _BloomFinalIntensity = Shader.PropertyToID(nameof(_BloomFinalIntensity)),
-            _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter))
+            _BloomCombineBicubicFilter = Shader.PropertyToID(nameof(_BloomCombineBicubicFilter)),
+            _FinalSrcMode = Shader.PropertyToID(nameof(_FinalSrcMode)),
+            _FinalDstMode = Shader.PropertyToID(nameof(_FinalDstMode))
             ;
 
         int 

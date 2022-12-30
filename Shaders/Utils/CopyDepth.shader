@@ -16,7 +16,6 @@ Shader "CRP/Utils/CopyDepth"
 
     TEXTURE2D(_SourceTex); SAMPLER(sampler_SourceTex);
 
-
     v2f vert (uint vid:SV_VERTEXID)
     {
         v2f o;
@@ -40,6 +39,7 @@ Shader "CRP/Utils/CopyDepth"
         ztest always
         Pass
         {
+
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag

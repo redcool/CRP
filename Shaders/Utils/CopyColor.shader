@@ -41,8 +41,10 @@ Shader "CRP/Utils/CopyColor"
         Cull off
         zwrite off
         ztest always
+
         Pass
         {
+            blend[_FinalSrcMode][_FinalDstMode]
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag

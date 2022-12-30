@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
+
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(BlitToTarget))]
     public class BlitToTarget : BasePass
     {
@@ -28,6 +29,9 @@ namespace PowerUtilities
         public int pass = 0;
         public bool isApplyColorGrading;
 
+        public BlendMode finalSrcMode = BlendMode.One;
+        public BlendMode finalDstMode = BlendMode.Zero;
+
         public override bool CanExecute()
         {
             if (camera.IsReflectionCamera())
@@ -47,7 +51,7 @@ namespace PowerUtilities
             RenderTargetIdentifier targetId = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : Shader.PropertyToID(targetName);
 
             Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, isApplyColorGrading ? 1 : 0);
-            Cmd.BlitTriangle(sourceId, targetId, blitMat, pass,camera );
+            Cmd.BlitTriangle(sourceId, targetId, blitMat, pass, camera, (finalSrcMode, finalDstMode));
         }
 
     }

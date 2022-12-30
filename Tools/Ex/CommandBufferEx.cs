@@ -96,21 +96,29 @@ namespace PowerUtilities
             }
         }
 
-        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass,Camera camera=null)
+        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass,Camera camera=null,(BlendMode finalSrcMode,BlendMode finalDstMode) finalBlendMode=default)
         {
             cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
-            cmd.SetRenderTarget(targetId, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
-            if(camera)
+
+            cmd.SetGlobalFloat(PostStackPass._FinalSrcMode, (float)finalBlendMode.finalSrcMode);
+            cmd.SetGlobalFloat(PostStackPass._FinalDstMode,(float)finalBlendMode.finalDstMode);
+
+            var loadAction = finalBlendMode.finalDstMode == BlendMode.Zero ? RenderBufferLoadAction.DontCare : RenderBufferLoadAction.Load;
+            cmd.SetRenderTarget(targetId, loadAction, RenderBufferStoreAction.Store);
+
+            if (camera)
+            {
                 cmd.SetViewport(camera.pixelRect);
+            }
             cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
         }
 
-        public static void BlitTriangleFinal(this CommandBuffer cmd,RenderTargetIdentifier sourceId, Material mat, int pass, Camera camera)
-        {
-            cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
-            cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
-            cmd.SetViewport(camera.pixelRect);
-            cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
-        }
+        //public static void BlitTriangleFinal(this CommandBuffer cmd,RenderTargetIdentifier sourceId, Material mat, int pass, Camera camera)
+        //{
+        //    cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
+        //    cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store);
+        //    cmd.SetViewport(camera.pixelRect);
+        //    cmd.DrawProcedural(Matrix4x4.identity, mat, pass, MeshTopology.Triangles, 3);
+        //}
     }
 }

@@ -15,9 +15,11 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: UICamera
+  minimalCameraType: 1
+  cameraTypeComparison: 2
   isInterrupt: 0
-  isSkip: 1
+  isSkip: 0
   isReset: 0
   targetNames: []
   depthTargetName: 
-  clearTarget: 0
+  clearTarget: 1

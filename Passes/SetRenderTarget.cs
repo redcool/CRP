@@ -23,15 +23,10 @@ namespace PowerUtilities
         [Tooltip("Clear target use camera clear settings")]
         public bool clearTarget;
 
-        //public bool onlyGameCamera;
         public override bool CanExecute()
         {
             if (camera.IsReflectionCamera())
                 return false;
-
-            //if(onlyGameCamera)
-            //if (camera.cameraType >= CameraType.SceneView)
-            //    return false;
 
             var isok = base.CanExecute();
             return isok;
