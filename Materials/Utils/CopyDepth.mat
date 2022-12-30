@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CRP_Utils_CopyDepth
+  m_Name: CopyDepth
   m_Shader: {fileID: 4800000, guid: a05c9928845fb2c46959a74462c39bfd, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []

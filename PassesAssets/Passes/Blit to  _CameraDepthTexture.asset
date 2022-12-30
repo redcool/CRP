@@ -20,6 +20,6 @@ MonoBehaviour:
   isReset: 0
   sourceName: _CameraDepthTarget
   targetName: _CameraDepthTexture
-  blitMat: {fileID: 0}
+  blitMat: {fileID: 2100000, guid: c84bd5e5ac7bf144f9e8b78a39a8d77d, type: 2}
   pass: 0
   isApplyColorGrading: 0

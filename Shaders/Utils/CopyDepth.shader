@@ -2,17 +2,11 @@ Shader "CRP/Utils/CopyDepth"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        
     }
 
     HLSLINCLUDE
-    #include "../Libs/UnityInput.hlsl"
-
-    struct appdata
-    {
-        float4 vertex : POSITION;
-        float2 uv : TEXCOORD0;
-    };
+    #include "../Libs/Common.hlsl"
 
     struct v2f
     {
@@ -20,26 +14,19 @@ Shader "CRP/Utils/CopyDepth"
         float4 vertex : SV_POSITION;
     };
 
-    TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
+    TEXTURE2D(_SourceTex); SAMPLER(sampler_SourceTex);
 
-    CBUFFER_START(UnityPerMaterial)
-    float4 _MainTex_ST;
-    CBUFFER_END
 
-    v2f vert (appdata v)
+    v2f vert (uint vid:SV_VERTEXID)
     {
         v2f o;
-        o.vertex = TransformObjectToHClip(v.vertex.xyz);
-        o.uv = v.uv;
-        #if defined(UNITY_UV_STARTS_AT_TOP)
-        o.uv.y = 1-o.uv.y;
-        #endif
+        FullScreenTriangleVert(vid,o.vertex/**/,o.uv/**/);
         return o;
     }
 
     float4 frag (v2f i) : SV_Target
     {
-        float depth = SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv).x;
+        float depth = SAMPLE_TEXTURE2D(_SourceTex,sampler_SourceTex,i.uv).x;
         return depth;
     }
     ENDHLSL
@@ -48,7 +35,9 @@ Shader "CRP/Utils/CopyDepth"
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
-
+        Cull off
+        zwrite off
+        ztest always
         Pass
         {
             HLSLPROGRAM
