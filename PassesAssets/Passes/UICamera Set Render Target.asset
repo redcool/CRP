@@ -16,8 +16,8 @@ MonoBehaviour:
   overridePassName: 
   gameCameraTag: UICamera
   isInterrupt: 0
-  isSkip: 0
+  isSkip: 1
   isReset: 0
   targetNames: []
   depthTargetName: 
-  clearTarget: 1
+  clearTarget: 0

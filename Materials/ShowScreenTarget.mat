@@ -28,7 +28,7 @@ Material:
     - _ColorTexture: 0
     - _CullMode: 2
     - _DstMode: 0
-    - _ShowColorTarget: 1
+    - _ShowColorTarget: 0
     - _SrcMode: 1
     - _ZWrite: 0
     m_Colors: []

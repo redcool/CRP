@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Blit to _CameraTexture
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: BlitToCameraTexture
+  overridePassName: 
   gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Render Transparent Object
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: ' Render Transparent Object'
+  overridePassName: 
   gameCameraTag: 
   isInterrupt: 0
   isSkip: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
   - Always
   - ForwardBase
   - PrepassBase
-  enableDynamicBatch: 0
-  enableInstanced: 0
+  enableDynamicBatch: 1
+  enableInstanced: 1
   enableSRPBatch: 1
   perObjectData: 775

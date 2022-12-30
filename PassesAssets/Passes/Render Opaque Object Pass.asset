@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Render Opaque Object Pass
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: Render Opaque Object Pass
+  overridePassName: 
   gameCameraTag: 
   isInterrupt: 0
   isSkip: 0

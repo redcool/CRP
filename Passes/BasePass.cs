@@ -8,6 +8,12 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities
 {
+    public enum CameraTypeComparison
+    {
+        LessEquals,
+        Less,
+        Equals
+    }
     public abstract class BasePass : ScriptableObject
     {
         [Header(nameof(BasePass))]
@@ -17,8 +23,13 @@ namespace PowerUtilities
         public string overridePassName;
 
         [Header("Filters (all)")]
-        [Tooltip(" Execute when camera's tag equals,otherwise skip")]
+        [Tooltip("Execute when Game camera's tag equals,otherwise skip")]
         public string gameCameraTag;
+
+        [Tooltip("Execute when current camera type <= minimalCameraType")]
+        public CameraType minimalCameraType = CameraType.Reflection;
+        [Tooltip("camera type comparison")]
+        public CameraTypeComparison cameraTypeComparison = CameraTypeComparison.LessEquals;
 
         [Header("Render flow")]
         [Tooltip("When pass done, break render flow?")]
@@ -98,21 +109,30 @@ namespace PowerUtilities
             }
         }
 
+        bool IsValidCameraType(CameraTypeComparison comp, CameraType cameraType, CameraType minCameraType) => comp switch
+        {
+            CameraTypeComparison.Equals => cameraType == minCameraType,
+            CameraTypeComparison.Less => cameraType < minCameraType,
+            _ => cameraType <= minimalCameraType,
+        };
+
         public virtual bool CanExecute()
         {
             if (camera.cameraType == CameraType.Game)
             {
                 return string.IsNullOrEmpty(gameCameraTag) ? true : camera.CompareTag(gameCameraTag);
             }
-            return true;
-            //return enabledCameraTypes.HasFlag(camera.cameraType);
+
+            var isValidType = IsValidCameraType(cameraTypeComparison, camera.cameraType,minimalCameraType);
+            
+            return isValidType;
         }
 
         public bool IsCullingResultsValid() => cullingResults != default;
         public abstract void OnRender();
 
 
-        public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? GetType().Name : overridePassName;
+        public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? name : overridePassName;
         public virtual bool NeedCleanup() => false;
 
         /// <summary>

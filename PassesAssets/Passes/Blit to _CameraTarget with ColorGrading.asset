@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Blit to _CameraTarget with ColorGrading
   m_EditorClassIdentifier: 
   isFoldout: 0
-  overridePassName: Blit to _CameraTarget with ColorGrading
+  overridePassName: 
   gameCameraTag: MainCamera
   isInterrupt: 0
   isSkip: 0
