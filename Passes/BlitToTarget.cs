@@ -29,9 +29,6 @@ namespace PowerUtilities
         public int pass = 0;
         public bool isApplyColorGrading;
 
-        public BlendMode finalSrcMode = BlendMode.One;
-        public BlendMode finalDstMode = BlendMode.Zero;
-
         public override bool CanExecute()
         {
             if (camera.IsReflectionCamera())
@@ -51,7 +48,17 @@ namespace PowerUtilities
             RenderTargetIdentifier targetId = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : Shader.PropertyToID(targetName);
 
             Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, isApplyColorGrading ? 1 : 0);
-            Cmd.BlitTriangle(sourceId, targetId, blitMat, pass, camera, (finalSrcMode, finalDstMode));
+
+            var finalSrcMode = BlendMode.One;
+            var finalDstMode = BlendMode.Zero;
+            var cameraData = camera.GetComponent<CRPCameraData>();
+            if (cameraData)
+            {
+                finalSrcMode = cameraData.finalSrcMode;
+                finalDstMode = cameraData.finalDstMode;
+            }
+
+            Cmd.BlitTriangle(sourceId, targetId, blitMat, pass, camera, finalSrcMode, finalDstMode);
         }
 
     }

@@ -96,14 +96,14 @@ namespace PowerUtilities
             }
         }
 
-        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass,Camera camera=null,(BlendMode finalSrcMode,BlendMode finalDstMode) finalBlendMode=default)
+        public static void BlitTriangle(this CommandBuffer cmd,RenderTargetIdentifier sourceId, RenderTargetIdentifier targetId,Material mat,int pass,Camera camera=null,BlendMode finalSrcMode = BlendMode.One,BlendMode finalDstMode = BlendMode.Zero)
         {
             cmd.SetGlobalTexture(PostStackPass._SourceTex, sourceId);
 
-            cmd.SetGlobalFloat(PostStackPass._FinalSrcMode, (float)finalBlendMode.finalSrcMode);
-            cmd.SetGlobalFloat(PostStackPass._FinalDstMode,(float)finalBlendMode.finalDstMode);
+            cmd.SetGlobalFloat(PostStackPass._FinalSrcMode, (float)finalSrcMode);
+            cmd.SetGlobalFloat(PostStackPass._FinalDstMode,(float)finalDstMode);
 
-            var loadAction = finalBlendMode.finalDstMode == BlendMode.Zero ? RenderBufferLoadAction.DontCare : RenderBufferLoadAction.Load;
+            var loadAction = finalDstMode == BlendMode.Zero ? RenderBufferLoadAction.DontCare : RenderBufferLoadAction.Load;
             cmd.SetRenderTarget(targetId, loadAction, RenderBufferStoreAction.Store);
 
             if (camera)

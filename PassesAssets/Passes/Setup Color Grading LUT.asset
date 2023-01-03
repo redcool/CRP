@@ -32,8 +32,8 @@ MonoBehaviour:
       saturation: 1
       brightness: 1
     whiteBalance:
-      temperature: -11.7
-      tint: -10.2
+      temperature: 0
+      tint: 0
     splitToning:
       shadows: {r: 0.5, g: 0.5, b: 0.5, a: 1}
       hightlights: {r: 0.5, g: 0.5, b: 0.5, a: 1}

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b251598c8ad180340b698e5411377ce2, type: 3}
+  m_Name: Render SceneView Gizmos
+  m_EditorClassIdentifier: 
+  isFoldout: 0
+  overridePassName: 
+  gameCameraTag: 
+  minimalCameraType: 2
+  cameraTypeComparison: 2
+  isInterrupt: 0
+  isSkip: 0
+  isReset: 0
+  drawOpaques: 0
+  drawSkybox: 0
+  drawTransparents: 0
+  drawUnsupportObjects: 0
+  drawGizmos: 1
+  supportLightModeTags:
+  - SRPDefaultUnlit
+  - UniversalForward
+  - UniversalForwardOnly
+  unsupportLightModeTags:
+  - Always
+  - ForwardBase
+  - PrepassBase
+  enableDynamicBatch: 1
+  enableInstanced: 1
+  enableSRPBatch: 1
+  perObjectData: 775

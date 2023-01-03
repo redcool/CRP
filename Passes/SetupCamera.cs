@@ -11,11 +11,11 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(SetupCamera))]
     public class SetupCamera : BasePass
     {
-
+        public bool isEmitWorldGeometryForSceneView;
         public override void OnRender()
         {
 #if UNITY_EDITOR
-            if (camera.cameraType == CameraType.SceneView)
+            if (isEmitWorldGeometryForSceneView && camera.cameraType == CameraType.SceneView)
             {
                 ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
             }
