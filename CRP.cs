@@ -47,6 +47,7 @@ namespace PowerUtilities
                 var camera = cameras[i];
 
                 ExecutePasses(Asset.passes, ref context, camera, i);
+                //camera cleanup
                 CameraCleanup();
             }
             ExecutePasses(Asset.endPasses, ref context, cameras[cameras.Length - 1], cameras.Length - 1);

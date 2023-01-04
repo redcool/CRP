@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1605d511a4769694898de46f37f93d26, type: 3}
-  m_Name: Color Grading Settings
+  m_Name: Default Color Grading Settings
   m_EditorClassIdentifier: 
   colorLUTResolution: 32
   isColorGradingUseLogC: 0

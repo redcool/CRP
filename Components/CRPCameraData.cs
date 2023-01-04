@@ -12,5 +12,9 @@ namespace PowerUtilities
         [Header("Blend Mode")]
         public BlendMode finalSrcMode = BlendMode.One;
         public BlendMode finalDstMode = BlendMode.Zero;
+
+        [Header("Camera PostStack Settings")]
+        [HideInInspector] public PostStackSettings postStackSettings;
+        [HideInInspector] public ColorGradingSettings colorGradingSettings;
     }
 }

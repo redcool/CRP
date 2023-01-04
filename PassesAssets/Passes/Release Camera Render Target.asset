@@ -9,18 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab9052a6e3ec60a4299a8694f18b05f1, type: 3}
-  m_Name: Post Stack Pass
+  m_Script: {fileID: 11500000, guid: d38ca1c509f23b146b63d7df743eb09c, type: 3}
+  m_Name: Release Camera Render Target
   m_EditorClassIdentifier: 
   isFoldout: 0
   overridePassName: 
   gameCameraTag: MainCamera
-  gameCameraTagComparison: 0
   minimalCameraType: 2
   cameraTypeComparison: 0
   isInterrupt: 0
   isSkip: 0
   isReset: 0
-  cameraSourceName: _CameraTarget
-  cameraTargetName: _PostCameraTarget
-  defaultPostStackSettings: {fileID: 11400000, guid: 29f63bd4898683341aab6406c394f0a7, type: 2}
+  targetNames:
+  - _ColorGradingLUT

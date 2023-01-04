@@ -33,25 +33,37 @@ namespace PowerUtilities
         public string cameraSourceName = "_CameraTarget";
         public string cameraTargetName = "_PostCameraTarget";
 
-        [HideInInspector]public PostStackSettings postStackSettings;
+        [HideInInspector]public PostStackSettings defaultPostStackSettings;
 
-        float bloomPrefilterRenderScale => postStackSettings.bloomPrefilterRenderScale;
-        Material postStackMaterial => postStackSettings.PostStackMaterial;
+        PostStackSettings PostStackSettings
+        {
+            get
+            {
+                var cameraData = camera.GetComponent<CRPCameraData>();
+                if (cameraData && cameraData.postStackSettings)
+                    return cameraData.postStackSettings;
 
-        int maxIterates => postStackSettings.maxIterates;
-        int minSize => postStackSettings.minSize;
+                return defaultPostStackSettings;
+            }
+        }
 
-        float threshold => postStackSettings.threshold;
-        float thresholdKnee => postStackSettings.thresholdKnee;
-        float maxLuma => postStackSettings.maxLuma;
+        float bloomPrefilterRenderScale => PostStackSettings.bloomPrefilterRenderScale;
+        Material postStackMaterial => PostStackSettings.PostStackMaterial;
 
-        bool isHdr=>postStackSettings.isHdr;
-        BloomMode bloomMode=>postStackSettings.bloomMode;
-        float intensity => postStackSettings.intensity;
-        float scatter => postStackSettings.scatter;
+        int maxIterates => PostStackSettings.maxIterates;
+        int minSize => PostStackSettings.minSize;
 
-        bool useGaussianBlur=>postStackSettings.useGaussianBlur;
-        bool isCombineBicubicFilter=>postStackSettings.isCombineBicubicFilter;
+        float threshold => PostStackSettings.threshold;
+        float thresholdKnee => PostStackSettings.thresholdKnee;
+        float maxLuma => PostStackSettings.maxLuma;
+
+        bool isHdr=>PostStackSettings.isHdr;
+        BloomMode bloomMode=>PostStackSettings.bloomMode;
+        float intensity => PostStackSettings.intensity;
+        float scatter => PostStackSettings.scatter;
+
+        bool useGaussianBlur=>PostStackSettings.useGaussianBlur;
+        bool isCombineBicubicFilter=>PostStackSettings.isCombineBicubicFilter;
 
         public static readonly int 
             _BloomPrefilterMap = Shader.PropertyToID(nameof(_BloomPrefilterMap)),
@@ -82,14 +94,23 @@ namespace PowerUtilities
             {
                 Shader.PropertyToID("_BloomPyramid" + i);
             }
+
+            var colorFormat = PostStackSettings.isHdr? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
+            Cmd.GetTemporaryRT(_CameraTarget, camera.pixelWidth, camera.pixelHeight, 0, FilterMode.Bilinear,colorFormat);
         }
 
 
         RenderTextureFormat GetTextureFormat() => isHdr ? RenderTextureFormat.DefaultHDR: RenderTextureFormat.Default;
 
+        public override bool IsNeedCameraCleanup() => true;
+        public override void CameraCleanup()
+        {
+            Cmd.ReleaseTemporaryRT(_CameraTarget);
+        }
+
         public override bool CanExecute()
         {
-            return base.CanExecute() && postStackSettings && postStackSettings.PostStackMaterial;
+            return base.CanExecute() && PostStackSettings && PostStackSettings.PostStackMaterial;
         }
 
         public override void OnRender()

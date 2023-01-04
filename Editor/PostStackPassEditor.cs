@@ -22,7 +22,7 @@ namespace PowerUtilities
 
         private void DrawSettings()
         {
-            var settingsProp = serializedObject.FindProperty("postStackSettings");
+            var settingsProp = serializedObject.FindProperty(nameof(PostStackPass.defaultPostStackSettings));
             EditorGUILayout.PropertyField(settingsProp);
             if (settingsProp == null)
                 return;

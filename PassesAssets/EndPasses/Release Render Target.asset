@@ -15,6 +15,7 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: 
+  gameCameraTagComparison: 0
   minimalCameraType: 16
   cameraTypeComparison: 0
   isInterrupt: 0
@@ -25,4 +26,3 @@ MonoBehaviour:
   - _CameraTexture
   - _CameraDepthTarget
   - _CameraDepthTexture
-  - _PostCameraTarget

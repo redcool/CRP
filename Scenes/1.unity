@@ -11720,6 +11720,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   finalSrcMode: 5
   finalDstMode: 10
+  postStackSettings: {fileID: 11400000, guid: b43767adbd7b56749a1cff958137460c, type: 2}
+  colorGradingSettings: {fileID: 0}
 --- !u!1 &2020316006
 GameObject:
   m_ObjectHideFlags: 0

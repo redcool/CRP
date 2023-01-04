@@ -15,8 +15,21 @@ namespace PowerUtilities
     {
         public override void OnInspectorGUI()
         {
+            serializedObject.Update();
             base.OnInspectorGUI();
             var inst = target as CRPCameraData;
+            DrawBlendModePresets(inst);
+
+            var postStackSettingsProp = serializedObject.FindProperty("postStackSettings");
+            var colorGradingSettingsProp = serializedObject.FindProperty("colorGradingSettings");
+            EditorGUILayout.PropertyField(postStackSettingsProp);
+            EditorGUILayout.PropertyField(colorGradingSettingsProp);
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private static void DrawBlendModePresets(CRPCameraData inst)
+        {
             GUILayout.BeginVertical("Box");
             {
                 GUILayout.Label("Preset Blend Modes");
