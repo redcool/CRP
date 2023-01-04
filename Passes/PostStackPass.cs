@@ -33,28 +33,25 @@ namespace PowerUtilities
         public string cameraSourceName = "_CameraTarget";
         public string cameraTargetName = "_PostCameraTarget";
 
-        [Header("Bloom")]
-        [Range(0.1f,1)]public float bloomPrefilterRenderScale = 1;
-        public Material postStackMaterial;
+        public PostStackSettings postStackSettings;
 
-        const int MAX_ITERATORS = 16;
-        [Range(0, MAX_ITERATORS)]public int maxIterates = MAX_ITERATORS;
-        [Min(2)]public int minSize = 2;
+        float bloomPrefilterRenderScale => postStackSettings.bloomPrefilterRenderScale;
+        Material postStackMaterial => postStackSettings.PostStackMaterial;
 
-        [Min(0)]public float threshold = 0.3f;
-        [Range(0,1)]public float thresholdKnee = 0;
-        [Range(0.1f, 100)] public float maxLuma = 10;
+        int maxIterates => postStackSettings.maxIterates;
+        int minSize => postStackSettings.minSize;
 
-        [Header("Bloom Intensity")]
-        public bool isHdr;
-        public BloomMode bloomMode;
-        [Min(0)] public float intensity = 1;
+        float threshold => postStackSettings.threshold;
+        float thresholdKnee => postStackSettings.thresholdKnee;
+        float maxLuma => postStackSettings.maxLuma;
 
-        [Tooltip("Scatter Mode use this value")]
-        [Range(0.005f, 0.99f)] public float scatter = 0.1f;
+        bool isHdr=>postStackSettings.isHdr;
+        BloomMode bloomMode=>postStackSettings.bloomMode;
+        float intensity => postStackSettings.intensity;
+        float scatter => postStackSettings.scatter;
 
-        public bool useGaussianBlur;
-        public bool isCombineBicubicFilter;
+        bool useGaussianBlur=>postStackSettings.useGaussianBlur;
+        bool isCombineBicubicFilter=>postStackSettings.isCombineBicubicFilter;
 
         public static readonly int 
             _BloomPrefilterMap = Shader.PropertyToID(nameof(_BloomPrefilterMap)),
@@ -81,7 +78,7 @@ namespace PowerUtilities
             _CameraSource = Shader.PropertyToID(cameraSourceName);
 
             _BloomPyramid0 = Shader.PropertyToID(nameof(_BloomPyramid0));
-            for (int i = 1; i < MAX_ITERATORS * 2; i++)
+            for (int i = 1; i < PostStackSettings.MAX_ITERATORS * 2; i++)
             {
                 Shader.PropertyToID("_BloomPyramid" + i);
             }
@@ -90,11 +87,16 @@ namespace PowerUtilities
 
         RenderTextureFormat GetTextureFormat() => isHdr ? RenderTextureFormat.DefaultHDR: RenderTextureFormat.Default;
 
+        public override bool CanExecute()
+        {
+            return base.CanExecute() && postStackSettings && postStackSettings.PostStackMaterial;
+        }
+
         public override void OnRender()
         {
             SetupShaderIDs();
 
-            if(!postStackMaterial || maxIterates == 0)
+            if(maxIterates == 0)
             {
                 Cmd.BlitTriangle(_CameraSource, _CameraTarget, postStackMaterial, (int)Pass.Copy);
                 return;

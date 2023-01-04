@@ -13,6 +13,7 @@ namespace PowerUtilities
     public partial class CRP : RenderPipeline
     {
         public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
+        public const string CREATE_SETTINGS_ASSET_MENU_ROOT = nameof(CRP)+"Settings";
 
         public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();

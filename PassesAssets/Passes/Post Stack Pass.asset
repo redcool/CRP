@@ -22,16 +22,4 @@ MonoBehaviour:
   isReset: 0
   cameraSourceName: _CameraTarget
   cameraTargetName: _PostCameraTarget
-  bloomPrefilterRenderScale: 1
-  postStackMaterial: {fileID: 2100000, guid: f583684fd650b044d89138009eb7251d, type: 2}
-  maxIterates: 3
-  minSize: 2
-  threshold: 0.5
-  thresholdKnee: 0.301
-  maxLuma: 100
-  isHdr: 1
-  bloomMode: 1
-  intensity: 1
-  scatter: 0.757
-  useGaussianBlur: 1
-  isCombineBicubicFilter: 0
+  postStackSettings: {fileID: 0}
