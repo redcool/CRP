@@ -16,11 +16,11 @@ MonoBehaviour:
   maxIterates: 3
   minSize: 2
   threshold: 0.3
-  thresholdKnee: 0
+  thresholdKnee: 0.016
   maxLuma: 100
   isHdr: 1
   bloomMode: 1
   intensity: 1
-  scatter: 0.7
+  scatter: 0.668
   useGaussianBlur: 1
   isCombineBicubicFilter: 0

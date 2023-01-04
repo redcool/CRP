@@ -24,7 +24,7 @@ MonoBehaviour:
   drawSkybox: 0
   drawTransparents: 1
   drawUnsupportObjects: 0
-  drawGizmos: 1
+  drawGizmos: 0
   supportLightModeTags:
   - SRPDefaultUnlit
   - UniversalForward

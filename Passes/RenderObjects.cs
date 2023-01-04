@@ -12,17 +12,29 @@ namespace PowerUtilities
     public class RenderObjects : BasePass
     {
         [Header("Render Options")]
+        [Tooltip("draw opaque objects(render queue <= 2000)")]
         public bool drawOpaques = true;
+
+        [Tooltip("draw skybox (render queue = 2450")]
         public bool drawSkybox = true;
+        
+        [Tooltip("draw transparent objects (render queue >= 3000)")]
         public bool drawTransparents = true;
+
+        [Tooltip("draw unsupport object use InternalErrorShader")]
         public bool drawUnsupportObjects=true;
+
+        [Tooltip("draw gizmos in unity editor")]
         public bool drawGizmos=true;
 
+        [Tooltip("supported shaders (assigned by shader pass tags LightMode)")]
         public string[] supportLightModeTags = new[] {
             "SRPDefaultUnlit",
             "UniversalForward",
             "UniversalForwardOnly"
         };
+
+        [Tooltip("unsupported shaders (assigned by shader pass tags LightMode)")]
         public string[] unsupportLightModeTags = new[] { 
         "Always",
         "ForwardBase",
@@ -33,6 +45,8 @@ namespace PowerUtilities
         public bool enableDynamicBatch;
         public bool enableInstanced;
         public bool enableSRPBatch = true;
+
+        [Tooltip("assign data for single instance")]
         public PerObjectData perObjectData = PerObjectData.None;
 
         //CullingResults cullingResults;

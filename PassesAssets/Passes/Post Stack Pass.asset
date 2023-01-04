@@ -22,4 +22,4 @@ MonoBehaviour:
   isReset: 0
   cameraSourceName: _CameraTarget
   cameraTargetName: _PostCameraTarget
-  postStackSettings: {fileID: 0}
+  postStackSettings: {fileID: 11400000, guid: 29f63bd4898683341aab6406c394f0a7, type: 2}
