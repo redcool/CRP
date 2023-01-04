@@ -12,12 +12,14 @@ namespace PowerUtilities
 {
     public partial class CRP : RenderPipeline
     {
-        public const string CREATE_PASS_ASSET_MENU_ROOT = ""+nameof(CRP)+"/Passes";
-        public const string CREATE_SETTINGS_ASSET_MENU_ROOT = nameof(CRP)+"Settings";
+        public const string CREATE_PASS_ASSET_MENU_ROOT = nameof(CRP)+"/Passes";
+        public const string CREATE_SETTINGS_ASSET_MENU_ROOT = nameof(CRP)+"/Settings";
 
         public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();
-        List<BasePass> needCleanupList = new List<BasePass>();
+
+        List<BasePass> pipelineCleanupList = new List<BasePass>();
+        List<BasePass> cameraCleanupList = new List<BasePass>();
 
         public CRP(CRPAsset asset)
         {
@@ -45,23 +47,33 @@ namespace PowerUtilities
                 var camera = cameras[i];
 
                 ExecutePasses(Asset.passes, ref context, camera, i);
+                CameraCleanup();
             }
             ExecutePasses(Asset.endPasses, ref context, cameras[cameras.Length - 1], cameras.Length - 1);
 
             //cleanup
-            Cleanup();
+            PipelineCleanup();
 
             cmd.Execute(ref context);
             context.Submit();
         }
 
-        private void Cleanup()
+        private void CameraCleanup()
         {
-            for (int i = 0; i < needCleanupList.Count; i++)
+            for (int i = 0; i < cameraCleanupList.Count; i++)
             {
-                needCleanupList[i].Cleanup();
+                cameraCleanupList[i].CameraCleanup();
             }
-            needCleanupList.Clear();
+            cameraCleanupList.Clear();
+        }
+
+        private void PipelineCleanup()
+        {
+            for (int i = 0; i < pipelineCleanupList.Count; i++)
+            {
+                pipelineCleanupList[i].PipelineCleanup();
+            }
+            pipelineCleanupList.Clear();
         }
 
         void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
@@ -73,8 +85,11 @@ namespace PowerUtilities
                 if (pass == null || pass.isSkip)
                     continue;
                 
-                if(pass.NeedCleanup())
-                    needCleanupList.Add(pass);  
+                if(pass.IsNeedPipelineCleanup())
+                    pipelineCleanupList.Add(pass);
+
+                if (pass.IsNeedCameraCleanup())
+                    cameraCleanupList.Add(pass);
 
                 pass.Render(ref context, camera);
 

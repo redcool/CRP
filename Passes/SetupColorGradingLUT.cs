@@ -24,7 +24,7 @@ namespace PowerUtilities
     public class SetupColorGradingLUT : BasePass
     {
         [Header("Color Grading")]
-        public ColorGradingSettings gradingSettings;
+        [HideInInspector]public ColorGradingSettings gradingSettings;
 
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]
@@ -57,23 +57,23 @@ namespace PowerUtilities
             _ColorGradingLUTParams = Shader.PropertyToID(nameof(_ColorGradingLUTParams)),
             _ColorGradingUseLogC = Shader.PropertyToID(nameof(_ColorGradingUseLogC))
             ;
-        static bool isCreated;
+
+        public override bool CanExecute()
+        {
+            return base.CanExecute() && gradingSettings!= null;
+        }
+
         public override void OnRender()
         {
-            if (isCreated)
-                return;
-
-            isCreated = true;
             SetupColorGradingParams(Cmd);
 
             SetupLUT(Cmd, gradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
         }
 
-        public override bool NeedCleanup() => true;
-        public override void Cleanup()
+        public override bool IsNeedCameraCleanup() => true;
+        public override void CameraCleanup()
         {
             Cmd.ReleaseTemporaryRT(_ColorGradingLUT);
-            isCreated = false;
         }
 
         bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;

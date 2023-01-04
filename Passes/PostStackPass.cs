@@ -33,7 +33,7 @@ namespace PowerUtilities
         public string cameraSourceName = "_CameraTarget";
         public string cameraTargetName = "_PostCameraTarget";
 
-        public PostStackSettings postStackSettings;
+        [HideInInspector]public PostStackSettings postStackSettings;
 
         float bloomPrefilterRenderScale => postStackSettings.bloomPrefilterRenderScale;
         Material postStackMaterial => postStackSettings.PostStackMaterial;

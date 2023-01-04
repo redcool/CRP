@@ -20,34 +20,5 @@ MonoBehaviour:
   isInterrupt: 0
   isSkip: 0
   isReset: 0
-  gradingSettings:
-    colorLUTResolution: 32
-    isColorGradingUseLogC: 0
-    colorAdjust:
-      exposure: 1
-      colorFilter: {r: 1, g: 0.91194963, b: 0.91194963, a: 1}
-      contrast: 0.04
-      hueScale: 1
-      hueOffset: 0
-      saturation: 1
-      brightness: 1
-    whiteBalance:
-      temperature: 0
-      tint: 0
-    splitToning:
-      shadows: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-      hightlights: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-      balance: 0
-    channelMixer:
-      red: {x: 1, y: 0, z: 0}
-      green: {x: 0, y: 1, z: 0}
-      blue: {x: 0, y: 0, z: 1}
-    shadowsMidtonesHighlights:
-      shadows: {r: 1, g: 1, b: 1, a: 1}
-      midtones: {r: 1, g: 1, b: 1, a: 1}
-      highlights: {r: 1, g: 1, b: 1, a: 1}
-      shadowStart: 0
-      shadowsEnd: 0.3
-      highlightsStart: 0.55
-      highlightsEnd: 1
+  gradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
   toneMappingPass: 0

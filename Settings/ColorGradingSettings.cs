@@ -61,8 +61,9 @@ namespace PowerUtilities
         [Range(0, 2)]
         public float shadowStart = 0, shadowsEnd = 0.3f, highlightsStart = 0.55f, highlightsEnd = 1;
     }
-    [Serializable]
-    public class ColorGradingSettings
+    //[Serializable]
+    [CreateAssetMenu(menuName = CRP.CREATE_SETTINGS_ASSET_MENU_ROOT+"/"+nameof(ColorGradingSettings))]
+    public class ColorGradingSettings : ScriptableObject
     {
         public enum ColorLUTResolution
         {

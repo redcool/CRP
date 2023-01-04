@@ -113,8 +113,8 @@ namespace PowerUtilities
             needCleanOther = shadowedOtherLightCount > 0;
         }
 
-        public override bool NeedCleanup() => true;
-        public override void Cleanup()
+        public override bool IsNeedPipelineCleanup() => true;
+        public override void PipelineCleanup()
         {
             Cmd.ReleaseTemporaryRT(_DirectionalShadowAtlas);
             if (needCleanOther)

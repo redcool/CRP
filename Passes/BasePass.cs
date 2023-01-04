@@ -14,6 +14,12 @@ namespace PowerUtilities
         Less,
         Equals
     }
+    public enum GameObjectTagComparison
+    {
+        Equals,
+        NotEquals,
+    }
+
     public abstract class BasePass : ScriptableObject
     {
         [Header(nameof(BasePass))]
@@ -22,10 +28,12 @@ namespace PowerUtilities
         [Tooltip("Pass name show in FrameDebugger")]
         public string overridePassName;
 
-        [Header("Filters (all)")]
+        [Header("Filter (GameObject Tag)")]
         [Tooltip("Execute when Game camera's tag equals,otherwise skip")]
         public string gameCameraTag;
+        public GameObjectTagComparison gameCameraTagComparison;
 
+        [Header("Filter (CameraType)")]
         [Tooltip("Execute when current camera type <= minimalCameraType")]
         public CameraType minimalCameraType = CameraType.Reflection;
         [Tooltip("camera type comparison")]
@@ -40,8 +48,8 @@ namespace PowerUtilities
 
         public bool isReset;
 
-        [NonSerialized]public ScriptableRenderContext context;
-        [NonSerialized]public Camera camera;
+        [NonSerialized] public ScriptableRenderContext context;
+        [NonSerialized] public Camera camera;
 
         static CommandBuffer cmd;
         //protected static ScriptableCullingParameters cullingParams;
@@ -63,7 +71,7 @@ namespace PowerUtilities
             Cmd.Clear();
         }
 
-        public void Render(ref ScriptableRenderContext context,Camera camera)
+        public void Render(ref ScriptableRenderContext context, Camera camera)
         {
             TryReset();
 
@@ -91,7 +99,7 @@ namespace PowerUtilities
         /// <summary>
         /// Init once before OnRender
         /// </summary>
-        private void TryInit()
+        void TryInit()
         {
             if (executeCount == 0)
             {
@@ -100,7 +108,7 @@ namespace PowerUtilities
             executeCount++;
         }
 
-        private void TryReset()
+        void TryReset()
         {
             if (isReset)
             {
@@ -116,30 +124,56 @@ namespace PowerUtilities
             _ => cameraType <= minimalCameraType,
         };
 
+        bool IsValidGameObjectTag(GameObjectTagComparison comp,Camera cam,string tag) => comp switch
+        {
+            GameObjectTagComparison.NotEquals => !cam.CompareTag(tag),
+            _ => cam.CompareTag(tag),
+        };
+
         public virtual bool CanExecute()
         {
             if (camera.cameraType == CameraType.Game)
             {
-                return string.IsNullOrEmpty(gameCameraTag) ? true : camera.CompareTag(gameCameraTag);
+                return string.IsNullOrEmpty(gameCameraTag) ? true :
+                    IsValidGameObjectTag(gameCameraTagComparison, camera, gameCameraTag);
             }
 
             var isValidType = IsValidCameraType(cameraTypeComparison, camera.cameraType,minimalCameraType);
             
             return isValidType;
         }
-
+        /// <summary>
+        /// SetupCamera should prefered call , when done return true
+        /// </summary>
+        /// <returns></returns>
         public bool IsCullingResultsValid() => cullingResults != default;
         public abstract void OnRender();
 
 
         public virtual string PassName() => string.IsNullOrEmpty(overridePassName) ? name : overridePassName;
-        public virtual bool NeedCleanup() => false;
 
         /// <summary>
-        /// when NeedCleanup() is true
-        /// call Cleanup when renderPipeline is done.
+        /// when IsNeedPipelineCleanup() is true
+        /// call PipelineCleanup when renderPipeline is done.
         /// </summary>
-        public virtual void Cleanup() { }
+        public virtual bool IsNeedPipelineCleanup() => false;
+        
+        /// <summary>
+        /// when IsNeedPipelineCleanup() is true
+        /// call PipelineCleanup when renderPipeline is done.
+        /// </summary>
+        public virtual void PipelineCleanup() { }
+
+        /// <summary>
+        /// when IsNeedCameraCleanup() is true
+        /// call CameraCleanup when camera rendering is done.
+        /// </summary>
+        public virtual bool IsNeedCameraCleanup() => false;
+        /// <summary>
+        /// when IsNeedCameraCleanup() is true
+        /// call CameraCleanup when camera rendering is done.
+        /// </summary>
+        public virtual void CameraCleanup() { }
 
         /// <summary>
         /// only call once before OnRender
