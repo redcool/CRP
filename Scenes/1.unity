@@ -11658,7 +11658,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 1}
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0.92941177}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -11667,7 +11667,7 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.29
+    x: 0.38
     y: 0.29
     width: 0.45
     height: 0.51
@@ -11721,7 +11721,7 @@ MonoBehaviour:
   finalSrcMode: 5
   finalDstMode: 10
   postStackSettings: {fileID: 11400000, guid: b43767adbd7b56749a1cff958137460c, type: 2}
-  colorGradingSettings: {fileID: 0}
+  colorGradingSettings: {fileID: 11400000, guid: a249ac7cb400fb2428dfbb600419a533, type: 2}
 --- !u!1 &2020316006
 GameObject:
   m_ObjectHideFlags: 0

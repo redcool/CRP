@@ -22,7 +22,7 @@ namespace PowerUtilities
 
         private void DrawSettings()
         {
-            var settingsProp = serializedObject.FindProperty("gradingSettings");
+            var settingsProp = serializedObject.FindProperty(nameof(SetupColorGradingLUT.defaultGradingSettings));
             EditorGUILayout.PropertyField(settingsProp);
 
             if (settingsProp.objectReferenceValue==null)

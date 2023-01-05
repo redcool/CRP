@@ -17,7 +17,7 @@ MonoBehaviour:
   minSize: 2
   threshold: 0.3
   thresholdKnee: 0.016
-  maxLuma: 100
+  maxLuma: 83
   isHdr: 1
   bloomMode: 1
   intensity: 1

@@ -24,7 +24,20 @@ namespace PowerUtilities
     public class SetupColorGradingLUT : BasePass
     {
         [Header("Color Grading")]
-        [HideInInspector]public ColorGradingSettings gradingSettings;
+        [HideInInspector]public ColorGradingSettings defaultGradingSettings;
+
+        ColorGradingSettings GradingSettings
+        {
+            get
+            {
+                var cameraData = camera.GetComponent<CRPCameraData>();
+                if(cameraData && cameraData.colorGradingSettings)
+                {
+                    return cameraData.colorGradingSettings;
+                }
+                return defaultGradingSettings;
+            }
+        }
 
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]
@@ -60,14 +73,14 @@ namespace PowerUtilities
 
         public override bool CanExecute()
         {
-            return base.CanExecute() && gradingSettings!= null;
+            return base.CanExecute() && GradingSettings!= null;
         }
 
         public override void OnRender()
         {
             SetupColorGradingParams(Cmd);
 
-            SetupLUT(Cmd, gradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
+            SetupLUT(Cmd, GradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
         }
 
         public override bool IsNeedCameraCleanup() => true;
@@ -81,7 +94,7 @@ namespace PowerUtilities
 
         public void SetupLUT(CommandBuffer Cmd, bool useLogC,Material mat, int pass)
         {
-            var lutHeight = (int)gradingSettings.colorLUTResolution;
+            var lutHeight = (int)GradingSettings.colorLUTResolution;
             var lutWidth = lutHeight * lutHeight;
             Cmd.GetTemporaryRT(_ColorGradingLUT, lutWidth, lutHeight, 0, FilterMode.Bilinear, RenderTextureFormat.DefaultHDR);
 
@@ -96,7 +109,7 @@ namespace PowerUtilities
 
         public void SetupColorGradingParams(CommandBuffer cmd)
         {
-            var colorAdjust = gradingSettings.colorAdjust;
+            var colorAdjust = GradingSettings.colorAdjust;
             cmd.SetGlobalVector(_ColorAdjustments, new Vector4(
                 Mathf.Pow(2, colorAdjust.exposure),
                 colorAdjust.contrast + 1
@@ -106,18 +119,18 @@ namespace PowerUtilities
 
             cmd.SetGlobalVector(_ColorAdjustHSV, colorAdjust.GetHSV());
 
-            cmd.SetGlobalVector(_WhiteBalanceFactors, gradingSettings.whiteBalance.GetFactors());
+            cmd.SetGlobalVector(_WhiteBalanceFactors, GradingSettings.whiteBalance.GetFactors());
 
-            var splitToning = gradingSettings.splitToning;
+            var splitToning = GradingSettings.splitToning;
             cmd.SetGlobalColor(_SplitToningShadows, new Color(splitToning.shadows.r, splitToning.shadows.g, splitToning.shadows.b, splitToning.balance));
             cmd.SetGlobalColor(_SplitToningHighlights, splitToning.hightlights);
 
-            var channelMixer = gradingSettings.channelMixer;
+            var channelMixer = GradingSettings.channelMixer;
             cmd.SetGlobalVector(_ChannelMixerRed, channelMixer.red);
             cmd.SetGlobalVector(_ChannelMixerGreen, channelMixer.green);
             cmd.SetGlobalVector(_ChannelMixerBlue, channelMixer.blue);
 
-            var smh = gradingSettings.shadowsMidtonesHighlights;
+            var smh = GradingSettings.shadowsMidtonesHighlights;
             cmd.SetGlobalColor(_SMHShadows, smh.shadows.linear);
             cmd.SetGlobalColor(_SMHMidtones, smh.midtones.linear);
             cmd.SetGlobalColor(_SMHHighlights, smh.highlights.linear);
