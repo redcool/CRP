@@ -32,6 +32,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7001d6e37fa287942a00efc9f67988c8, type: 2}
   - {fileID: 11400000, guid: 0e30db48db09d634cba339e34fb609d1, type: 2}
   - {fileID: 11400000, guid: f8651887096f79e488b42b51719f6734, type: 2}
+  - {fileID: 11400000, guid: 96e523ef0be7feb41b5fae56106e228c, type: 2}
   - {fileID: 11400000, guid: e46ba591b17b3a144abd4eaf17cf54f3, type: 2}
   endPasses:
   - {fileID: 11400000, guid: 25c1f0b438a6fa4498bdf9a6552ec70f, type: 2}

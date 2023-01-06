@@ -15,7 +15,9 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: 
-  isInterrupt: 0
-  isSkip: 1
+  gameCameraTagComparison: 0
+  minimalCameraType: 16
+  cameraTypeComparison: 0
+  passState: 2
   isReset: 0
   mat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}

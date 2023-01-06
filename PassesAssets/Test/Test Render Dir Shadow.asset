@@ -15,9 +15,11 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: 
-  isInterrupt: 0
-  isSkip: 1
-  isReset: 0
+  gameCameraTagComparison: 0
+  minimalCameraType: 16
+  cameraTypeComparison: 0
+  passRunMode: 2
+  isResetCounter: 0
   atlasSize: 1024
   cascadeCount: 4
   splitRatio: {x: 0.1, y: 0.3, z: 0.6}

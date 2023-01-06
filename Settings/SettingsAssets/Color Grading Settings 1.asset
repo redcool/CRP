@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Color Grading Settings 1
   m_EditorClassIdentifier: 
   colorLUTResolution: 32
-  isColorGradingUseLogC: 0
+  isColorGradingUseLogC: 1
   colorAdjust:
-    exposure: 0
+    exposure: 1
     colorFilter: {r: 1, g: 1, b: 1, a: 1}
-    contrast: 0
+    contrast: 0.2
     hueScale: 1
     hueOffset: 0
     saturation: 1

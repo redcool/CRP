@@ -20,8 +20,18 @@ namespace PowerUtilities
         NotEquals,
     }
 
+
     public abstract class BasePass : ScriptableObject
     {
+        public enum PassRunMode
+        {
+            Normal = 0,
+            Interrupt = 1,
+            Skip = 2,
+            EditorOnly = 3
+        }
+
+
         [Header(nameof(BasePass))]
         public bool isFoldout;
 
@@ -39,14 +49,13 @@ namespace PowerUtilities
         [Tooltip("camera type comparison")]
         public CameraTypeComparison cameraTypeComparison = CameraTypeComparison.LessEquals;
 
-        [Header("Render flow")]
-        [Tooltip("When pass done, break render flow?")]
-        public bool isInterrupt;
+        [Header("Pass states")]
+        [Tooltip("Skip : dont run , Interrupt : after run interrupt passes afterward , EditorOnly : run only in unity editor")]
+        public PassRunMode passRunMode;
+        public bool isEditorOnly;
 
-        [Tooltip("Skip this pass?")]
-        public bool isSkip;
-
-        public bool isReset;
+        [Tooltip("ResetCounter will trigger Init() again")]
+        public bool isResetCounter;
 
         [NonSerialized] public ScriptableRenderContext context;
         [NonSerialized] public Camera camera;
@@ -110,9 +119,9 @@ namespace PowerUtilities
 
         void TryReset()
         {
-            if (isReset)
+            if (isResetCounter)
             {
-                isReset = false;
+                isResetCounter = false;
                 executeCount = 0;
             }
         }
@@ -124,7 +133,7 @@ namespace PowerUtilities
             _ => cameraType <= minimalCameraType,
         };
 
-        bool IsValidGameObjectTag(GameObjectTagComparison comp,Camera cam,string tag) => comp switch
+        bool IsValidGameObjectTag(GameObjectTagComparison comp, Camera cam, string tag) => comp switch
         {
             GameObjectTagComparison.NotEquals => !cam.CompareTag(tag),
             _ => cam.CompareTag(tag),
@@ -138,15 +147,19 @@ namespace PowerUtilities
                     IsValidGameObjectTag(gameCameraTagComparison, camera, gameCameraTag);
             }
 
-            var isValidType = IsValidCameraType(cameraTypeComparison, camera.cameraType,minimalCameraType);
-            
-            return isValidType;
+            var isValidPass = IsValidCameraType(cameraTypeComparison, camera.cameraType, minimalCameraType);
+
+            if (isEditorOnly)
+                isValidPass = isValidPass && Application.isEditor;
+
+            return isValidPass;
         }
         /// <summary>
         /// SetupCamera should prefered call , when done return true
         /// </summary>
         /// <returns></returns>
         public bool IsCullingResultsValid() => cullingResults != default;
+
         public abstract void OnRender();
 
 
@@ -157,7 +170,7 @@ namespace PowerUtilities
         /// call PipelineCleanup when renderPipeline is done.
         /// </summary>
         public virtual bool IsNeedPipelineCleanup() => false;
-        
+
         /// <summary>
         /// when IsNeedPipelineCleanup() is true
         /// call PipelineCleanup when renderPipeline is done.
@@ -180,5 +193,8 @@ namespace PowerUtilities
         /// set isReset = true,will reset pass
         /// </summary>
         public virtual void Init() { }
+
+        public bool IsSkip() => passRunMode== PassRunMode.Skip;
+        public bool IsInterrupt() => passRunMode== PassRunMode.Interrupt;
     }
 }

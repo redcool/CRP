@@ -1,10 +1,14 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+
 namespace PowerUtilities
 {
     [CustomEditor(typeof(SetupColorGradingLUT))]
@@ -14,7 +18,6 @@ namespace PowerUtilities
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            //base.OnInspectorGUI();
             DrawDefaultInspector();
             DrawSettings();
             serializedObject.ApplyModifiedProperties();

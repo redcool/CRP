@@ -18,6 +18,7 @@ Shader "CRP/Utils/CopyColor"
     sampler2D _SourceTex;
 
     bool _ApplyColorGrading;
+    bool _LinearToGamma;
 
     v2f vert (uint vid:SV_VERTEXID)
     {
@@ -27,11 +28,15 @@ Shader "CRP/Utils/CopyColor"
         return o;
     }
 
-    half4 frag (v2f i) : SV_Target
+    float4 frag (v2f i) : SV_Target
     {
-        half4 col = tex2D(_SourceTex, i.uv);
+        float4 col = tex2D(_SourceTex, i.uv);
         if(_ApplyColorGrading)
             col.xyz = ApplyColorGradingLUT(col.xyz);
+
+        if(_LinearToGamma)
+            col.xyz = Gamma22ToLinear(col.xyz);
+
         return col;
     }
     ENDHLSL

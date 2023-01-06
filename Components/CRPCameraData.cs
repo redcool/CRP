@@ -15,6 +15,12 @@ namespace PowerUtilities
 
         [Header("Camera PostStack Settings")]
         [HideInInspector] public PostStackSettings postStackSettings;
+
+        [Header("Color Grading LUT Generation")]
+        [Tooltip("When not empty,do not generate colorGrading LUT.")]
+        public Texture colorGradingTexture;
+
         [HideInInspector] public ColorGradingSettings colorGradingSettings;
+        
     }
 }

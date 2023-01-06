@@ -14,6 +14,7 @@ namespace PowerUtilities
     {
         public const string CREATE_PASS_ASSET_MENU_ROOT = nameof(CRP)+"/Passes";
         public const string CREATE_SETTINGS_ASSET_MENU_ROOT = nameof(CRP)+"/Settings";
+        public const string CREATE_EDITOR_PASS_ASSET_ROOT = CREATE_PASS_ASSET_MENU_ROOT+"/EditorPasses";
 
         public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();
@@ -83,7 +84,7 @@ namespace PowerUtilities
             cmd.BeginSampleExecute(camera.name, ref context);
             foreach (var pass in passes)
             {
-                if (pass == null || pass.isSkip)
+                if (pass == null || pass.IsSkip())
                     continue;
                 
                 if(pass.IsNeedPipelineCleanup())
@@ -94,7 +95,7 @@ namespace PowerUtilities
 
                 pass.Render(ref context, camera);
 
-                if (pass.isInterrupt)
+                if (pass.IsInterrupt())
                     break;
             }
 

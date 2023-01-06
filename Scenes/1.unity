@@ -11639,7 +11639,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &1984385656
 AudioListener:
   m_ObjectHideFlags: 0
@@ -11721,6 +11721,7 @@ MonoBehaviour:
   finalSrcMode: 5
   finalDstMode: 10
   postStackSettings: {fileID: 11400000, guid: b43767adbd7b56749a1cff958137460c, type: 2}
+  colorGradingTexture: {fileID: 2800000, guid: ef519f702913ad647acf24a4be0894c5, type: 3}
   colorGradingSettings: {fileID: 11400000, guid: a249ac7cb400fb2428dfbb600419a533, type: 2}
 --- !u!1 &2020316006
 GameObject:

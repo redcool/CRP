@@ -36,6 +36,17 @@ namespace PowerUtilities
             serializedObject.ApplyModifiedProperties();
         }
 
+        public static Color GetTitleColor(BasePass pass)
+        {
+            if (pass.isEditorOnly)
+                return Color.yellow;
+            else if (pass.IsInterrupt())
+                return Color.red;
+            else if (pass.IsSkip())
+                return Color.green;
+            return GUI.color;
+        }
+
         private void DrawPassesDetails(SerializedProperty iterator)
         {
             isPassesFoldout = EditorGUILayout.Foldout(isPassesFoldout, "Passes Details", true, EditorStyles.foldoutHeader);
@@ -53,9 +64,7 @@ namespace PowerUtilities
                     var isPassFoldout = passItemSO.FindProperty("isFoldout");
                     var passName = basePass.PassName();
 
-                    var titleColor = basePass.isInterrupt ? Color.red : basePass.isSkip ? Color.green : GUI.color;
-
-                    ColorField(titleColor, () => {
+                    ColorField(GetTitleColor(basePass), () => {
                         isPassFoldout.boolValue = EditorGUILayout.Foldout(isPassFoldout.boolValue, passName, true);
                     });
 

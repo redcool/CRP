@@ -47,7 +47,6 @@ namespace PowerUtilities
             RenderTargetIdentifier sourceId = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : Shader.PropertyToID(sourceName);
             RenderTargetIdentifier targetId = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : Shader.PropertyToID(targetName);
 
-            Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, isApplyColorGrading ? 1 : 0);
 
             var finalSrcMode = BlendMode.One;
             var finalDstMode = BlendMode.Zero;
@@ -58,6 +57,8 @@ namespace PowerUtilities
                 finalDstMode = cameraData.finalDstMode;
             }
 
+            Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, isApplyColorGrading ? 1 : 0);
+            Cmd.SetGlobalFloat(ShaderPropertyIds._LinearToGamma, 0);
             Cmd.BlitTriangle(sourceId, targetId, blitMat, pass, camera, finalSrcMode, finalDstMode);
         }
 

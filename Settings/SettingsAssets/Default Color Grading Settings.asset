@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Default Color Grading Settings
   m_EditorClassIdentifier: 
   colorLUTResolution: 32
-  isColorGradingUseLogC: 0
+  isColorGradingUseLogC: 1
   colorAdjust:
     exposure: 0
     colorFilter: {r: 1, g: 1, b: 1, a: 1}

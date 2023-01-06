@@ -9,17 +9,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f004bfa891525643a1bb2ca1452baa8, type: 3}
-  m_Name: Setup Color Grading LUT
+  m_Script: {fileID: 11500000, guid: c16d7455c08097b4d8da7bda8608caee, type: 3}
+  m_Name: Copy Target
   m_EditorClassIdentifier: 
-  isFoldout: 0
+  isFoldout: 1
   overridePassName: 
   gameCameraTag: MainCamera
   gameCameraTagComparison: 0
-  minimalCameraType: 2
+  minimalCameraType: 16
   cameraTypeComparison: 0
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
-  defaultGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
-  toneMappingPass: 0
+  passRunMode: 3
+  isEditorOnly: 1
+  isResetCounter: 0
+  sourceName: _ColorGradingLUT
+  outputPath: /target.png
+  width: 1024
+  height: 32
+  blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
+  isLinearToGamma: 1
+  isRunOnce: 0

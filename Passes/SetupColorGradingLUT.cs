@@ -23,7 +23,8 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/" + nameof(SetupColorGradingLUT))]
     public class SetupColorGradingLUT : BasePass
     {
-        [Header("Color Grading")]
+        [Header(nameof(SetupColorGradingLUT))]
+        public string targetName = "_ColorGradingLUT";
         [HideInInspector]public ColorGradingSettings defaultGradingSettings;
 
         ColorGradingSettings GradingSettings
@@ -66,10 +67,11 @@ namespace PowerUtilities
             _SMHRange = Shader.PropertyToID(nameof(_SMHRange)),
 
             //LUT
-            _ColorGradingLUT = Shader.PropertyToID(nameof(_ColorGradingLUT)),
             _ColorGradingLUTParams = Shader.PropertyToID(nameof(_ColorGradingLUTParams)),
             _ColorGradingUseLogC = Shader.PropertyToID(nameof(_ColorGradingUseLogC))
             ;
+
+        int targetId;
 
         public override bool CanExecute()
         {
@@ -78,6 +80,15 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
+            var cameraData = camera.GetComponent<CRPCameraData>();
+            if(cameraData && cameraData.colorGradingTexture)
+            {
+                Cmd.SetGlobalTexture(targetId, cameraData.colorGradingTexture);
+                return;
+            }
+
+            targetId = Shader.PropertyToID(targetName);
+
             SetupColorGradingParams(Cmd);
 
             SetupLUT(Cmd, GradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
@@ -86,7 +97,7 @@ namespace PowerUtilities
         public override bool IsNeedCameraCleanup() => true;
         public override void CameraCleanup()
         {
-            Cmd.ReleaseTemporaryRT(_ColorGradingLUT);
+            Cmd.ReleaseTemporaryRT(targetId);
         }
 
         bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;
@@ -96,11 +107,13 @@ namespace PowerUtilities
         {
             var lutHeight = (int)GradingSettings.colorLUTResolution;
             var lutWidth = lutHeight * lutHeight;
-            Cmd.GetTemporaryRT(_ColorGradingLUT, lutWidth, lutHeight, 0, FilterMode.Bilinear, RenderTextureFormat.DefaultHDR);
+
+            var colorFormat = CRP.Asset.pipelineSettings.isHdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
+            Cmd.GetTemporaryRT(targetId, lutWidth, lutHeight, 0, FilterMode.Bilinear, colorFormat);
 
             Cmd.SetGlobalFloat(_ColorGradingUseLogC, useLogC ? 1 : 0);
             Cmd.SetGlobalVector(_ColorGradingLUTParams, new Vector4(lutHeight, 0.5f / lutWidth, 0.5f / lutHeight, lutHeight / (lutHeight - 1)));
-            Cmd.BlitTriangle(BuiltinRenderTextureType.None, _ColorGradingLUT, mat, pass);
+            Cmd.BlitTriangle(BuiltinRenderTextureType.None, targetId, mat, pass);
 
             ExecuteCommand();
             // update _ColorGradingLUTParams, then can ApplyColorGradingLUT
