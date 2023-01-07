@@ -46,7 +46,7 @@
         return float4(ACESFilm(c),1);
     }
     float4 fragACES(v2f i):SV_TARGET{
-        float3 c = ColorGradingLUT(i.uv);
+        float3 c = ColorGradingLUT(i.uv,true);
         return float4(AcesTonemap(c),1); 
     }
 

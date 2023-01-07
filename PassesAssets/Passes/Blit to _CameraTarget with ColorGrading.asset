@@ -15,11 +15,12 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: MainCamera
+  gameCameraTagComparison: 0
   minimalCameraType: 2
   cameraTypeComparison: 0
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
   sourceName: _PostCameraTarget
   targetName: 
   blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}

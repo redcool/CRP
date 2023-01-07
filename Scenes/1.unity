@@ -7899,6 +7899,7 @@ GameObject:
   - component: {fileID: 1226615865}
   - component: {fileID: 1226615864}
   - component: {fileID: 1226615863}
+  - component: {fileID: 1226615866}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -7972,6 +7973,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1226615866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226615862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689e014a8ff4ab34e868a48f2b0da8ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  finalSrcMode: 1
+  finalDstMode: 0
+  postStackSettings: {fileID: 0}
+  colorGradingTexture: {fileID: 0}
+  colorGradingSettings: {fileID: 0}
 --- !u!1 &1233354659
 GameObject:
   m_ObjectHideFlags: 0
@@ -10403,7 +10421,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2147483647
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
@@ -11721,8 +11739,8 @@ MonoBehaviour:
   finalSrcMode: 5
   finalDstMode: 10
   postStackSettings: {fileID: 11400000, guid: b43767adbd7b56749a1cff958137460c, type: 2}
-  colorGradingTexture: {fileID: 2800000, guid: ef519f702913ad647acf24a4be0894c5, type: 3}
-  colorGradingSettings: {fileID: 11400000, guid: a249ac7cb400fb2428dfbb600419a533, type: 2}
+  colorGradingTexture: {fileID: 0}
+  colorGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
 --- !u!1 &2020316006
 GameObject:
   m_ObjectHideFlags: 0

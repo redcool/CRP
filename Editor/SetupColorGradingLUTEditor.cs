@@ -20,6 +20,7 @@ namespace PowerUtilities
             serializedObject.Update();
             DrawDefaultInspector();
             DrawSettings();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SetupColorGradingLUT.toneMappingPass)));
             serializedObject.ApplyModifiedProperties();
         }
 

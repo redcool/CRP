@@ -25,6 +25,7 @@ namespace PowerUtilities
     {
         [Header(nameof(SetupColorGradingLUT))]
         public string targetName = "_ColorGradingLUT";
+
         [HideInInspector]public ColorGradingSettings defaultGradingSettings;
 
         ColorGradingSettings GradingSettings
@@ -42,7 +43,7 @@ namespace PowerUtilities
 
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]
-        public ToneMappingPass toneMappingPass;
+        [HideInInspector] public ToneMappingPass toneMappingPass;
 
         static Lazy<Material> lazyColorGradingMaterial = new Lazy<Material>(() => new Material(Shader.Find("CRP/Utils/ColorGrading")));
         public static readonly int
@@ -72,7 +73,7 @@ namespace PowerUtilities
             ;
 
         int targetId;
-
+        bool hasColorGradingTexture;
         public override bool CanExecute()
         {
             return base.CanExecute() && GradingSettings!= null;
@@ -80,44 +81,49 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
-            var cameraData = camera.GetComponent<CRPCameraData>();
-            if(cameraData && cameraData.colorGradingTexture)
-            {
-                Cmd.SetGlobalTexture(targetId, cameraData.colorGradingTexture);
-                return;
-            }
 
             targetId = Shader.PropertyToID(targetName);
 
-            SetupColorGradingParams(Cmd);
+            Cmd.SetGlobalFloat(_ColorGradingUseLogC, GradingSettings.isColorGradingUseLogC ? 1 : 0);
 
-            SetupLUT(Cmd, GradingSettings.isColorGradingUseLogC, lazyColorGradingMaterial.Value, GetPassId());
+            var lutHeight = (int)GradingSettings.colorLUTResolution;
+            var lutWidth = lutHeight * lutHeight;
+
+            var cameraData = camera.GetComponent<CRPCameraData>();
+            hasColorGradingTexture = (cameraData && cameraData.colorGradingTexture);
+
+            if (hasColorGradingTexture)
+            {
+                Cmd.SetGlobalTexture(targetId, cameraData.colorGradingTexture);
+                lutWidth = cameraData.colorGradingTexture.width;
+                lutHeight = cameraData.colorGradingTexture.height;
+            }
+            else
+            {
+                SetupColorGradingParams(Cmd);
+                SetupLUT(Cmd, lazyColorGradingMaterial.Value, GetPassId(), lutWidth, lutHeight);
+            }
+            // update _ColorGradingLUTParams, then can ApplyColorGradingLUT
+            Cmd.SetGlobalVector(_ColorGradingLUTParams, new Vector4(1f / lutWidth, 1f / lutHeight, lutHeight - 1));
         }
 
         public override bool IsNeedCameraCleanup() => true;
         public override void CameraCleanup()
         {
-            Cmd.ReleaseTemporaryRT(targetId);
+            if(hasColorGradingTexture)
+                Cmd.ReleaseTemporaryRT(targetId);
         }
 
         bool IsApplyTone() => CRP.Asset.pipelineSettings.isHdr && toneMappingPass != ToneMappingPass.None;
         int GetPassId() => IsApplyTone() ? (int)toneMappingPass : 0;
 
-        public void SetupLUT(CommandBuffer Cmd, bool useLogC,Material mat, int pass)
+        public void SetupLUT(CommandBuffer Cmd,Material mat, int pass,int lutWidth,int lutHeight)
         {
-            var lutHeight = (int)GradingSettings.colorLUTResolution;
-            var lutWidth = lutHeight * lutHeight;
-
             var colorFormat = CRP.Asset.pipelineSettings.isHdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
             Cmd.GetTemporaryRT(targetId, lutWidth, lutHeight, 0, FilterMode.Bilinear, colorFormat);
-
-            Cmd.SetGlobalFloat(_ColorGradingUseLogC, useLogC ? 1 : 0);
+            
             Cmd.SetGlobalVector(_ColorGradingLUTParams, new Vector4(lutHeight, 0.5f / lutWidth, 0.5f / lutHeight, lutHeight / (lutHeight - 1)));
             Cmd.BlitTriangle(BuiltinRenderTextureType.None, targetId, mat, pass);
-
-            ExecuteCommand();
-            // update _ColorGradingLUTParams, then can ApplyColorGradingLUT
-            Cmd.SetGlobalVector(_ColorGradingLUTParams, new Vector4(1f / lutWidth, 1f / lutHeight, lutHeight - 1));
         }
 
         public void SetupColorGradingParams(CommandBuffer cmd)

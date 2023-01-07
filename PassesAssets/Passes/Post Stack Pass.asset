@@ -18,9 +18,9 @@ MonoBehaviour:
   gameCameraTagComparison: 0
   minimalCameraType: 2
   cameraTypeComparison: 0
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
   cameraSourceName: _CameraTarget
   cameraTargetName: _PostCameraTarget
   defaultPostStackSettings: {fileID: 11400000, guid: 29f63bd4898683341aab6406c394f0a7, type: 2}

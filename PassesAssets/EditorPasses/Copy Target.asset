@@ -25,6 +25,6 @@ MonoBehaviour:
   outputPath: /target.png
   width: 1024
   height: 32
-  blitMat: {fileID: 2100000, guid: 31ce5d4a6041fdc44b66dbbf996e5b89, type: 2}
   isLinearToGamma: 1
   isRunOnce: 0
+  tempRT: {fileID: 0}

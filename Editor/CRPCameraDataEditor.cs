@@ -33,16 +33,17 @@ namespace PowerUtilities
             var colorTextureProp = serializedObject.FindProperty(nameof(CRPCameraData.colorGradingTexture));
             EditorGUILayout.PropertyField(colorTextureProp);
 
+            var colorGradingSettingsProp = serializedObject.FindProperty(nameof(CRPCameraData.colorGradingSettings));
+
             if (colorTextureProp.objectReferenceValue != null)
             {
                 EditorGUILayout.LabelField("ColorGradingSettings is hidden when use ColorGradingTexture .");
                 return;
             }
 
-            var colorGradingSettingsProp = serializedObject.FindProperty(nameof(CRPCameraData.colorGradingSettings));
             EditorGUILayout.PropertyField(colorGradingSettingsProp);
 
-            if (colorGradingSettingsProp ==null)
+            if (colorGradingSettingsProp ==null || colorGradingSettingsProp.objectReferenceValue == null)
                 return;
 
             EditorGUITools.DrawPropertyEditor(colorGradingSettingsProp, ref isColorGradingSettingsFoldout);
@@ -53,7 +54,7 @@ namespace PowerUtilities
             var postStackSettingsProp = serializedObject.FindProperty(nameof(CRPCameraData.postStackSettings));
             EditorGUILayout.PropertyField(postStackSettingsProp);
 
-            if (postStackSettingsProp == null)
+            if (postStackSettingsProp == null || postStackSettingsProp.objectReferenceValue == null)
                 return;
 
             EditorGUITools.DrawPropertyEditor(postStackSettingsProp, ref isPostSettingsFoldout);

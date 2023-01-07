@@ -18,8 +18,9 @@ MonoBehaviour:
   gameCameraTagComparison: 0
   minimalCameraType: 2
   cameraTypeComparison: 0
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
+  targetName: _ColorGradingLUT
   defaultGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
-  toneMappingPass: 0
+  toneMappingPass: 6
