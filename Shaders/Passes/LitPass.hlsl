@@ -87,6 +87,7 @@
         surface.depth = -TransformWorldToView(worldPos).z;
         surface.dither = InterleavedGradientNoise(i.vertex.xy,0);
         surface.fresnelIntensity = _FresnelIntensity;
+        surface.renderingLayerMask = asuint(unity_RenderingLayer.x);
 
         BRDF brdf = GetBRDF(surface);
 
@@ -98,7 +99,7 @@
 // return _DirectionalLightShadowData[0].w==1;
         half3 col = CalcLighting(surface,gi,brdf,shadowData);
 
-        col.xyz += GetEmission(i.uv);
+        col.xyz += GetEmission(i.uv.xy);
         return half4(col,surface.alpha);
     }
 #endif //CRP_LIT_PASS_HLSL

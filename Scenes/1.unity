@@ -5227,7 +5227,7 @@ GameObject:
   - component: {fileID: 787355849}
   - component: {fileID: 787355848}
   - component: {fileID: 787355847}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Cube (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5242,7 +5242,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 787355845}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.04, y: -0.16, z: -7.8}
+  m_LocalPosition: {x: 6.18, y: -0.16, z: -7.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5279,7 +5279,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 2
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 38bcadaefc8896146a1b6b03d0c851b1, type: 2}
@@ -7989,7 +7989,7 @@ MonoBehaviour:
   finalDstMode: 0
   postStackSettings: {fileID: 0}
   colorGradingTexture: {fileID: 0}
-  colorGradingSettings: {fileID: 0}
+  colorGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
 --- !u!1 &1233354659
 GameObject:
   m_ObjectHideFlags: 0
@@ -10371,7 +10371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &1852901338
 Light:
   m_ObjectHideFlags: 0
@@ -10384,7 +10384,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.32
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -10422,7 +10422,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 2147483647
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 2147483647
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}

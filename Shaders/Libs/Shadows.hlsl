@@ -81,7 +81,7 @@ ShadowData GetShadowData(Surface surface){
         }
     }
 
-    ShadowData d;
+    ShadowData d = (ShadowData)0;
     d.cascadeIndex = i;
     d.cascadeBlend = fade;
     
@@ -147,11 +147,12 @@ float GetDirShadow(DirectionalShadowData dirShadowData,ShadowData shadowData,Sur
 }
 
 float GetBakedShadow(int occlusionMaskChannel,ShadowData shadowData){
+    float shadow = 1;
     #if defined(_SHADOW_MASK_DISTANCE) || defined(_SHADOW_MASK)
         if(occlusionMaskChannel>=0)
-            return lerp(1,shadowData.shadowMask[occlusionMaskChannel],shadowData.strength);
+            shadow = lerp(1,shadowData.shadowMask[occlusionMaskChannel],shadowData.strength);
     #endif
-    return 1;
+    return shadow;
 }
 
 float MixRealtimeAndBakedShadows(float realtimeShadow,float bakedShadow,float dirShadowStrength,float shadowStrength){

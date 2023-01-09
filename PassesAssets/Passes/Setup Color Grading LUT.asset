@@ -23,4 +23,4 @@ MonoBehaviour:
   isResetCounter: 0
   targetName: _ColorGradingLUT
   defaultGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
-  toneMappingPass: 6
+  toneMappingPass: 4

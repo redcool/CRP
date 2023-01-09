@@ -11,6 +11,7 @@ struct Surface{
     float depth;
     float dither;
     float fresnelIntensity;
+    uint renderingLayerMask;
 };
 
 void PremultiplyAlpha(inout Surface s){

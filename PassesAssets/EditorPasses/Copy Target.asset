@@ -25,6 +25,6 @@ MonoBehaviour:
   outputPath: /target.png
   width: 1024
   height: 32
-  isLinearToGamma: 1
+  isLinearToGamma: 0
   isRunOnce: 0
   tempRT: {fileID: 0}

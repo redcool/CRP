@@ -7,14 +7,14 @@
 CBUFFER_START(_CustomLights)
 int _DirectionalLightCount;
 half4 _DirectionalLightColors[MAX_LIGHT_COUNT];
-float4 _DirectionalLightDirections[MAX_LIGHT_COUNT];
+float4 _DirectionalLightDirectionsAndMask[MAX_LIGHT_COUNT];
 float4 _DirectionalLightShadowData[MAX_LIGHT_COUNT]; // {x:shadow strength,y: light tileId,z: NormalBiasFactor,w: shadowMask Channel}
 float4 _DirectionalLightShadowMaskChannel;
 
 int _OtherLightCount;
 half4 _OtherLightColors[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
-float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
+float4 _OtherLightDirectionsAndMask[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherLightSpotAngles[MAX_OTHER_LIGHT_COUNT];
 float4 _OtherShadowData[MAX_OTHER_LIGHT_COUNT];
 CBUFFER_END
@@ -23,6 +23,7 @@ struct Light{
     half3 color;
     float3 direction;
     float attenuation;
+    uint renderingLayerMask;
 };
 
 int GetLightCount(){
@@ -44,7 +45,8 @@ DirectionalShadowData GetDirLightShadowData(int lightId,ShadowData shadowData){
 Light GetLight(int id,Surface surface,ShadowData shadowData){
     Light l = (Light)0;
     l.color = _DirectionalLightColors[id].xyz;
-    l.direction = _DirectionalLightDirections[id].xyz;
+    l.direction = _DirectionalLightDirectionsAndMask[id].xyz;
+    l.renderingLayerMask = asuint(_DirectionalLightDirectionsAndMask[id].w);
 
     DirectionalShadowData dirShadowData = GetDirLightShadowData(id,shadowData);
     l.attenuation = GetDirShadowAttenuation(dirShadowData,shadowData,surface);
@@ -63,7 +65,7 @@ OtherShadowData GetOtherShadowData(int id){
 
 Light GetOtherLight(int id,Surface surface,ShadowData shadowData){
     Light l = (Light)0;
-    l.color = _OtherLightColors[id];
+    l.color = _OtherLightColors[id].xyz;
 
     float3 lightPos = _OtherLightPositions[id].xyz;
     float3 dir = lightPos - surface.worldPos;
@@ -76,11 +78,12 @@ Light GetOtherLight(int id,Surface surface,ShadowData shadowData){
     // spot angle atten
     float4 spotAngles = _OtherLightSpotAngles[id];
 
+    l.renderingLayerMask = asuint(_OtherLightDirectionsAndMask[id].w);
     // pow(da + b,2)
-    float3 spotDirection = _OtherLightDirections[id].xyz;
+    float3 spotDirection = _OtherLightDirectionsAndMask[id].xyz;
     float spotAngleAtten = saturate(dot(spotDirection,l.direction) * spotAngles.x + spotAngles.y);
     spotAngleAtten *= spotAngleAtten;
-// spotAngleAtten = saturate(dot(_OtherLightDirections[id].xyz,l.direction)-0.5);
+// spotAngleAtten = saturate(dot(_OtherLightDirectionsAndMask[id].xyz,l.direction)-0.5);
 
 // shadowMask atten
     OtherShadowData otherShadowData = GetOtherShadowData(id);

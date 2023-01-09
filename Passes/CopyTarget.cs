@@ -25,7 +25,7 @@ namespace PowerUtilities
 
         public RenderTexture tempRT;
 
-        Lazy<Material> lazyBlitMaterial = new Lazy<Material>(() => new Material(Shader.Find("CRP/Utils/CopyColor")));
+        Material BlitMaterial => MaterialCacheTools.GetMaterial("CRP/Utils/CopyColor");
         public override bool CanExecute()
         {
             isEditorOnly= true;
@@ -56,7 +56,7 @@ namespace PowerUtilities
 
             Cmd.SetGlobalFloat(SetupColorGradingLUT._ApplyColorGrading, 0);
             Cmd.SetGlobalFloat(ShaderPropertyIds._LinearToGamma, isLinearToGamma ? 1 : 0);
-            Cmd.BlitTriangle(sourceName, tempRT, lazyBlitMaterial.Value, 0);
+            Cmd.BlitTriangle(sourceName, tempRT, BlitMaterial, 0);
             
             var path = Application.dataPath + outputPath;
             if (SystemInfo.supportsAsyncGPUReadback)

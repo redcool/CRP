@@ -45,7 +45,8 @@ namespace PowerUtilities
         [Tooltip("ToneMapping should apply the last blit pass")]
         [HideInInspector] public ToneMappingPass toneMappingPass;
 
-        static Lazy<Material> lazyColorGradingMaterial = new Lazy<Material>(() => new Material(Shader.Find("CRP/Utils/ColorGrading")));
+        Material ColorGradingMaterial => MaterialCacheTools.GetMaterial("CRP/Utils/ColorGrading");
+
         public static readonly int
             _ApplyColorGrading = Shader.PropertyToID(nameof(_ApplyColorGrading)),
             // color adjustments
@@ -101,7 +102,7 @@ namespace PowerUtilities
             else
             {
                 SetupColorGradingParams(Cmd);
-                SetupLUT(Cmd, lazyColorGradingMaterial.Value, GetPassId(), lutWidth, lutHeight);
+                SetupLUT(Cmd, ColorGradingMaterial, GetPassId(), lutWidth, lutHeight);
             }
             // update _ColorGradingLUTParams, then can ApplyColorGradingLUT
             Cmd.SetGlobalVector(_ColorGradingLUTParams, new Vector4(1f / lutWidth, 1f / lutHeight, lutHeight - 1));

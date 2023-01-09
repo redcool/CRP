@@ -33,8 +33,6 @@ namespace PowerUtilities
         public bool useGaussianBlur = true;
         public bool isCombineBicubicFilter;
 
-        const string POST_STACK_SHADER = "Hidden/CRP/PostStack";
-        Lazy<Material> lazyPostStackMaterial = new Lazy<Material>(() => new Material(Shader.Find(POST_STACK_SHADER)));
-        public Material PostStackMaterial => lazyPostStackMaterial.Value;
+        public Material PostStackMaterial => MaterialCacheTools.GetMaterial("Hidden/CRP/PostStack");
     }
 }

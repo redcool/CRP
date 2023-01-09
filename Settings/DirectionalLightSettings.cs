@@ -48,6 +48,9 @@ namespace PowerUtilities
 
         public PCFMode pcfMode;
         public CascadeBlendMode cascadeBlendMode;
+
+        public bool useRenderingLayerMask;
+        public ShadowObjectsFilter objectsFilter = ShadowObjectsFilter.AllObjects;
     }
 
     [Serializable]
@@ -58,5 +61,8 @@ namespace PowerUtilities
         [Range(0, 16)] public int maxShadowedOtherLightCount = 16;
         public TextureSize atlasSize = TextureSize._1k;
         public PCFMode pcfMode;
+
+        public bool useRenderingLayerMask;
+        public ShadowObjectsFilter objectsFilter = ShadowObjectsFilter.AllObjects;
     }
 }

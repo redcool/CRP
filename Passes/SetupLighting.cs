@@ -13,6 +13,8 @@ namespace PowerUtilities
     public class SetupLighting : BasePass
     {
         [Header(nameof(SetupLighting))]
+
+        [Tooltip("enable light culling per object, also need RenderObjects(Pass) enable PerObjectData(Light Indices|Light Data)")]
         public bool useLightPerObject;
 
         const string _LIGHTS_PER_OBJECT = nameof(_LIGHTS_PER_OBJECT);
@@ -20,11 +22,11 @@ namespace PowerUtilities
         public static readonly int
             _DirectionalLightCount = Shader.PropertyToID(nameof(_DirectionalLightCount)),
             _DirectionalLightColors = Shader.PropertyToID(nameof(_DirectionalLightColors)),
-            _DirectionalLightDirections = Shader.PropertyToID(nameof(_DirectionalLightDirections)),
+            _DirectionalLightDirectionsAndMask = Shader.PropertyToID(nameof(_DirectionalLightDirectionsAndMask)),
 
             _OtherLightCount = Shader.PropertyToID(nameof(_OtherLightCount)),
             _OtherLightPositions = Shader.PropertyToID(nameof(_OtherLightPositions)),
-            _OtherLightDirections = Shader.PropertyToID(nameof(_OtherLightDirections)),
+            _OtherLightDirectionsAndMask = Shader.PropertyToID(nameof(_OtherLightDirectionsAndMask)),
             _OtherLightColors = Shader.PropertyToID(nameof(_OtherLightColors)),
             _OtherLightSpotAngles = Shader.PropertyToID(nameof(_OtherLightSpotAngles))
             ;
@@ -48,6 +50,12 @@ namespace PowerUtilities
         }
         void SetupLightIndices()
         {
+            if (!useLightPerObject)
+            {
+                Cmd.SetShaderKeyords(false, _LIGHTS_PER_OBJECT);
+                return;
+            }
+
             var maxOtherLightCount = CRP.Asset.otherLightSettings.maxOtherLightCount;
 
             int otherLightCount = 0;
@@ -67,16 +75,14 @@ namespace PowerUtilities
                 indexMap[i] = newIndex;
             }
 
-            if (useLightPerObject)
+            for (int i = vLights.Length - 1; i < indexMap.Length; i++)
             {
-                for (int i = vLights.Length - 1; i < indexMap.Length; i++)
-                {
-                    indexMap[i] = -1;
-                }
-                cullingResults.SetLightIndexMap(indexMap);
-                indexMap.Dispose();
+                indexMap[i] = -1;
             }
-            Cmd.SetShaderKeyords(useLightPerObject, _LIGHTS_PER_OBJECT);
+            cullingResults.SetLightIndexMap(indexMap);
+            indexMap.Dispose();
+
+            Cmd.SetShaderKeyords(true, _LIGHTS_PER_OBJECT);
         }
 
         void SetupLights()
@@ -92,6 +98,7 @@ namespace PowerUtilities
             for (int i = 0; i < vLights.Length; i++)
             {
                 var vlight = vLights[i];
+
                 switch (vlight.lightType)
                 {
                     case LightType.Directional:
@@ -137,7 +144,7 @@ namespace PowerUtilities
             Cmd.SetGlobalInt(_DirectionalLightCount, dirLightCount);
             if (dirLightCount > 0)
             {
-                Cmd.SetGlobalVectorArray(_DirectionalLightDirections, dirLightDirections);
+                Cmd.SetGlobalVectorArray(_DirectionalLightDirectionsAndMask, dirLightDirections);
                 Cmd.SetGlobalVectorArray(_DirectionalLightColors, dirLightColors);
             }
 
@@ -146,7 +153,7 @@ namespace PowerUtilities
             {
                 Cmd.SetGlobalVectorArray(_OtherLightPositions, otherLightPositions);
                 Cmd.SetGlobalVectorArray(_OtherLightColors, otherLightColors);
-                Cmd.SetGlobalVectorArray(_OtherLightDirections, otherLightDirections);
+                Cmd.SetGlobalVectorArray(_OtherLightDirectionsAndMask, otherLightDirections);
                 Cmd.SetGlobalVectorArray(_OtherLightSpotAngles, otherLightSpotAngles);
             }
         }
@@ -155,6 +162,7 @@ namespace PowerUtilities
         {
             dirLightColors[id] = vlight.finalColor.linear;
             dirLightDirections[id] = -vlight.localToWorldMatrix.GetColumn(2);
+            dirLightDirections[id].w = vlight.light.renderingLayerMask.AsFloat();
         }
 
         void SetupPointLight(int id, ref VisibleLight vlight)
@@ -164,11 +172,14 @@ namespace PowerUtilities
             pos.w = 1f/(vlight.range * vlight.range + 0.0001f);
             otherLightPositions[id] = pos;
             otherLightSpotAngles[id] = new Vector4(0, 1);
+
+            otherLightDirections[id] = -vlight.localToWorldMatrix.GetColumn(2);
+            otherLightDirections[id].w = vlight.light.renderingLayerMask.AsFloat();
         }
         void SetupSpotLight(int id, ref VisibleLight vlight)
         {
             SetupPointLight(id,ref vlight);
-            otherLightDirections[id] = -vlight.localToWorldMatrix.GetColumn(2);
+
             var innerCos = Mathf.Cos(vlight.light.innerSpotAngle * Mathf.Deg2Rad * 0.5f);
             var outerCos = Mathf.Cos(vlight.spotAngle * Mathf.Deg2Rad * 0.5f);
             var invertRange = 1f/(innerCos - outerCos + 0.001f);

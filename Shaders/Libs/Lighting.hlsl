@@ -38,27 +38,35 @@ float3 CalcGI(Surface surface,GI gi,BRDF brdf){
     return (diffuseGI + specularGI) * surface.occlusion;
 }
 
+bool IsRenderingLayersOverlap(Surface surface,Light light){
+    return (surface.renderingLayerMask & light.renderingLayerMask) != 0;
+}
+
 float3 CalcLighting(Surface surface,GI gi,BRDF brdf,ShadowData shadowData){
     float3 col = CalcGI(surface,gi,brdf);
 
     int lightCount = GetLightCount();
-    for(int i=0;i<lightCount;i++){
-        Light l = GetLight(i,surface,shadowData);
-        col += CalcLight(l,surface,brdf);
+    for(int j=0;j<lightCount;j++){
+        Light l = GetLight(j,surface,shadowData);
+        if(IsRenderingLayersOverlap(surface,l))
+            col += CalcLight(l,surface,brdf);
     }
 
     #if defined(_LIGHTS_PER_OBJECT)
         for(int i=0;i<min(unity_LightData.y,8);i++){
-            int lightIndex = unity_LightIndices[(uint)j/4][(uint)j%4];
+            int lightIndex = unity_LightIndices[(uint)i/4][(uint)i%4];
             Light l = GetOtherLight(lightIndex,surface,shadowData);
-            color += CalcLight(l,surface,brdf);
+
+            if(IsRenderingLayersOverlap(surface,l))
+                col += CalcLight(l,surface,brdf);
         }
     #else
         int otherLightCount = GetOtherLightCount();
         for(int i=0;i<otherLightCount;i++){
             Light l = GetOtherLight(i,surface,shadowData);
             // return l.attenuation;
-            col += CalcLight(l,surface,brdf);
+            if(IsRenderingLayersOverlap(surface,l))
+                col += CalcLight(l,surface,brdf);
         }
     #endif
     return col;

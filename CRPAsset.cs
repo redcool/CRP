@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 namespace PowerUtilities
 {
     [CreateAssetMenu(menuName = nameof(CRP)+"/CreateRPAsset")]
-    public class CRPAsset : RenderPipelineAsset
+    public partial class CRPAsset : RenderPipelineAsset
     {
         [Header("First camera passes")]
         public BasePass[] beginPasses;

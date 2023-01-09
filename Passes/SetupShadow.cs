@@ -33,7 +33,7 @@ namespace PowerUtilities
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/" + nameof(SetupShadow))]
     public class SetupShadow : BasePass
     {
-        DirectionalLightSettings dirShadowSettings => CRP.Asset.directionalLightSettings;
+        DirectionalLightSettings dirLightSettings => CRP.Asset.directionalLightSettings;
 
         public static readonly int
             _DirectionalShadowAtlas = Shader.PropertyToID(nameof(_DirectionalShadowAtlas)),
@@ -57,6 +57,7 @@ namespace PowerUtilities
         LightShadowInfo[] dirLightShadowInfos;
         Matrix4x4[] dirLightShadowMatrices;
         Vector4 shadowAtlasSize;    //{dirAtlasSize ,1/dirAtlasSize,otherAtlasSize,1/ otherAtlasSize}
+
 
         Vector4[]
             dirLightShadowData,     //{shadow strength,tile id, normal bias,shadow Mask channel}
@@ -210,11 +211,17 @@ namespace PowerUtilities
 
         private void RenderSpotShadow(int i, int split, int tileSize)
         {
+            var otherLightSettings = CRP.Asset.otherLightSettings;
+
             var shadowInfo = otherShadowInfos[i];
             cullingResults.ComputeSpotShadowMatricesAndCullingPrimitives(shadowInfo.lightIndex, 
                 out var viewMatrix, out var projMatrix, out var splitData);
 
-            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex);
+            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
+            {
+                objectsFilter = otherLightSettings.objectsFilter,
+                useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask
+            };
             settings.splitData = splitData;
 
             var offset = new Vector2(i % split, i / split);
@@ -230,7 +237,7 @@ namespace PowerUtilities
             otherShadowMatrices[i] = ConvertToShadowAtlasMatrix(projMatrix * viewMatrix, offset, split);
 
             var texelSize = 2f / (tileSize * projMatrix.m00);
-            float pcfMode = (float)CRP.Asset.otherLightSettings.pcfMode + 1;
+            float pcfMode = (float)otherLightSettings.pcfMode + 1;
             var filterSize = texelSize * pcfMode;
             var bias = shadowInfo.normalBias * filterSize * 1.414f;
             var tileScale = 1f / split;
@@ -239,9 +246,15 @@ namespace PowerUtilities
 
         private void RenderPointShadow(int shadowedLightId, int split, int tileSize)
         {
-            float pcfMode = (float)CRP.Asset.otherLightSettings.pcfMode +1;
+            var otherLightSettings = CRP.Asset.otherLightSettings;
+
+            float pcfMode = (float)otherLightSettings.pcfMode +1;
             var shadowInfo = otherShadowInfos[shadowedLightId];
-            var settings = new ShadowDrawingSettings(cullingResults,shadowInfo.lightIndex);
+            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
+            {
+                objectsFilter = otherLightSettings.objectsFilter,
+                useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask
+            };
 
             var texelSize = 2 / tileSize;
             var filterSize = texelSize * pcfMode;
@@ -296,13 +309,13 @@ namespace PowerUtilities
 
         void SetDirShadowKeywords()
         {
-            var filterId = (int)dirShadowSettings.pcfMode - 1;
+            var filterId = (int)dirLightSettings.pcfMode - 1;
             for (int i = 0; i < DIR_PCF_MODE_KEYWORDS.Length; i++)
             {
                 Cmd.SetShaderKeyords(i == filterId, DIR_PCF_MODE_KEYWORDS[i]);
             }
 
-            var cascadeBlendId = (int)dirShadowSettings.cascadeBlendMode - 1;
+            var cascadeBlendId = (int)dirLightSettings.cascadeBlendMode - 1;
             for (int i = 0; i < CASCADE_BLEND_MODE_KEYWORDS.Length; i++)
             {
                 Cmd.SetShaderKeyords(i == cascadeBlendId, CASCADE_BLEND_MODE_KEYWORDS[i]);
@@ -320,9 +333,9 @@ namespace PowerUtilities
 
         int SetupDirLightShadows()
         {
-            var maxDirLightCount = dirShadowSettings.maxDirLightCount;
-            var maxShadowedDirLightCount = dirShadowSettings.maxShadowedDirLightCount;
-            var maxCascadeCount = dirShadowSettings.maxCascades;
+            var maxDirLightCount = dirLightSettings.maxDirLightCount;
+            var maxShadowedDirLightCount = dirLightSettings.maxShadowedDirLightCount;
+            var maxCascadeCount = dirLightSettings.maxCascades;
 
             if (maxShadowedDirLightCount <= 0)
                 return 0;
@@ -418,8 +431,8 @@ namespace PowerUtilities
 
         public void RenderDirLightShadows(int shadowedDirLightCount)
         {
-            var atlasSize = (int)dirShadowSettings.atlasSize;
-            var cascadeCount = dirShadowSettings.maxCascades;
+            var atlasSize = (int)dirLightSettings.atlasSize;
+            var cascadeCount = dirLightSettings.maxCascades;
 
             var sampleName = nameof(RenderDirLightShadows);
             Cmd.BeginSampleExecute(sampleName, ref context);
@@ -433,24 +446,22 @@ namespace PowerUtilities
                 RenderDirectionalShadow(i, splitCount, tileSize);
             }
 
-            
-
             Cmd.EndSampleExecute(sampleName, ref context);
         }
 
         private void SendDirLightShadowParams()
         {
-            var maxLightCount = dirShadowSettings.maxDirLightCount;
-            var maxShadowedDirLightCount = dirShadowSettings.maxShadowedDirLightCount;
+            var maxLightCount = dirLightSettings.maxDirLightCount;
+            var maxShadowedDirLightCount = dirLightSettings.maxShadowedDirLightCount;
 
             if (maxLightCount == 0 || maxShadowedDirLightCount == 0)
                 return;
 
-            var atlasSize = (int)dirShadowSettings.atlasSize;
-            var cascadeCount = dirShadowSettings.maxCascades;
-            var shadowDistance = dirShadowSettings.maxShadowDistance;
-            var distanceFade = dirShadowSettings.distanceFade;
-            var cascadeFade = dirShadowSettings.cascadeFade;
+            var atlasSize = (int)dirLightSettings.atlasSize;
+            var cascadeCount = dirLightSettings.maxCascades;
+            var shadowDistance = dirLightSettings.maxShadowDistance;
+            var distanceFade = dirLightSettings.distanceFade;
+            var cascadeFade = dirLightSettings.cascadeFade;
 
             Cmd.SetGlobalMatrixArray(_DirectionalShadowMatrices, dirLightShadowMatrices);
 
@@ -522,12 +533,16 @@ namespace PowerUtilities
         void RenderDirectionalShadow(int lightId, int splitCount, int tileSize)
         {
             LightShadowInfo shadowInfo = dirLightShadowInfos[lightId];
-            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex);
+            var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
+            {
+                useRenderingLayerMaskTest = dirLightSettings.useRenderingLayerMask,
+                objectsFilter = dirLightSettings.objectsFilter
+            };
 
-            var cascadeCount = dirShadowSettings.maxCascades;
+            var cascadeCount = dirLightSettings.maxCascades;
             var tileOffset = lightId * cascadeCount;
-            var splitRatio = dirShadowSettings.CascadeRatios;
-            var cullingFactor = Mathf.Max(0, 0.8f - dirShadowSettings.cascadeFade);
+            var splitRatio = dirLightSettings.CascadeRatios;
+            var cullingFactor = Mathf.Max(0, 0.8f - dirLightSettings.cascadeFade);
 
             for (int i = 0; i < cascadeCount; i++)
             {
@@ -569,7 +584,7 @@ namespace PowerUtilities
 
         private void SetCascadeData(int cascadeId, Vector4 cullingSphere, int tileSize)
         {
-            float filterId = (float)dirShadowSettings.pcfMode + 1;
+            float filterId = (float)dirLightSettings.pcfMode + 1;
             float texelSize = 2f * cullingSphere.w / tileSize;
             var filterSize = texelSize * filterId;
 

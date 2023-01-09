@@ -10,18 +10,7 @@ namespace PowerUtilities
 {
     public static class RenderingTools
     {
-        public const string errorShaderName = "Hidden/InternalErrorShader";
-        static Material errorMaterial;
-
-        public static Material ErrorMaterial
-        {
-            get
-            {
-                if (!errorMaterial)
-                    errorMaterial = new Material(Shader.Find(errorShaderName));
-                return errorMaterial;
-            }
-        }
+        public static Material ErrorMaterial => MaterialCacheTools.GetMaterial("Hidden/InternalErrorShader");
 
         public static void ConvertStringArray<T>(ref T[] results, Func<string, T> onConvert, params string[] names)
         {

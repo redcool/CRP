@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 #if UNITY_EDITOR
 
 namespace PowerUtilities
@@ -13,15 +14,43 @@ namespace PowerUtilities
     [CustomEditorForRenderPipeline(typeof(Light),typeof(CRPAsset))]
     public class CRPLightEditor : LightEditor
     {
+        static GUIContent renderingLayerMaskLabel = new GUIContent("*Rendering Layer Mask","Rendering LayerMask");
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            if(!settings.lightType.hasMultipleDifferentValues &&
+            DrawRenderingLayerMask();
+
+            if (!settings.lightType.hasMultipleDifferentValues &&
                 settings.light.type == LightType.Spot)
             {
                 settings.DrawInnerAndOuterSpotAngle();
-                settings.ApplyModifiedProperties();
             }
+
+            var light = (Light)target;
+            if (light.cullingMask !=-1 || light.cullingMask != int.MaxValue)
+            {
+                var str = light.type == LightType.Directional ? "Culling Mask only affects shadows." : "CullingMask only affects shadow unless use Lights Per Objects in on.";
+                EditorGUILayout.HelpBox(str, MessageType.Warning);
+            }
+
+            settings.ApplyModifiedProperties();
+        }
+
+        public void DrawRenderingLayerMask()
+        {
+            var prop = settings.renderingLayerMask;
+            EditorGUI.showMixedValue = prop.hasMultipleDifferentValues;
+            EditorGUI.BeginChangeCheck();
+            int mask = prop.intValue;
+            Debug.Log(mask);
+            if(mask == int.MaxValue)
+                mask = -1;
+
+            mask = EditorGUILayout.MaskField(renderingLayerMaskLabel, mask, GraphicsSettings.currentRenderPipeline.renderingLayerMaskNames);
+            if(EditorGUI.EndChangeCheck() ) {
+                prop.intValue = mask == -1 ? int.MaxValue : mask;
+            }
+            EditorGUI.showMixedValue= false;
         }
 
         protected override void OnSceneGUI()

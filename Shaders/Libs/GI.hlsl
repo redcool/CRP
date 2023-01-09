@@ -65,16 +65,19 @@ half3 SampleSH9(float3 normal){
 }
 
 half3 SampleProbes(float3 position,float3 normal){
+    half3 c = 0;
     if(unity_ProbeVolumeParams.x){
-        return SampleProbeVolumeSH4(
+        c = SampleProbeVolumeSH4(
             TEXTURE3D_ARGS(unity_ProbeVolumeSH,samplerunity_ProbeVolumeSH),
             position,normal,
             unity_ProbeVolumeWorldToObject,
             unity_ProbeVolumeParams.y,unity_ProbeVolumeParams.z,
             unity_ProbeVolumeMin.xyz,unity_ProbeVolumeSizeInv.xyz
         );
+    }else{
+        c = SampleSH9(normal);
     }
-    return SampleSH9(normal);
+    return c;
 }
 
 half4 SampleBakedShadow(float2 uv,float3 position){
@@ -82,8 +85,9 @@ half4 SampleBakedShadow(float2 uv,float3 position){
         half4 shadowMask = SAMPLE_TEXTURE2D(unity_ShadowMask,samplerunity_ShadowMask,uv);
         return shadowMask;
     #else
+        half4 probe = unity_ProbesOcclusion;
         if(unity_ProbeVolumeParams.x){ // lppv
-            return SampleProbeOcclusion(
+            probe = SampleProbeOcclusion(
                 TEXTURE3D_ARGS(unity_ProbeVolumeSH,samplerunity_ProbeVolumeSH),
                 position,
                 unity_ProbeVolumeWorldToObject,
@@ -91,7 +95,7 @@ half4 SampleBakedShadow(float2 uv,float3 position){
                 unity_ProbeVolumeMin.xyz,unity_ProbeVolumeSizeInv.xyz
             );
         }
-        return unity_ProbesOcclusion;
+        return probe;
     #endif
 }
 
