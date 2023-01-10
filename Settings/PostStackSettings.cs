@@ -33,6 +33,6 @@ namespace PowerUtilities
         public bool useGaussianBlur = true;
         public bool isCombineBicubicFilter;
 
-        public Material PostStackMaterial => MaterialCacheTools.GetMaterial("Hidden/CRP/PostStack");
+        public Material PostStackMaterial => MaterialCacheTool.GetMaterial("Hidden/CRP/PostStack");
     }
 }

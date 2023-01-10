@@ -45,8 +45,13 @@ namespace PowerUtilities
         public bool enableDynamicBatch;
         public bool enableInstanced;
 
+        [Header("Drawing Options")]
         [Tooltip("assign data for single instance")]
         public PerObjectData perObjectData = PerObjectData.None;
+        public Material overrideMaterial;
+        [Range(0,15)]public int overrideMaterialPass;
+        public LayerMask opaqueLayers = -1;
+        public LayerMask transparentLayers = -1;
 
         //CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
@@ -84,6 +89,7 @@ namespace PowerUtilities
             var drawSettings = new DrawingSettings();
 
             SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced,perObjectData);
+            drawSettings.overrideMaterial = overrideMaterial;
 
             if (drawOpaques)
                 DrawOpaques(ref sortingSettings, ref drawSettings, ref filterSettings);
@@ -107,7 +113,8 @@ namespace PowerUtilities
             
             drawSettings.sortingSettings = sortSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
-            filterSettings.layerMask = camera.cullingMask;
+            //filterSettings.layerMask = camera.cullingMask;
+            filterSettings.layerMask = opaqueLayers;
 
             Cmd.BeginSampleExecute(nameof(DrawOpaques),ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);

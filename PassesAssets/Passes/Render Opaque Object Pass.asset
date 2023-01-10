@@ -15,9 +15,12 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: 
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  gameCameraTagComparison: 0
+  minimalCameraType: 16
+  cameraTypeComparison: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
   drawOpaques: 1
   drawSkybox: 1
   drawTransparents: 0
@@ -33,5 +36,12 @@ MonoBehaviour:
   - PrepassBase
   enableDynamicBatch: 0
   enableInstanced: 1
-  enableSRPBatch: 1
-  perObjectData: 1807
+  perObjectData: 1887
+  overrideMaterial: {fileID: 0}
+  overrideMaterialPass: 0
+  opaqueLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  transparentLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295

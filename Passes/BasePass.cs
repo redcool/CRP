@@ -196,5 +196,6 @@ namespace PowerUtilities
 
         public bool IsSkip() => passRunMode== PassRunMode.Skip;
         public bool IsInterrupt() => passRunMode== PassRunMode.Interrupt;
+
     }
 }

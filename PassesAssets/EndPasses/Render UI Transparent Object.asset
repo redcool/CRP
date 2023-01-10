@@ -15,11 +15,12 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: UICamera
+  gameCameraTagComparison: 0
   minimalCameraType: 18
   cameraTypeComparison: 0
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
   drawOpaques: 0
   drawSkybox: 0
   drawTransparents: 1
@@ -35,5 +36,12 @@ MonoBehaviour:
   - PrepassBase
   enableDynamicBatch: 1
   enableInstanced: 1
-  enableSRPBatch: 1
-  perObjectData: 775
+  perObjectData: 863
+  overrideMaterial: {fileID: 0}
+  overrideMaterialPass: 0
+  opaqueLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  transparentLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295

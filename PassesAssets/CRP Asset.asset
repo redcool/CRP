@@ -52,10 +52,16 @@ MonoBehaviour:
     distanceFade: 0.1
     pcfMode: 0
     cascadeBlendMode: 0
+    useRenderingLayerMask: 0
+    objectsFilter: 0
   otherLightSettings:
     maxOtherLightCount: 64
     maxShadowedOtherLightCount: 16
     atlasSize: 1024
     pcfMode: 0
+    useRenderingLayerMask: 0
+    objectsFilter: 0
   pipelineSettings:
     isHdr: 1
+    useSRPBatch: 1
+    lightsUseLinearColor: 1

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab9052a6e3ec60a4299a8694f18b05f1, type: 3}
   m_Name: Post Stack Pass
   m_EditorClassIdentifier: 
-  isFoldout: 0
+  isFoldout: 1
   overridePassName: 
   gameCameraTag: MainCamera
   gameCameraTagComparison: 0

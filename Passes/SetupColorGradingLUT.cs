@@ -24,16 +24,17 @@ namespace PowerUtilities
     public class SetupColorGradingLUT : BasePass
     {
         [Header(nameof(SetupColorGradingLUT))]
-        public string targetName = "_ColorGradingLUT";
+        public Texture2D colorGradingLUT;
 
-        [HideInInspector]public ColorGradingSettings defaultGradingSettings;
+        public string targetName = "_ColorGradingLUT";
+        [HideInInspector] public ColorGradingSettings defaultGradingSettings;
 
         ColorGradingSettings GradingSettings
         {
             get
             {
                 var cameraData = camera.GetComponent<CRPCameraData>();
-                if(cameraData && cameraData.colorGradingSettings)
+                if (cameraData && cameraData.colorGradingSettings)
                 {
                     return cameraData.colorGradingSettings;
                 }
@@ -41,11 +42,21 @@ namespace PowerUtilities
             }
         }
 
+        Texture ColorGradingLUT
+        {
+            get
+            {
+                var cameraData = camera.GetComponent<CRPCameraData>();
+                var gradingLut = (cameraData && cameraData.colorGradingTexture) ? cameraData.colorGradingTexture : colorGradingLUT;
+                return gradingLut;
+            }
+        }
+
         [Header("ToneMapping")]
         [Tooltip("ToneMapping should apply the last blit pass")]
         [HideInInspector] public ToneMappingPass toneMappingPass;
 
-        Material ColorGradingMaterial => MaterialCacheTools.GetMaterial("CRP/Utils/ColorGrading");
+        Material ColorGradingMaterial => MaterialCacheTool.GetMaterial("CRP/Utils/ColorGrading");
 
         public static readonly int
             _ApplyColorGrading = Shader.PropertyToID(nameof(_ApplyColorGrading)),
@@ -82,22 +93,19 @@ namespace PowerUtilities
 
         public override void OnRender()
         {
-
             targetId = Shader.PropertyToID(targetName);
-
             Cmd.SetGlobalFloat(_ColorGradingUseLogC, GradingSettings.isColorGradingUseLogC ? 1 : 0);
+
 
             var lutHeight = (int)GradingSettings.colorLUTResolution;
             var lutWidth = lutHeight * lutHeight;
 
-            var cameraData = camera.GetComponent<CRPCameraData>();
-            hasColorGradingTexture = (cameraData && cameraData.colorGradingTexture);
-
-            if (hasColorGradingTexture)
+            var gradingLut = ColorGradingLUT;
+            if (hasColorGradingTexture=gradingLut)
             {
-                Cmd.SetGlobalTexture(targetId, cameraData.colorGradingTexture);
-                lutWidth = cameraData.colorGradingTexture.width;
-                lutHeight = cameraData.colorGradingTexture.height;
+                Cmd.SetGlobalTexture(targetId, gradingLut);
+                lutWidth = gradingLut.width;
+                lutHeight = gradingLut.height;
             }
             else
             {
@@ -111,7 +119,7 @@ namespace PowerUtilities
         public override bool IsNeedCameraCleanup() => true;
         public override void CameraCleanup()
         {
-            if(hasColorGradingTexture)
+            if(! hasColorGradingTexture)
                 Cmd.ReleaseTemporaryRT(targetId);
         }
 

@@ -21,6 +21,7 @@ MonoBehaviour:
   passRunMode: 0
   isEditorOnly: 0
   isResetCounter: 0
+  colorGradingLUT: {fileID: 2800000, guid: 8608106223bbce74ebfc8666739e8f25, type: 3}
   targetName: _ColorGradingLUT
   defaultGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
   toneMappingPass: 4

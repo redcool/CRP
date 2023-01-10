@@ -25,7 +25,7 @@ namespace PowerUtilities
 
         public RenderTexture tempRT;
 
-        Material BlitMaterial => MaterialCacheTools.GetMaterial("CRP/Utils/CopyColor");
+        Material BlitMaterial => MaterialCacheTool.GetMaterial("CRP/Utils/CopyColor");
         public override bool CanExecute()
         {
             isEditorOnly= true;

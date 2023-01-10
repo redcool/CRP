@@ -10,7 +10,7 @@ namespace PowerUtilities
 {
     public static class RenderingTools
     {
-        public static Material ErrorMaterial => MaterialCacheTools.GetMaterial("Hidden/InternalErrorShader");
+        public static Material ErrorMaterial => MaterialCacheTool.GetMaterial("Hidden/InternalErrorShader");
 
         public static void ConvertStringArray<T>(ref T[] results, Func<string, T> onConvert, params string[] names)
         {
