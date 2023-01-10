@@ -26,7 +26,8 @@ namespace PowerUtilities
         {
             Asset=asset;
 
-            GraphicsSettings.lightsUseLinearIntensity = true;
+            GraphicsSettings.useScriptableRenderPipelineBatching = asset.pipelineSettings.useSRPBatch;
+            GraphicsSettings.lightsUseLinearIntensity = asset.pipelineSettings.lightsUseLinearColor;
             EditorInit();
         }
 

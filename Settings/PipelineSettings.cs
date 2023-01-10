@@ -11,5 +11,7 @@ namespace PowerUtilities
     public class PipelineSettings
     {
         public bool isHdr;
+        public bool useSRPBatch = true;
+        public bool lightsUseLinearColor = true;
     }
 }

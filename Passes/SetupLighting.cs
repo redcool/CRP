@@ -62,7 +62,8 @@ namespace PowerUtilities
 
             var indexMap = cullingResults.GetLightIndexMap(Allocator.Temp);
             var vLights = cullingResults.visibleLights;
-            for (int i = 0; i < vLights.Length; i++)
+            int i;
+            for (i = 0; i < vLights.Length; i++)
             {
                 var newIndex = -1;
                 var vlight = vLights[i];
@@ -75,10 +76,11 @@ namespace PowerUtilities
                 indexMap[i] = newIndex;
             }
 
-            for (int i = vLights.Length - 1; i < indexMap.Length; i++)
+            for (; i < indexMap.Length; i++)
             {
                 indexMap[i] = -1;
             }
+
             cullingResults.SetLightIndexMap(indexMap);
             indexMap.Dispose();
 

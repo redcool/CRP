@@ -42,7 +42,7 @@ namespace PowerUtilities
             EditorGUI.showMixedValue = prop.hasMultipleDifferentValues;
             EditorGUI.BeginChangeCheck();
             int mask = prop.intValue;
-            Debug.Log(mask);
+
             if(mask == int.MaxValue)
                 mask = -1;
 
