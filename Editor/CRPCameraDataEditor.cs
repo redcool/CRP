@@ -24,6 +24,7 @@ namespace PowerUtilities
             DrawPostStackSettings();
 
             DrawColorGradingSettings();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(CRPCameraData.renderingLayerMask)));
 
             serializedObject.ApplyModifiedProperties();
         }

@@ -21,6 +21,9 @@ namespace PowerUtilities
         public Texture colorGradingTexture;
 
         [HideInInspector] public ColorGradingSettings colorGradingSettings;
-        
+
+        [Header("Camera rendering layer")]
+        [RenderingLayerMask]
+        public uint renderingLayerMask = uint.MaxValue;
     }
 }

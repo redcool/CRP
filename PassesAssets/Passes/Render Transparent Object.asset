@@ -39,9 +39,3 @@ MonoBehaviour:
   perObjectData: 1911
   overrideMaterial: {fileID: 0}
   overrideMaterialPass: 0
-  opaqueLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  transparentLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295

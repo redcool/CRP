@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,6 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-#if UNITY_EDITOR
 
 namespace PowerUtilities
 {
@@ -14,11 +14,11 @@ namespace PowerUtilities
     [CustomEditorForRenderPipeline(typeof(Light),typeof(CRPAsset))]
     public class CRPLightEditor : LightEditor
     {
-        static GUIContent renderingLayerMaskLabel = new GUIContent("*Rendering Layer Mask","Rendering LayerMask");
+        static GUIContent renderingLayerMaskLabel = new GUIContent("*Rendering Layer Mask","use this Rendering LayerMask");
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            DrawRenderingLayerMask();
+            RenderingLayerMaskDrawer.Draw(settings.renderingLayerMask,renderingLayerMaskLabel);
 
             if (!settings.lightType.hasMultipleDifferentValues &&
                 settings.light.type == LightType.Spot)
@@ -36,30 +36,13 @@ namespace PowerUtilities
             settings.ApplyModifiedProperties();
         }
 
-        public void DrawRenderingLayerMask()
-        {
-            var prop = settings.renderingLayerMask;
-            EditorGUI.showMixedValue = prop.hasMultipleDifferentValues;
-            EditorGUI.BeginChangeCheck();
-            int mask = prop.intValue;
-
-            if(mask == int.MaxValue)
-                mask = -1;
-
-            mask = EditorGUILayout.MaskField(renderingLayerMaskLabel, mask, GraphicsSettings.currentRenderPipeline.renderingLayerMaskNames);
-            if(EditorGUI.EndChangeCheck() ) {
-                prop.intValue = mask == -1 ? int.MaxValue : mask;
-            }
-            EditorGUI.showMixedValue= false;
-        }
-
         protected override void OnSceneGUI()
         {
             base.OnSceneGUI();
             var light = settings.light;
             if (light.type == LightType.Spot)
             {
-                // draw disct
+                // draw disc
                 var dir = light.transform.forward * light.range;
                 var endPos = light.transform.position + dir;
                 float r = Mathf.Tan(light.innerSpotAngle * Mathf.Deg2Rad * 0.5f) * dir.magnitude;

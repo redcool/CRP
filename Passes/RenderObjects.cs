@@ -51,7 +51,7 @@ namespace PowerUtilities
 
         public Material overrideMaterial;
         [Range(0,15)]public int overrideMaterialPass;
-        public LayerMask layers = -1;
+        //public LayerMask layers = -1;
 
         //CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
@@ -86,7 +86,8 @@ namespace PowerUtilities
 
             var sortingSettings = new SortingSettings(camera);
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
-            filterSettings.layerMask = layers;
+            filterSettings.layerMask = camera.cullingMask;
+            filterSettings.renderingLayerMask = GetCameraData() ? GetCameraData().renderingLayerMask : uint.MaxValue;
 
             var drawSettings = new DrawingSettings();
             SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced,perObjectData);

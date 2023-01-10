@@ -73,6 +73,7 @@ namespace PowerUtilities
             }
         }
         protected int executeCount;
+        private CRPCameraData cameraData;
 
         public void ExecuteCommand()
         {
@@ -197,5 +198,12 @@ namespace PowerUtilities
         public bool IsSkip() => passRunMode== PassRunMode.Skip;
         public bool IsInterrupt() => passRunMode== PassRunMode.Interrupt;
 
+
+        public CRPCameraData GetCameraData()
+        {
+            if (!cameraData) 
+                cameraData = camera.GetComponent<CRPCameraData>();
+            return cameraData;
+        }
     }
 }

@@ -7990,6 +7990,7 @@ MonoBehaviour:
   postStackSettings: {fileID: 0}
   colorGradingTexture: {fileID: 2800000, guid: 8608106223bbce74ebfc8666739e8f25, type: 3}
   colorGradingSettings: {fileID: 0}
+  renderingLayerMask: 2147483647
 --- !u!1 &1233354659
 GameObject:
   m_ObjectHideFlags: 0
@@ -11839,6 +11840,7 @@ MonoBehaviour:
   postStackSettings: {fileID: 11400000, guid: b43767adbd7b56749a1cff958137460c, type: 2}
   colorGradingTexture: {fileID: 0}
   colorGradingSettings: {fileID: 11400000, guid: d9b7fd57039bed449bc874d8b9db072a, type: 2}
+  renderingLayerMask: 4294967295
 --- !u!1 &2020316006
 GameObject:
   m_ObjectHideFlags: 0
