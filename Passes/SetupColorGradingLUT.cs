@@ -85,7 +85,7 @@ namespace PowerUtilities
             ;
 
         int targetId;
-        bool hasColorGradingTexture;
+        [HideInInspector]public bool hasColorGradingTexture;
         public override bool CanExecute()
         {
             return base.CanExecute() && GradingSettings!= null;

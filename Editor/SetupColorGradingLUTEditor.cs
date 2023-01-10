@@ -19,9 +19,22 @@ namespace PowerUtilities
         {
             serializedObject.Update();
             DrawDefaultInspector();
-            DrawSettings();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SetupColorGradingLUT.toneMappingPass)));
+            var inst = (SetupColorGradingLUT)target;
+            if (!inst.hasColorGradingTexture)
+            {
+                DrawSettings();
+                EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(SetupColorGradingLUT.toneMappingPass)));
+            }
+            else
+            {
+                DrawWarning();
+            }
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawWarning()
+        {
+            EditorGUILayout.HelpBox("Use ColorGradingLUT,settings was hidden", MessageType.Warning);
         }
 
         private void DrawSettings()
