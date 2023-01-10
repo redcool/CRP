@@ -48,10 +48,10 @@ namespace PowerUtilities
         [Header("Drawing Options")]
         [Tooltip("assign data for single instance")]
         public PerObjectData perObjectData = PerObjectData.None;
+
         public Material overrideMaterial;
         [Range(0,15)]public int overrideMaterialPass;
-        public LayerMask opaqueLayers = -1;
-        public LayerMask transparentLayers = -1;
+        public LayerMask layers = -1;
 
         //CullingResults cullingResults;
         ShaderTagId[] supportLightModeTagIds;
@@ -86,8 +86,9 @@ namespace PowerUtilities
 
             var sortingSettings = new SortingSettings(camera);
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
-            var drawSettings = new DrawingSettings();
+            filterSettings.layerMask = layers;
 
+            var drawSettings = new DrawingSettings();
             SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced,perObjectData);
             drawSettings.overrideMaterial = overrideMaterial;
 
@@ -114,7 +115,6 @@ namespace PowerUtilities
             drawSettings.sortingSettings = sortSettings;
             filterSettings.renderQueueRange = RenderQueueRange.opaque;
             //filterSettings.layerMask = camera.cullingMask;
-            filterSettings.layerMask = opaqueLayers;
 
             Cmd.BeginSampleExecute(nameof(DrawOpaques),ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
@@ -126,8 +126,8 @@ namespace PowerUtilities
             sortSettings.criteria = SortingCriteria.CommonTransparent;
             drawSettings.sortingSettings = sortSettings;
 
-            filterSettings.layerMask = camera.cullingMask;
             filterSettings.renderQueueRange = RenderQueueRange.transparent;
+            //filterSettings.layerMask = camera.cullingMask;
 
             Cmd.BeginSampleExecute(nameof(DrawTransparents), ref context);
             context.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
