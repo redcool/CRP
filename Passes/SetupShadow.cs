@@ -85,8 +85,10 @@ namespace PowerUtilities
             if (!IsCullingResultsValid())
                 return;
 
-            var shadowedDirLightCount = SetupDirLightShadows();
-            var shadowedOtherLightCount = SetupOtherLightShadows();
+            var cameraRenderingLayerMask = CameraData ? CameraData.renderingLayerMask : int.MaxValue;
+
+            var shadowedDirLightCount = SetupDirLightShadows(cameraRenderingLayerMask);
+            var shadowedOtherLightCount = SetupOtherLightShadows(cameraRenderingLayerMask);
             //
             if (!camera.IsReflectionCamera())
             {
@@ -122,7 +124,7 @@ namespace PowerUtilities
                 Cmd.ReleaseTemporaryRT(_OtherShadowAtlas);
         }
 
-        int SetupOtherLightShadows()
+        int SetupOtherLightShadows(uint cameraRenderingLayerMask = uint.MaxValue)
         {
             var maxOtherLightCount = CRP.Asset.otherLightSettings.maxOtherLightCount;
             var maxShadowedOtherLightCount = CRP.Asset.otherLightSettings.maxShadowedOtherLightCount;
@@ -146,6 +148,9 @@ namespace PowerUtilities
                     otherShadowData[i].Set(0, -1, 0, -1);
 
                 var vLight = cullingResults.visibleLights[i];
+                if ((vLight.light.renderingLayerMask & cameraRenderingLayerMask) == 0)
+                    continue;
+
                 var isPoint = vLight.lightType == LightType.Point;
                 if (!(isPoint || vLight.lightType == LightType.Spot))
                     continue;
@@ -220,7 +225,7 @@ namespace PowerUtilities
             var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
             {
                 objectsFilter = otherLightSettings.objectsFilter,
-                useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask
+                useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask,
             };
             settings.splitData = splitData;
 
@@ -305,8 +310,6 @@ namespace PowerUtilities
             Cmd.SetGlobalVectorArray(_OtherShadowTiles, otherShadowTiles);
         }
 
-
-
         void SetDirShadowKeywords()
         {
             var filterId = (int)dirLightSettings.pcfMode - 1;
@@ -331,7 +334,7 @@ namespace PowerUtilities
             }
         }
 
-        int SetupDirLightShadows()
+        int SetupDirLightShadows(uint cameraRenderingLayerMask = uint.MaxValue)
         {
             var maxDirLightCount = dirLightSettings.maxDirLightCount;
             var maxShadowedDirLightCount = dirLightSettings.maxShadowedDirLightCount;
@@ -347,6 +350,8 @@ namespace PowerUtilities
             {
                 var vlight = vLights[i];
                 if (vlight.lightType != LightType.Directional)
+                    continue;
+                if ((vlight.light.renderingLayerMask & cameraRenderingLayerMask) == 0)
                     continue;
 
                 if (shadowedDirLightCount >= maxShadowedDirLightCount)

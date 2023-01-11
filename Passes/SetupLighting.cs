@@ -44,7 +44,8 @@ namespace PowerUtilities
             if (!IsCullingResultsValid())
                 return;
 
-            SetupLights();
+            var renderingLayerMask = CameraData ? CameraData.renderingLayerMask : uint.MaxValue;
+            SetupLights(renderingLayerMask);
 
             SetupLightIndices();
         }
@@ -87,7 +88,7 @@ namespace PowerUtilities
             Cmd.SetShaderKeyords(true, _LIGHTS_PER_OBJECT);
         }
 
-        void SetupLights()
+        void SetupLights(uint renderingLayerMask=uint.MaxValue)
         {
             var maxDirLightCount = CRP.Asset.directionalLightSettings.maxDirLightCount;
             var maxOtherLightCount = CRP.Asset.otherLightSettings.maxOtherLightCount;
@@ -100,6 +101,9 @@ namespace PowerUtilities
             for (int i = 0; i < vLights.Length; i++)
             {
                 var vlight = vLights[i];
+
+                if ((vlight.light.renderingLayerMask & renderingLayerMask) ==0)
+                    continue;
 
                 switch (vlight.lightType)
                 {

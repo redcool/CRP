@@ -49,6 +49,7 @@ namespace PowerUtilities
         public PCFMode pcfMode;
         public CascadeBlendMode cascadeBlendMode;
 
+        [Header("Filters")]
         public bool useRenderingLayerMask;
         public ShadowObjectsFilter objectsFilter = ShadowObjectsFilter.AllObjects;
     }
@@ -62,6 +63,7 @@ namespace PowerUtilities
         public TextureSize atlasSize = TextureSize._1k;
         public PCFMode pcfMode;
 
+        [Header("Filters")]
         public bool useRenderingLayerMask;
         public ShadowObjectsFilter objectsFilter = ShadowObjectsFilter.AllObjects;
     }

@@ -87,7 +87,7 @@ namespace PowerUtilities
             var sortingSettings = new SortingSettings(camera);
             var filterSettings = new FilteringSettings(RenderQueueRange.opaque);
             filterSettings.layerMask = camera.cullingMask;
-            filterSettings.renderingLayerMask = GetCameraData() ? GetCameraData().renderingLayerMask : uint.MaxValue;
+            filterSettings.renderingLayerMask = CameraData ? CameraData.renderingLayerMask : uint.MaxValue;
 
             var drawSettings = new DrawingSettings();
             SetupDrawingSettings(ref drawSettings, supportLightModeTagIds, enableDynamicBatch, enableInstanced,perObjectData);

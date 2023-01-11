@@ -199,11 +199,14 @@ namespace PowerUtilities
         public bool IsInterrupt() => passRunMode== PassRunMode.Interrupt;
 
 
-        public CRPCameraData GetCameraData()
+        public CRPCameraData CameraData
         {
-            if (!cameraData) 
-                cameraData = camera.GetComponent<CRPCameraData>();
-            return cameraData;
+            get
+            {
+                if (!cameraData)
+                    cameraData = camera.GetComponent<CRPCameraData>();
+                return cameraData;
+            }
         }
     }
 }
