@@ -7,14 +7,15 @@ using UnityEngine;
 
 namespace PowerUtilities
 {
-    public class ObjectCacheTool<T> where T : class
+    public class ObjectCacheTool<T> where T : UnityEngine.Object
     {
         Dictionary<string, T> dict = new Dictionary<string, T>();
         public T Get(string key, Func<T> onNotExists)
         {
             if (dict.TryGetValue(key, out T obj))
             {
-                if (onNotExists != null && obj == default)
+                //Debug.Log("obj:"+ (obj == default));
+                if (onNotExists != null && obj == null)
                 {
                     return dict[key] = onNotExists();
                 }
