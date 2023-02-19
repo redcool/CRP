@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CanEditMultipleObjects]
     [CustomEditorForRenderPipeline(typeof(Light),typeof(CRPAsset))]

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/" + nameof(PostStackPass))]
     public class PostStackPass : BasePass

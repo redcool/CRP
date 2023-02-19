@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public static class ReinterpretEx
     {

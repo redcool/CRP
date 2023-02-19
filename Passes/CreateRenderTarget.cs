@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+ nameof(CreateRenderTarget))]
     public class CreateRenderTarget : BasePass

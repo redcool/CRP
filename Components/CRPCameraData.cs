@@ -1,4 +1,4 @@
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     using System.Collections;
     using System.Collections.Generic;

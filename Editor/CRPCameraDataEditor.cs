@@ -1,5 +1,5 @@
 ﻿#if UNITY_EDITOR
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     using System;
     using System.Collections.Generic;

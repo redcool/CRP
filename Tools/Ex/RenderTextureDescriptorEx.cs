@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Rendering;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public static class RenderTextureDescriptorEx
     {

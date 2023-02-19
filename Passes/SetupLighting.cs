@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 using UnityEngine;
 using Unity.Collections;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/"+nameof(SetupLighting))]
     public class SetupLighting : BasePass

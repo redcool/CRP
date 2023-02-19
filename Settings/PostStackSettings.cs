@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static PowerUtilities.PostStackPass;
+using static PowerUtilities.CRP.PostStackPass;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_SETTINGS_ASSET_MENU_ROOT+"/"+nameof(PostStackSettings))]
     public class PostStackSettings : ScriptableObject

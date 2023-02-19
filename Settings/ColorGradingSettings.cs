@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking.Types;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [Serializable]
     public class ColorAdjustSettings

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [Serializable]
     public class ShaderVariable

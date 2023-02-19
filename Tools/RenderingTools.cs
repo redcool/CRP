@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public static class RenderingTools
     {

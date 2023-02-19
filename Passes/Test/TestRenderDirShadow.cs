@@ -7,7 +7,7 @@ using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT + "/Test/" + nameof(TestRenderDirShadow))]
     internal class TestRenderDirShadow : BasePass

@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CustomEditor(typeof(SetupColorGradingLUT))]
     public class SetupColorGradingLUTEditor : Editor

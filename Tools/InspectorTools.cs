@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public static class InspectorTools
     {

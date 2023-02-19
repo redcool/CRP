@@ -8,7 +8,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_EDITOR_PASS_ASSET_ROOT+"/"+nameof(CopyTarget))]
     public class CopyTarget : BasePass

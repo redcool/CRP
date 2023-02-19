@@ -8,7 +8,7 @@ using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.Networking.Types;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public static class CommandBufferEx
     {

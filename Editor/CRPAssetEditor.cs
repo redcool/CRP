@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CustomEditor(typeof(CRPAsset))]
     public class CRPAssetEditor : Editor

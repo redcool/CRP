@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     //[CustomPropertyDrawer(typeof(BasePass))]
     public class BasePassPropertyDrawer : PropertyDrawer

@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public partial class CRP : RenderPipeline
     {

@@ -7,7 +7,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     public partial class CRP
     {

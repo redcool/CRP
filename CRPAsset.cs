@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace PowerUtilities
+namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = nameof(CRP)+"/CreateRPAsset")]
     public partial class CRPAsset : RenderPipelineAsset
