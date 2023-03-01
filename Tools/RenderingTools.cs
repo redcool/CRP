@@ -33,5 +33,7 @@ namespace PowerUtilities.CRP
         public static void ShaderTagNameToId(string[] tagNames, ref ShaderTagId[] ids)
         => ConvertStringArray(ref ids, (n) => new ShaderTagId(n), tagNames);
 
+        public static bool IsNeedCreateTexture(Texture t, int targetWidth, int targetHeight)
+            => !(t && t.width == targetWidth && t.height == targetHeight);
     }
 }

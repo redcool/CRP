@@ -48,7 +48,7 @@ namespace PowerUtilities.CRP
         {
             isRunOnce= false;
 
-            if (TextureTools.IsNeedCreateTexture(tempRT, width, height))
+            if (RenderingTools.IsNeedCreateTexture(tempRT, width, height))
             {
                 //var format = CRP.Asset.pipelineSettings.isHdr ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default;
                 tempRT = new RenderTexture(width, height, 0, RenderTextureFormat.Default, 0);
