@@ -6,6 +6,8 @@ Shader "CRP/Utils/ColorGrading"
     }
 
     HLSLINCLUDE
+    #include "../Libs/Common.hlsl"    
+    #include "../../../PowerShaderLib/Lib/BlitLib.hlsl"    
     #include "ColorGradingPass.hlsl"
     ENDHLSL
 

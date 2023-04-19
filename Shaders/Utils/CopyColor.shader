@@ -7,6 +7,7 @@ Shader "CRP/Utils/CopyColor"
 
     HLSLINCLUDE
     #include "../Libs/Common.hlsl"
+    #include "../../../PowerShaderLib/Lib/BlitLib.hlsl"
     #include "../../../PowerShaderLib/Lib/Colors.hlsl"
 
     struct v2f

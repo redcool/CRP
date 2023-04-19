@@ -28,20 +28,4 @@ float3 TransformToTangent(float3 tSpace0,float3 tSpace1,float3 tSpace2,float3 tn
     );
 }
 
-void FullScreenTriangleVert(uint vertexId,out float4 posHClip,out float2 uv){
-    posHClip = float4(
-        vertexId <= 1 ? -1 : 3,
-        vertexId == 1 ? 3 : -1,
-        0,1
-    );
-    uv = float2(
-        vertexId <= 1 ? 0 : 2,
-        vertexId == 1 ? 2 : 0
-    );
-    // #if defined(UNITY_UV_STARTS_AT_TOP)
-    if(_ProjectionParams.x < 0)
-        uv.y = 1 - uv.y;
-    // #endif
-}
-
 #endif //CRP_COMMON_HLSL

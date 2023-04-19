@@ -1,6 +1,7 @@
 #if !defined(POST_PASS_HLSL)
 #define POST_PASS_HLSL
     #include "Libs/Common.hlsl"
+    #include "../../../PowerShaderLib/Lib/BlitLib.hlsl"
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
 
     struct v2f

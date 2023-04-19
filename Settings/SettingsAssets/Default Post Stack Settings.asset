@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66c1b852ff78b944abf76461a89fd02a, type: 3}
   m_Name: Default Post Stack Settings
   m_EditorClassIdentifier: 
-  bloomPrefilterRenderScale: 1
-  maxIterates: 3
+  bloomPrefilterRenderScale: 0.891
+  maxIterates: 4
   minSize: 2
   threshold: 0.3
   thresholdKnee: 0.016
@@ -21,6 +21,6 @@ MonoBehaviour:
   isHdr: 1
   bloomMode: 1
   intensity: 1
-  scatter: 0.668
+  scatter: 0.454
   useGaussianBlur: 1
   isCombineBicubicFilter: 0

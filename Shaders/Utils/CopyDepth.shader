@@ -7,7 +7,8 @@ Shader "CRP/Utils/CopyDepth"
 
     HLSLINCLUDE
     #include "../Libs/Common.hlsl"
-
+    #include "../../../PowerShaderLib/Lib/BlitLib.hlsl"
+    
     struct v2f
     {
         float2 uv : TEXCOORD0;
