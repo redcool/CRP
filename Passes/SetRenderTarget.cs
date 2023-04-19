@@ -20,7 +20,7 @@ namespace PowerUtilities.CRP
         public string depthTargetName;
 
         [Header("Clear Options")]
-        [Tooltip("Clear target use camera clear settings")]
+        [Tooltip("Clear target use camera clear settingList")]
         public bool clearTarget;
 
         public override bool CanExecute()

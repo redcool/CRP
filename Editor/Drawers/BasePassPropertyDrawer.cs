@@ -61,7 +61,7 @@ namespace PowerUtilities.CRP
                         EditorGUI.PropertyField(propRect, iterator);
                     }
                     enterChildren =false;
-                    //EditorGUI.DrawRect(new Rect(propRect.x, propRect.y, propRect.width, propRect.height *0.8f), Color.blue*0.2f);
+                    //EditorGUI.DrawRect(new Rect(propRect.x, propRect.y, propRect.width, propRect.height *0.8f), color.blue*0.2f);
                 }
             }
             basePassObj.ApplyModifiedProperties();

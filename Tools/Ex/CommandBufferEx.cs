@@ -27,8 +27,8 @@ namespace PowerUtilities.CRP
             cmd.ClearRenderTarget(flags, backColor, depth, stencil);
 
             //cmd.ClearRenderTarget(camera.clearFlags <= CameraClearFlags.Depth,
-            //camera.clearFlags == CameraClearFlags.Color,
-            //camera.clearFlags == CameraClearFlags.Color ? camera.backgroundColor : Color.clear
+            //camera.clearFlags == CameraClearFlags.color,
+            //camera.clearFlags == CameraClearFlags.color ? camera.backgroundColor : color.clear
             //);
         }
 

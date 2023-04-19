@@ -34,7 +34,7 @@ namespace PowerUtilities.CRP
 
         private void DrawWarning()
         {
-            EditorGUILayout.HelpBox("Use ColorGradingLUT,settings was hidden", MessageType.Warning);
+            EditorGUILayout.HelpBox("Use ColorGradingLUT,settingList was hidden", MessageType.Warning);
         }
 
         private void DrawSettings()

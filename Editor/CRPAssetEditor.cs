@@ -12,7 +12,6 @@ namespace PowerUtilities.CRP
     [CustomEditor(typeof(CRPAsset))]
     public class CRPAssetEditor : Editor
     {
-
         public bool isPassesFoldout;
 
         public override void OnInspectorGUI()
@@ -47,49 +46,27 @@ namespace PowerUtilities.CRP
             return GUI.color;
         }
 
-        private void DrawPassesDetails(SerializedProperty iterator)
+        private void DrawPassesDetails(SerializedProperty propiterator)
         {
             isPassesFoldout = EditorGUILayout.Foldout(isPassesFoldout, "Passes Details", true, EditorStyles.foldoutHeader);
             if (isPassesFoldout)
             {
                 EditorGUI.indentLevel++;
-                for (int i = 0; i < iterator.arraySize; i++)
+                for (int i = 0; i < propiterator.arraySize; i++)
                 {
-                    var passItemProp = iterator.GetArrayElementAtIndex(i);
+                    var passItemProp = propiterator.GetArrayElementAtIndex(i);
 
                     var basePass = (passItemProp.objectReferenceValue as BasePass);
                     var passItemSO = new SerializedObject(basePass);
-                    passItemSO.UpdateIfRequiredOrScript();
-
-                    var isPassFoldout = passItemSO.FindProperty("isFoldout");
+                    var titleColor = GetTitleColor(basePass);
                     var passName = basePass.PassName();
-
-                    ColorField(GetTitleColor(basePass), () => {
-                        isPassFoldout.boolValue = EditorGUILayout.Foldout(isPassFoldout.boolValue, passName, true);
-                    });
-
-                    if (isPassFoldout.boolValue)
-                    {
-                        EditorGUI.indentLevel++;
-                        GUILayout.BeginVertical("Box");
-                        InspectorTools.DrawDefaultInspect(passItemSO);
-                        GUILayout.EndVertical();
-                        EditorGUI.indentLevel--;
-                    }
-
-                    passItemSO.ApplyModifiedProperties();
+                    var isPassFoldout = passItemSO.FindProperty("isFoldout");
+                    PassDrawer.DrawPassDetail(passItemSO, titleColor, isPassFoldout, EditorGUITools.TempContent(passName));
                 }
                 EditorGUI.indentLevel--;
             }
         }
 
-        public static void ColorField(Color c, Action onDraw)
-        {
-            var lastColor = GUI.color;
-            GUI.color = c;
-            onDraw();
-            GUI.color = lastColor;
-        }
     }
 }
 #endif
