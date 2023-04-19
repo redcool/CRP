@@ -15,9 +15,12 @@ MonoBehaviour:
   isFoldout: 0
   overridePassName: 
   gameCameraTag: MainCamera
-  isInterrupt: 0
-  isSkip: 0
-  isReset: 0
+  gameCameraTagComparison: 0
+  minimalCameraType: 16
+  cameraTypeComparison: 0
+  passRunMode: 0
+  isEditorOnly: 0
+  isResetCounter: 0
   targetNames:
   - _CameraTarget
   depthTargetName: _CameraDepthTarget
