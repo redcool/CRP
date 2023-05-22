@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace PowerUtilities.CRP
 {
-    [CreateAssetMenu(menuName = nameof(CRP)+"/CreateRPAsset")]
+    [CreateAssetMenu(menuName = CRP.CRP_ROOT_PATH + "/CreateRPAsset")]
     public partial class CRPAsset : RenderPipelineAsset
     {
         [Header("First camera passes")]

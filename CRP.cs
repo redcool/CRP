@@ -12,9 +12,10 @@ namespace PowerUtilities.CRP
 {
     public partial class CRP : RenderPipeline
     {
-        public const string CREATE_PASS_ASSET_MENU_ROOT = nameof(CRP)+"/Passes";
-        public const string CREATE_SETTINGS_ASSET_MENU_ROOT = nameof(CRP)+"/Settings";
-        public const string CREATE_EDITOR_PASS_ASSET_ROOT = CREATE_PASS_ASSET_MENU_ROOT+"/EditorPasses";
+        public const string CRP_ROOT_PATH = "PowerUtilities/" + nameof(CRP);
+        public const string CREATE_PASS_ASSET_MENU_ROOT = CRP_ROOT_PATH + "/Passes";
+        public const string CREATE_SETTINGS_ASSET_MENU_ROOT = CRP_ROOT_PATH + "/Settings";
+        public const string CREATE_EDITOR_PASS_ASSET_ROOT = CREATE_PASS_ASSET_MENU_ROOT + "/EditorPasses";
 
         public static CRPAsset Asset { private set; get; }
         CommandBuffer cmd = new CommandBuffer();
@@ -24,7 +25,7 @@ namespace PowerUtilities.CRP
 
         public CRP(CRPAsset asset)
         {
-            Asset=asset;
+            Asset = asset;
 
             GraphicsSettings.useScriptableRenderPipelineBatching = asset.pipelineSettings.useSRPBatch;
             GraphicsSettings.lightsUseLinearIntensity = asset.pipelineSettings.lightsUseLinearColor;
@@ -79,7 +80,7 @@ namespace PowerUtilities.CRP
             pipelineCleanupList.Clear();
         }
 
-        void ExecutePasses(BasePass[] passes,ref ScriptableRenderContext context,Camera camera, int cameraId)
+        void ExecutePasses(BasePass[] passes, ref ScriptableRenderContext context, Camera camera, int cameraId)
         {
             cmd.name = camera.name;
             cmd.BeginSampleExecute(camera.name, ref context);
@@ -87,8 +88,8 @@ namespace PowerUtilities.CRP
             {
                 if (pass == null || pass.IsSkip())
                     continue;
-                
-                if(pass.IsNeedPipelineCleanup())
+
+                if (pass.IsNeedPipelineCleanup())
                     pipelineCleanupList.Add(pass);
 
                 if (pass.IsNeedCameraCleanup())
