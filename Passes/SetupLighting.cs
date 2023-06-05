@@ -53,7 +53,7 @@ namespace PowerUtilities.CRP
         {
             if (!useLightPerObject)
             {
-                Cmd.SetShaderKeyords(false, _LIGHTS_PER_OBJECT);
+                Cmd.SetShaderKeywords(false, _LIGHTS_PER_OBJECT);
                 return;
             }
 
@@ -85,7 +85,7 @@ namespace PowerUtilities.CRP
             cullingResults.SetLightIndexMap(indexMap);
             indexMap.Dispose();
 
-            Cmd.SetShaderKeyords(true, _LIGHTS_PER_OBJECT);
+            Cmd.SetShaderKeywords(true, _LIGHTS_PER_OBJECT);
         }
 
         void SetupLights(uint renderingLayerMask=uint.MaxValue)

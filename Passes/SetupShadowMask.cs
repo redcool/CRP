@@ -34,14 +34,14 @@ namespace PowerUtilities.CRP
             if (maskModeId < 0)
             {
                 QualitySettings.shadowmaskMode = ShadowmaskMode.DistanceShadowmask;
-                Cmd.SetShaderKeyords(false, SHADOW_MASK_KEYS);
+                Cmd.SetShaderKeywords(false, SHADOW_MASK_KEYS);
                 return;
             }
 
             // on by conditions
             for (int i = 0; i < SHADOW_MASK_KEYS.Length; i++)
             {
-                Cmd.SetShaderKeyords(i == maskModeId, SHADOW_MASK_KEYS[i]);
+                Cmd.SetShaderKeywords(i == maskModeId, SHADOW_MASK_KEYS[i]);
             }
             // sync QualitySettings
             QualitySettings.shadowmaskMode = (ShadowmaskMode)maskModeId;

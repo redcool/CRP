@@ -315,13 +315,13 @@ namespace PowerUtilities.CRP
             var filterId = (int)dirLightSettings.pcfMode - 1;
             for (int i = 0; i < DIR_PCF_MODE_KEYWORDS.Length; i++)
             {
-                Cmd.SetShaderKeyords(i == filterId, DIR_PCF_MODE_KEYWORDS[i]);
+                Cmd.SetShaderKeywords(i == filterId, DIR_PCF_MODE_KEYWORDS[i]);
             }
 
             var cascadeBlendId = (int)dirLightSettings.cascadeBlendMode - 1;
             for (int i = 0; i < CASCADE_BLEND_MODE_KEYWORDS.Length; i++)
             {
-                Cmd.SetShaderKeyords(i == cascadeBlendId, CASCADE_BLEND_MODE_KEYWORDS[i]);
+                Cmd.SetShaderKeywords(i == cascadeBlendId, CASCADE_BLEND_MODE_KEYWORDS[i]);
             }
         }
 
@@ -330,7 +330,7 @@ namespace PowerUtilities.CRP
             var filterId = (int)CRP.Asset.otherLightSettings.pcfMode - 1;
             for (int i = 0; i < OTHER_PCF_MODE_KEYWORDS.Length; i++)
             {
-                Cmd.SetShaderKeyords(i == filterId, OTHER_PCF_MODE_KEYWORDS[i]);
+                Cmd.SetShaderKeywords(i == filterId, OTHER_PCF_MODE_KEYWORDS[i]);
             }
         }
 
