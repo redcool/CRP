@@ -54,7 +54,11 @@ namespace PowerUtilities.CRP
                 var handlePos = endPos + light.transform.right * r;
 
                 EditorGUI.BeginChangeCheck();
-                var newPos = Handles.FreeMoveHandle(handlePos, Quaternion.identity, size, snap, Handles.CubeHandleCap);
+#if UNITY_2023_1_OR_NEWER
+                var newPos = Handles.FreeMoveHandle(handlePos, size, snap, Handles.CubeHandleCap);
+#else
+                var newPos = Handles.FreeMoveHandle(handlePos,Quaternion.identity, size, snap, Handles.CubeHandleCap);
+#endif
                 if (EditorGUI.EndChangeCheck())
                 {
                     Undo.RecordObject(light, $"update {light.name} spot inner angle");

@@ -9,7 +9,7 @@ using UnityEngine.Rendering;
 namespace PowerUtilities.CRP
 {
     [CreateAssetMenu(menuName = CRP.CREATE_PASS_ASSET_MENU_ROOT+"/RenderObjects")]
-    public class RenderObjects : BasePass
+    public class DrawObjects : BasePass
     {
         [Header("Render Options")]
         [Tooltip("draw opaque objects(render queue <= 2000)")]
