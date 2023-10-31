@@ -54,7 +54,7 @@ namespace PowerUtilities.CRP
                 var handlePos = endPos + light.transform.right * r;
 
                 EditorGUI.BeginChangeCheck();
-#if UNITY_2023_1_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
                 var newPos = Handles.FreeMoveHandle(handlePos, size, snap, Handles.CubeHandleCap);
 #else
                 var newPos = Handles.FreeMoveHandle(handlePos,Quaternion.identity, size, snap, Handles.CubeHandleCap);
