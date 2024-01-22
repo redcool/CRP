@@ -44,8 +44,8 @@ namespace PowerUtilities.CRP
         {
             var isCurrentActive = string.IsNullOrEmpty(sourceName);
             var isCameraTarget = string.IsNullOrEmpty(targetName);
-            RenderTargetIdentifier sourceId = isCurrentActive ? BuiltinRenderTextureType.CurrentActive : Shader.PropertyToID(sourceName);
-            RenderTargetIdentifier targetId = isCameraTarget ? BuiltinRenderTextureType.CameraTarget : Shader.PropertyToID(targetName);
+            RenderTargetIdentifier sourceId = isCurrentActive ? (RenderTargetIdentifier)BuiltinRenderTextureType.CurrentActive : Shader.PropertyToID(sourceName);
+            RenderTargetIdentifier targetId = isCameraTarget ? (RenderTargetIdentifier)BuiltinRenderTextureType.CameraTarget : Shader.PropertyToID(targetName);
 
 
             var finalSrcMode = BlendMode.One;

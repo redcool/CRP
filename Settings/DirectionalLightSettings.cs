@@ -5,6 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+#if UNITY_2020
+/// <summary>
+/// compatible for unity 2020
+/// </summary>
+public enum ShadowObjectsFilter
+{
+    //
+    // 摘要:
+    //     Renders all GameObjects.
+    AllObjects,
+    //
+    // 摘要:
+    //     Only renders GameObjects that do not include the Static Shadow Caster tag.
+    DynamicOnly,
+    //
+    // 摘要:
+    //     Only renders GameObjects that include the Static Shadow Caster tag.
+    StaticOnly
+}
+#endif
+
 namespace PowerUtilities.CRP
 {
     public enum TextureSize

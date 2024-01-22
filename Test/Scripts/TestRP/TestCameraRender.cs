@@ -89,7 +89,11 @@ namespace Assets.CRP.Test
             cmd.GetTemporaryRT(_CameraDepthTexture, desc);
 
             desc.colorFormat = RenderTextureFormat.Depth;
+#if UNITY_2020
+            desc.depthBufferBits = 24;
+#else
             desc.depthStencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.D24_UNorm_S8_UInt;
+#endif
             cmd.GetTemporaryRT(_CameraDepthTarget, desc);
 
         }

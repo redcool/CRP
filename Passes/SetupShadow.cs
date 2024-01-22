@@ -224,7 +224,9 @@ namespace PowerUtilities.CRP
 
             var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
             {
+#if UNITY_2021_1_OR_NEWER
                 objectsFilter = otherLightSettings.objectsFilter,
+#endif
                 useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask,
             };
             settings.splitData = splitData;
@@ -257,7 +259,9 @@ namespace PowerUtilities.CRP
             var shadowInfo = otherShadowInfos[shadowedLightId];
             var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
             {
+#if UNITY_2021_1_OR_NEWER
                 objectsFilter = otherLightSettings.objectsFilter,
+#endif
                 useRenderingLayerMaskTest = otherLightSettings.useRenderingLayerMask
             };
 
@@ -415,6 +419,16 @@ namespace PowerUtilities.CRP
             return !isInvalidShadowLight;
         }
 
+#if UNITY_2020
+        int GetAtlasRowCount(int count)
+        {
+            if (count <= 1) return 1;
+            if (count <= 4) return 2;
+            if (count <= 16) return 4;
+            if(count <= 64) return 8;
+            return 1;
+        }
+#else
         int GetAtlasRowCount(int count) => count switch
         {
             <= 1 => 1,
@@ -423,7 +437,7 @@ namespace PowerUtilities.CRP
             <= 64 => 8,
             _ => 1
         };
-
+#endif
 
         void SetupShadowTarget(int atlasSize)
         {
@@ -501,13 +515,13 @@ namespace PowerUtilities.CRP
 
             /* 
             var splitRatio = 1f / splitCount;
-            var mat = MatrixEx.Matrix(
+            var objectMat = MatrixEx.Matrix(
                 0.5f * splitRatio, 0, 0, 0.5f * splitRatio + splitRatio * offset.x,
                 0, 0.5f * splitRatio, 0, 0.5f * splitRatio + splitRatio * offset.y,
                 0, 0, 0.5f, 0.5f,
                 0, 0, 0, 1
                 );
-            return mat * m;
+            return objectMat * m;
             */
 
             var r0 = m.GetRow(0);
@@ -541,7 +555,9 @@ namespace PowerUtilities.CRP
             var settings = new ShadowDrawingSettings(cullingResults, shadowInfo.lightIndex)
             {
                 useRenderingLayerMaskTest = dirLightSettings.useRenderingLayerMask,
+#if UNITY_2021_1_OR_NEWER
                 objectsFilter = dirLightSettings.objectsFilter
+#endif
             };
 
             var cascadeCount = dirLightSettings.maxCascades;

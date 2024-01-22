@@ -20,7 +20,9 @@ namespace PowerUtilities.CRP
             }
         }
         public override string[] renderingLayerMaskNames => renderingLayerNames;
+#if UNITY_2021_1_OR_NEWER
         public override string[] prefixedRenderingLayerMaskNames => renderingLayerNames;
+#endif
     }
 }
 #endif
